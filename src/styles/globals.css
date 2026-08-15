@@ -1,0 +1,88 @@
+/**
+ * Global stylesheet — the only CSS file imported by the app entry point.
+ *
+ * Order matters: tokens first, then Tailwind, then the `@theme inline` bridge
+ * that exposes the tokens to Tailwind's utility generator.
+ */
+
+@import './tokens.css';
+@import 'tailwindcss';
+
+/**
+ * Tailwind v4 theme bridge.
+ *
+ * `inline` means the generated utilities reference `var(--bg)` directly rather
+ * than copying its value, so re-theming only requires editing tokens.css.
+ */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-secondary: var(--accent-secondary);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+
+  --ease-out: var(--ease-out);
+  --ease-in-out: var(--ease-in-out);
+}
+
+/**
+ * `.num` — for anything numeric that changes over time (lap times, sector
+ * deltas, counters). Tabular figures stop the layout jittering as digits
+ * change; slashed zero keeps 0/O readable at small sizes.
+ */
+@utility num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums slashed-zero;
+  font-feature-settings:
+    'tnum' 1,
+    'zero' 1;
+  letter-spacing: -0.01em;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* The whole site is scroll-driven; honour the OS-level opt-out. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
+}

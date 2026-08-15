@@ -1,0 +1,8 @@
+# pnpm settings live here from pnpm 11 onward, not in package.json.
+#
+# esbuild ships a postinstall that fetches its platform binary. Vite cannot
+# build without it, so it is explicitly allowed to run. Every other package's
+# install scripts stay blocked — that default is a supply-chain guard, not
+# noise to switch off wholesale.
+allowBuilds:
+  esbuild: true
