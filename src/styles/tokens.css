@@ -1,0 +1,64 @@
+/**
+ * Design tokens as plain CSS custom properties.
+ *
+ * This file is the single source of truth for colour, typography, spacing and
+ * radius. `globals.css` maps these into Tailwind's theme so that utilities
+ * (`bg-bg`, `text-accent-primary`, `font-display`, …) resolve to the same
+ * variables. Nothing here is final — the visual design is still in progress.
+ *
+ * TODO: replace every value once the design is delivered.
+ * TODO: decide whether a light theme is needed at all (currently dark-only).
+ */
+
+:root {
+  /* --- Surfaces & text --------------------------------------------------- */
+  --bg: #07090b;
+  --surface: #101418;
+  --surface-raised: #171c22;
+  --border: #232a32;
+
+  --text: #f2f5f7;
+  --text-muted: #8b959f;
+
+  /* --- Accents ----------------------------------------------------------- */
+  --accent-primary: #00e0c6; /* cyan  — primary highlight, data, lap lines */
+  --accent-secondary: #e8232a; /* red   — secondary highlight, alerts, livery */
+
+  /* --- Typography -------------------------------------------------------- */
+  /* TODO: swap for the licensed display/body faces once chosen. */
+  --font-display: 'Archivo Expanded', 'Archivo', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* --- Spacing scale (4px base) ------------------------------------------ */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* --- Radius scale ------------------------------------------------------ */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-md: 6px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* --- Motion ------------------------------------------------------------ */
+  /* TODO: tune once the animation choreography is defined. */
+  --duration-fast: 150ms;
+  --duration-base: 320ms;
+  --duration-slow: 700ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* --- Layout ------------------------------------------------------------ */
+  --content-max: 1280px;
+  --gutter: var(--space-6);
+}

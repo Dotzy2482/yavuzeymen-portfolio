@@ -1,0 +1,54 @@
+# --- Dependencies ---------------------------------------------------------
+node_modules/
+.pnpm-store/
+
+# --- Build output ---------------------------------------------------------
+dist/
+dist-ssr/
+build/
+.vite/
+*.local
+
+# --- Test / coverage ------------------------------------------------------
+coverage/
+
+# --- Environment ----------------------------------------------------------
+# Never commit real values. Only .env.example is tracked.
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# --- Secrets, keys, certificates -----------------------------------------
+*.pem
+*.key
+*.p12
+*.crt
+id_rsa*
+*.keystore
+
+# --- Editors / IDEs -------------------------------------------------------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# --- OS -------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- Logs -----------------------------------------------------------------
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Tooling --------------------------------------------------------------
+.claude/settings.local.json
+.eslintcache
+
+# --- Media awaiting usage rights ------------------------------------------
+# Photos whose publishing permission is not settled yet.
+public/images/private/
