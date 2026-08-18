@@ -53,5 +53,7 @@ yarn-error.log*
 # Photos whose publishing permission is not settled yet.
 public/images/private/
 
-# Local preview server config (machine-specific)
-.claude/
+# Claude Code: launch.json is shared project config and IS tracked;
+# local overrides and session state are not.
+.claude/settings.local.json
+.claude/*.local.json
