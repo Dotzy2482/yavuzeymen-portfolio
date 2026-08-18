@@ -1,40 +1,29 @@
 /**
- * The three-segment sector bar under the map, filling as the lap runs.
+ * S1 / S2 / S3 progress bars.
  *
- * Segment widths come from `track.sectors` (percentages of the lap), so the
- * bar is proportional to the real sector split rather than three equal thirds.
- *
- * TODO: fill each segment as the car passes through it.
- * TODO: colour completed sectors by delta against the reference lap
- *       (purple/green/yellow, the usual timing-screen convention).
- * TODO: show the sector time under each segment once it is complete.
+ * The sectors are even thirds of the lap, not real timing-loop splits — the
+ * handoff has no sector data, and the design draws them as thirds. Each
+ * fill's width is written by the animation loop.
  */
 
 import { cn } from '@/lib/cn';
 
-import type { SectorSplit } from '../data/types';
-
 export interface SectorBarProps {
-  /** [S1, S2, S3] as percentages of the lap. */
-  sectors: SectorSplit;
-  /** Position around the lap, 0–1. */
-  progress: number;
   className?: string;
 }
 
-export function SectorBar({ sectors, progress, className }: SectorBarProps) {
-  // TODO: `progress` drives the fill; unused until that is implemented.
-  void progress;
+const LABELS = ['S1', 'S2', 'S3'] as const;
 
+export function SectorBar({ className }: SectorBarProps) {
   return (
-    <div className={cn('sector-bar', className)} role="presentation">
-      {sectors.map((percent, index) => (
-        <div
-          key={index}
-          className="sector-bar__segment"
-          style={{ flexBasis: `${percent}%` }}
-          data-sector={index + 1}
-        />
+    <div className={cn('flex flex-1 items-center gap-2 md:gap-2.5', className)}>
+      {LABELS.map((label, i) => (
+        <div key={label} className="flex flex-1 items-center gap-2 md:gap-2.5">
+          <span className="tracking-mono text-text-quiet font-mono text-[9px] md:w-5">{label}</span>
+          <div className="bg-track-sector-track h-[3px] flex-1">
+            <div data-lap-sector={i} className="bg-accent-primary h-full w-0" />
+          </div>
+        </div>
       ))}
     </div>
   );

@@ -1,42 +1,54 @@
 /**
- * Owns "which track is selected" and "which series is being filtered".
+ * Owns "which track is selected" and "which region is being filtered".
  *
- * The single source of truth for the section's selection state — TrackList and
- * TrackPanel both read from here rather than holding their own copies.
- *
- * TODO: implement with useState + useMemo for the filtered list.
- * TODO: when the filter changes and the selected track falls out of the
- *       filtered set, select the first remaining track instead of showing an
- *       empty panel.
- * TODO: decide whether the selection should sync to the URL hash so a specific
- *       track can be linked to.
+ * The single source of truth for the section's selection state — the list,
+ * the chips and the panel all read from here rather than holding their own
+ * copies. Switching region always lands on that region's first track, so the
+ * panel is never left empty.
  */
 
-import { tracks } from '../data/tracks';
-import type { Track, TrackId, TrackSeries } from '../data/types';
+import { useCallback, useMemo, useState } from 'react';
 
-/** `null` means "all series". */
-export type SeriesFilter = TrackSeries | null;
+import { tracks } from '../data/tracks';
+import type { Track, TrackId, TrackRegion } from '../data/types';
 
 export interface UseTrackSelectionResult {
-  /** Tracks matching the current filter, in display order. */
+  region: TrackRegion;
+  /** Tracks in the current region, in display order. */
   visibleTracks: Track[];
   selectedTrackId: TrackId | null;
-  /** The selected track, or null when nothing matches the filter. */
+  /** The selected track, or null when the region is somehow empty. */
   selectedTrack: Track | null;
-  seriesFilter: SeriesFilter;
   selectTrack: (id: TrackId) => void;
-  setSeriesFilter: (series: SeriesFilter) => void;
+  selectRegion: (region: TrackRegion) => void;
 }
 
-export function useTrackSelection(): UseTrackSelectionResult {
-  // Stub: no state yet — always reports the full list with nothing selected.
+export function useTrackSelection(initialRegion: TrackRegion = 'EUROPE'): UseTrackSelectionResult {
+  const [region, setRegion] = useState<TrackRegion>(initialRegion);
+  const [selectedTrackId, setSelectedTrackId] = useState<TrackId | null>(
+    () => tracks.find((track) => track.region === initialRegion)?.id ?? null,
+  );
+
+  const visibleTracks = useMemo(() => tracks.filter((track) => track.region === region), [region]);
+
+  const selectedTrack = useMemo(
+    () => visibleTracks.find((track) => track.id === selectedTrackId) ?? visibleTracks[0] ?? null,
+    [visibleTracks, selectedTrackId],
+  );
+
+  const selectRegion = useCallback((next: TrackRegion) => {
+    setRegion(next);
+    setSelectedTrackId(tracks.find((track) => track.region === next)?.id ?? null);
+  }, []);
+
+  const selectTrack = useCallback((id: TrackId) => setSelectedTrackId(id), []);
+
   return {
-    visibleTracks: tracks,
-    selectedTrackId: null,
-    selectedTrack: null,
-    seriesFilter: null,
-    selectTrack: () => {},
-    setSeriesFilter: () => {},
+    region,
+    visibleTracks,
+    selectedTrackId: selectedTrack?.id ?? null,
+    selectedTrack,
+    selectTrack,
+    selectRegion,
   };
 }

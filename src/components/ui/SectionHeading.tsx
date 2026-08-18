@@ -1,39 +1,73 @@
 /**
- * The heading block that opens every section: an index number, a title and an
- * optional lead paragraph.
+ * The heading block that opens every section — the design's "section header
+ * pattern": cyan mono index + huge Archivo title + 1px hairline flex-filler +
+ * optional right-aligned mono meta label.
  *
- * TODO: implement the visual treatment (display face, oversized index,
- *       accent rule) once the design lands.
- * TODO: wire up the per-character reveal animation.
+ * `accent` renders one word of the title in Instrument Serif italic
+ * ("Who is *Yavuz Eymen?*", "Sim to *Real*") — never more than one word,
+ * per the style guide.
  */
 
-import { cn } from '@/lib/cn';
+import { MonoLabel } from './MonoLabel';
 
 export interface SectionHeadingProps {
   /** Two-digit section index, e.g. `'03'`. */
   index?: string;
   title: string;
+  /** Serif-italic accent appended to the title. One word (or name) max. */
+  accent?: string;
+  /** Right-aligned mono meta label, e.g. `'2019 — 2026'`. */
+  meta?: string;
   /** Optional short lead paragraph under the title. */
   lead?: string;
   /** Heading level — the page has exactly one h1 (the hero). */
   as?: 'h1' | 'h2' | 'h3';
-  align?: 'left' | 'center';
   className?: string;
 }
 
 export function SectionHeading({
   index,
   title,
+  accent,
+  meta,
   lead,
   as: Tag = 'h2',
-  align = 'left',
   className,
 }: SectionHeadingProps) {
   return (
-    <header className={cn('section-heading', align === 'center' && 'text-center', className)}>
-      {index && <span className="num text-text-muted">{index}</span>}
-      <Tag className="font-display">{title}</Tag>
-      {lead && <p className="text-text-muted">{lead}</p>}
-    </header>
+    <div className={className}>
+      <header className="flex items-baseline gap-4 md:gap-7">
+        {index && (
+          <span className="text-accent-primary font-mono text-[13px] md:text-[16px]">{index}</span>
+        )}
+        {/* Section titles are English; the document is lang="tr", where
+            uppercasing would turn "Achievements" into "ACHİEVEMENTS". */}
+        <Tag
+          lang="en"
+          className="font-display tracking-title stretch-display m-0 text-[32px] leading-none font-black uppercase md:text-[clamp(44px,4.6vw,72px)]"
+        >
+          {title}
+          {accent && (
+            <>
+              {' '}
+              <em className="font-serif font-normal tracking-normal normal-case italic">
+                {accent}
+              </em>
+            </>
+          )}
+        </Tag>
+        <span aria-hidden="true" className="bg-hairline-strong h-px flex-1 self-center" />
+        {meta && (
+          <MonoLabel size="md" tracking="lg" className="hidden text-right md:inline">
+            {meta}
+          </MonoLabel>
+        )}
+      </header>
+      {lead && (
+        <p className="text-text-secondary mt-7 max-w-[520px] text-[14px] leading-[1.8] md:text-[16px]">
+          {lead}
+        </p>
+      )}
+    </div>
   );
 }

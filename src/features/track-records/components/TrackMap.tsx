@@ -1,52 +1,79 @@
 /**
- * The circuit outline SVG, with the car marker running around it.
+ * The circuit map: three stacked strokes of the same path plus the moving
+ * marker.
  *
- * Owns the ref to the <path>; CarMarker and usePathPoint both read geometry
- * from it, so it must not be recreated on every render.
+ * Layers, bottom to top:
+ *  1. base outline (dim) — also the element every measurement reads from,
+ *  2. cyan progress, revealed by a growing dash,
+ *  3. bright trail, a short dash pinned to the dot,
+ *  4. start/finish tick, and the car marker.
  *
- * TODO: draw the outline with a stroke-dashoffset draw-in when the track
- *       changes.
- * TODO: overlay the three sector segments in distinct colours.
- * TODO: mark the start/finish line using track.startFinishOffset.
- * TODO: add aria-hidden — this is a decorative diagram; the numbers next to it
- *       carry the actual information.
+ * The overlaid driver plate is HTML, positioned in panel pixels by the
+ * animation loop — hence the tagged wrapper.
  */
 
-import { useRef } from 'react';
-
-import { cn } from '@/lib/cn';
-
 import { CarMarker } from './CarMarker';
-import type { Track } from '../data/types';
+import { DriverLabel } from './DriverLabel';
+import { TRACK_VIEWBOX } from '../data/types';
+import { LAP_NODE } from '../hooks/useLapAnimation';
 
 export interface TrackMapProps {
-  track: Track;
-  /** Car position around the lap, 0–1. */
-  progress: number;
-  className?: string;
+  /** The active circuit's `d` attribute. */
+  path: string;
+  /** Accessible description — the map itself is decorative geometry. */
+  trackName: string;
+  driverName: string;
 }
 
-export function TrackMap({ track, progress, className }: TrackMapProps) {
-  const pathRef = useRef<SVGPathElement | null>(null);
-
+export function TrackMap({ path, trackName, driverName }: TrackMapProps) {
   return (
-    <svg
-      viewBox={track.viewBox}
-      className={cn('track-map', className)}
-      role="img"
-      aria-label={`${track.name} circuit layout`}
-    >
-      <path
-        ref={pathRef}
-        d={track.svgPath}
-        fill="none"
-        stroke="var(--border)"
-        strokeWidth={4}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      {/* TODO: sector overlay paths go here, under the marker. */}
-      <CarMarker pathRef={pathRef} progress={progress} offset={track.startFinishOffset} />
-    </svg>
+    <div data-lap={LAP_NODE.map} className="relative mt-4 md:mt-6">
+      <svg
+        viewBox={TRACK_VIEWBOX}
+        role="img"
+        aria-label={`${trackName} pist haritası`}
+        className="block h-auto w-full"
+      >
+        <path
+          data-lap={LAP_NODE.base}
+          d={path}
+          fill="none"
+          stroke="var(--track-base)"
+          strokeWidth="4"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          className="md:[stroke-width:3]"
+        />
+        <path
+          data-lap={LAP_NODE.progress}
+          d={path}
+          fill="none"
+          stroke="var(--accent-primary)"
+          strokeWidth="5"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          className="md:[stroke-width:3.5]"
+        />
+        <path
+          data-lap={LAP_NODE.trail}
+          d={path}
+          fill="none"
+          stroke="var(--track-trail)"
+          strokeWidth="7"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          opacity="0.85"
+          className="md:[stroke-width:5]"
+        />
+        <g data-lap={LAP_NODE.startFinish}>
+          <rect x="-4" y="-18" width="8" height="36" fill="var(--text)" opacity="0.85" />
+          <text x="16" y="-22" fill="var(--track-sf)" fontFamily="var(--font-mono)" fontSize="22">
+            S/F
+          </text>
+        </g>
+        <CarMarker />
+      </svg>
+      <DriverLabel name={driverName} />
+    </div>
   );
 }

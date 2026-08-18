@@ -1,26 +1,60 @@
 /**
- * Career timeline entries, newest first.
+ * Career timeline entries, oldest first — the design's scroll-filled timeline
+ * reads top-down from 2019 to the present.
  *
- * Rendered by the Career section as a vertical, scroll-revealed timeline.
- *
- * TODO: replace with the real history.
+ * The shape mirrors what the design actually renders per node: a year, an
+ * uppercase title and one line of Turkish description. Copy is design-final.
  */
-
-import type { DateRange } from '@/types';
 
 export interface CareerEntry {
   id: string;
-  /** Team, academy or organisation. */
-  organisation: string;
-  /** Role or seat, e.g. "Factory Driver". */
-  role: string;
-  /** Championship or platform, e.g. "GT World Challenge Esports". */
-  series: string;
-  period: DateRange;
-  /** Short description; 1–2 sentences. */
-  summary: string;
+  year: number;
+  title: string;
+  description: string;
+  /** BCP-47 tag when the title is not Turkish (see Achievement.lang). */
+  lang?: string;
 }
 
 export const career: CareerEntry[] = [
-  // TODO: real entries.
+  {
+    id: 'start',
+    year: 2019,
+    title: "Sim Racing'e Başlangıç",
+    description: 'İlk direksiyon setiyle rekabetçi liglerde yarışmaya başladım.',
+  },
+  {
+    id: 'sensible',
+    year: 2020,
+    title: 'Sensible Racing',
+    lang: 'en',
+    description: 'İlk takım deneyimi; ulusal liglerde düzenli podyumlar.',
+  },
+  {
+    id: 'nogrip',
+    year: 2022,
+    title: "NoGripSimRacing'in Kuruluşu",
+    description: 'Kendi içerik markamı kurdum; topluluk hızla büyüdü.',
+  },
+  {
+    id: 'tch',
+    year: 2023,
+    title: 'Team Curve Hunters',
+    lang: 'en',
+    description: 'Takıma katıldım; uluslararası GT3 organizasyonlarında yarıştım.',
+  },
+  {
+    id: 'main-driver',
+    year: 2024,
+    title: 'Ana Takım Pilotluğu',
+    description: 'Team Curve Hunters ana kadrosuna yükseldim.',
+  },
+  {
+    id: 'real-track',
+    year: 2025,
+    title: 'Gerçek Pist — TOSFED & FIAT',
+    description: 'Simülatörden gerçek piste geçtim; TOSFED ve FIAT programlarında yarıştım.',
+  },
 ];
+
+/** Right-aligned meta label in the section header. */
+export const careerRange = '2019 — 2026';

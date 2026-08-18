@@ -17,21 +17,68 @@
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
-  --color-surface-raised: var(--surface-raised);
-  --color-border: var(--border);
+  --color-surface-2: var(--surface-2);
+
   --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-faint: var(--text-faint);
+  --color-text-quiet: var(--text-quiet);
   --color-text-muted: var(--text-muted);
+  --color-text-strong: var(--text-strong);
+  --color-text-body: var(--text-body);
+
+  --color-hairline: var(--hairline);
+  --color-hairline-mid: var(--hairline-mid);
+  --color-hairline-strong: var(--hairline-strong);
+  --color-border-chip: var(--border-chip);
+  --color-border-emphasis: var(--border-emphasis);
+  --color-border-flag: var(--border-flag);
+  --color-border-btn: var(--border-btn);
+  --color-border-dashed: var(--border-dashed);
+
   --color-accent-primary: var(--accent-primary);
+  --color-accent-primary-dim: var(--accent-primary-dim);
   --color-accent-secondary: var(--accent-secondary);
+  --color-accent-secondary-hover: var(--accent-secondary-hover);
+  --color-accent-secondary-border: var(--accent-secondary-border);
+
+  --color-track-base: var(--track-base);
+  --color-track-trail: var(--track-trail);
+  --color-track-dot: var(--track-dot);
+  --color-track-sf: var(--track-sf);
+  --color-track-row-hover: var(--track-row-hover);
+  --color-track-row-line: var(--track-row-line);
+  --color-track-sector-track: var(--track-sector-track);
 
   --font-display: var(--font-display);
   --font-body: var(--font-body);
+  --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);
 
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
-  --radius-xl: var(--radius-xl);
+  /* Letter-spacing vocabulary of the design: negative for display headings,
+     wide positive steps for mono tracking labels. */
+  --tracking-display: -0.015em;
+  --tracking-title: -0.01em;
+  --tracking-caps: 0.04em;
+  --tracking-ui: 0.06em;
+  --tracking-btn: 0.08em;
+  --tracking-nav: 0.1em;
+  --tracking-wordmark: 0.12em;
+  --tracking-label: 0.14em;
+  --tracking-chip: 0.16em;
+  --tracking-mono: 0.18em;
+  --tracking-mono-lg: 0.2em;
+  --tracking-mono-xl: 0.22em;
+  --tracking-mono-2xl: 0.24em;
+  --tracking-hero-sub: 0.26em;
+  --tracking-kicker: 0.3em;
+
+  --radius-flag: var(--radius-flag);
+
+  --shadow-fan: var(--shadow-fan);
+  --shadow-glow-line: var(--glow-line);
+  --shadow-glow-dot: var(--glow-dot);
 
   --ease-out: var(--ease-out);
   --ease-in-out: var(--ease-in-out);
@@ -51,6 +98,36 @@
   letter-spacing: -0.01em;
 }
 
+/**
+ * Archivo width-axis steps. Tailwind has no font-stretch utilities; these map
+ * onto the variable font's wdth axis (UI labels 115, subheads 120, display
+ * 125).
+ */
+@utility stretch-ui {
+  font-stretch: var(--stretch-ui);
+}
+@utility stretch-wide {
+  font-stretch: var(--stretch-wide);
+}
+@utility stretch-display {
+  font-stretch: var(--stretch-display);
+}
+
+/**
+ * `.container-section` — the recurring section shell: max width, responsive
+ * gutter, 150px top padding (90px on mobile). Wide sections (Track Records,
+ * Sim to Real, Content) override the max width with `.container-wide`.
+ */
+@utility container-section {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding: var(--section-pt) var(--gutter) 60px;
+  box-sizing: border-box;
+}
+@utility container-wide {
+  max-width: var(--content-max-wide);
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -63,6 +140,11 @@
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--accent-primary);
+    color: var(--bg);
   }
 
   /* The whole site is scroll-driven; honour the OS-level opt-out. */

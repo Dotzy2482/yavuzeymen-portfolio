@@ -10,9 +10,9 @@
 export type SectionId =
   | 'hero'
   | 'about'
-  | 'track-records'
   | 'career'
   | 'achievements'
+  | 'track-records'
   | 'sim-to-real'
   | 'content'
   | 'setup'

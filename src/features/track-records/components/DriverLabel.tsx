@@ -1,38 +1,29 @@
 /**
- * The name/time flag that tracks alongside the car marker.
+ * The driver plate that trails the car dot — an HTML overlay rather than SVG
+ * text, so the type renders at the same weight as the rest of the UI.
  *
- * Rendered inside the map SVG, offset from the marker so it never sits on top
- * of the circuit outline.
- *
- * TODO: implement collision avoidance — flip the label to the other side of
- *       the marker when it would run off the viewBox edge.
- * TODO: fade out while the marker is in a tight corner sequence, where the
- *       label thrashes.
+ * A leader line joins it to the dot. The animation loop positions it and
+ * flips `flex-direction` when the dot nears the right edge, so the plate
+ * never leaves the panel. It never rotates.
  */
 
+import { LAP_NODE } from '../hooks/useLapAnimation';
+
 export interface DriverLabelProps {
-  /** Driver name shown on the flag. */
   name: string;
-  /** Live lap time next to the name; omit to show the name alone. */
-  timeLabel?: string;
-  /** Marker position in viewBox units. */
-  x: number;
-  y: number;
-  className?: string;
 }
 
-export function DriverLabel({ name, timeLabel, x, y, className }: DriverLabelProps) {
+export function DriverLabel({ name }: DriverLabelProps) {
   return (
-    <g className={className} transform={`translate(${x}, ${y})`}>
-      {/* TODO: background plate behind the text. */}
-      <text x={12} y={-8} fill="var(--text)">
+    <div
+      data-lap={LAP_NODE.label}
+      aria-hidden="true"
+      className="pointer-events-none absolute top-0 left-0 flex items-center will-change-transform"
+    >
+      <span className="bg-accent-primary/70 block h-px w-3 md:w-[18px]" />
+      <span className="border-accent-primary/50 bg-surface-2 tracking-label text-text block border px-2 py-[5px] font-mono text-[9px] whitespace-nowrap md:px-2.5 md:py-1.5 md:text-[10px]">
         {name}
-      </text>
-      {timeLabel && (
-        <text x={12} y={8} fill="var(--text-muted)">
-          {timeLabel}
-        </text>
-      )}
-    </g>
+      </span>
+    </div>
   );
 }

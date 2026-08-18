@@ -14,3 +14,12 @@ export type { ButtonProps, ButtonVariant, ButtonSize } from './Button';
 
 export { Divider } from './Divider';
 export type { DividerProps } from './Divider';
+
+export { MonoLabel } from './MonoLabel';
+export type { MonoLabelProps, MonoLabelSize, MonoLabelTracking, MonoLabelTone } from './MonoLabel';
+
+export { PhotoCard } from './PhotoCard';
+export type { PhotoCardProps } from './PhotoCard';
+
+export { SocialLinks } from './SocialLinks';
+export type { SocialLinksProps } from './SocialLinks';

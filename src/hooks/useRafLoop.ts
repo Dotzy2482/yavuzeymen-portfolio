@@ -1,16 +1,16 @@
 /**
  * Runs a callback on every animation frame while `active` is true.
  *
- * The lap animation is driven from here rather than from CSS or a timer, so
- * that playback position stays frame-accurate and can be scrubbed.
+ * Per-frame DOM writes (hero helmet fit, lap animation) are driven from here
+ * rather than from CSS or a timer, so positions stay frame-accurate and never
+ * pass through React state.
  *
- * TODO: implement with requestAnimationFrame; cancel on unmount and whenever
- *       `active` flips to false.
- * TODO: keep the callback in a ref so a changing closure does not restart the
- *       loop.
- * TODO: clamp `delta` (e.g. to 100ms) so a backgrounded tab does not produce
- *       one enormous jump on return.
+ * The callback lives in a ref so a changing closure does not restart the
+ * loop, and `delta` is clamped to 100ms so a backgrounded tab does not
+ * produce one enormous jump on return.
  */
+
+import { useEffect, useRef } from 'react';
 
 /**
  * @param delta   Milliseconds since the previous frame.
@@ -18,6 +18,28 @@
  */
 export type RafCallback = (delta: number, elapsed: number) => void;
 
-export function useRafLoop(_callback: RafCallback, _active: boolean = true): void {
-  // Stub: no loop runs yet.
+export function useRafLoop(callback: RafCallback, active: boolean = true): void {
+  const callbackRef = useRef(callback);
+
+  useEffect(() => {
+    callbackRef.current = callback;
+  });
+
+  useEffect(() => {
+    if (!active) return;
+
+    let raf = 0;
+    const start = performance.now();
+    let last = start;
+
+    const tick = (now: number) => {
+      const delta = Math.min(100, now - last);
+      last = now;
+      callbackRef.current(delta, now - start);
+      raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [active]);
 }

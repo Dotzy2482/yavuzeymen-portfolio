@@ -1,19 +1,28 @@
 /**
- * Reveals its children when they scroll into view — the default entrance for
- * essentially every block on the page.
+ * Reveals its children when they scroll into view.
  *
- * TODO: implement with motion's `<motion.div>` + `whileInView`, driven by the
- *       `direction`/`distance` props.
- * TODO: skip the animation entirely (render at rest) when
- *       usePrefersReducedMotion() is true. Content must never stay invisible.
+ * NOTE: the design brief says scroll effects are scrub-linked, not time-based
+ * entrances — so this is used sparingly (stat cards, grids), never on whole
+ * sections.
  *
- * Renders its children unwrapped-but-visible for now so the page is readable
- * while the design is being finished.
+ * Under reduced motion the children render at rest, immediately visible.
  */
 
+import { motion } from 'motion/react';
+
 import { cn } from '@/lib/cn';
+import { DURATION, EASE_OUT } from '@/lib/constants';
+import { usePrefersReducedMotion } from '@/hooks';
 
 export type RevealDirection = 'up' | 'down' | 'left' | 'right' | 'none';
+
+const OFFSETS: Record<RevealDirection, { x?: number; y?: number }> = {
+  up: { y: 1 },
+  down: { y: -1 },
+  left: { x: 1 },
+  right: { x: -1 },
+  none: {},
+};
 
 export interface RevealProps {
   children: React.ReactNode;
@@ -30,6 +39,36 @@ export interface RevealProps {
   className?: string;
 }
 
-export function Reveal({ children, className }: RevealProps) {
-  return <div className={cn('reveal', className)}>{children}</div>;
+export function Reveal({
+  children,
+  direction = 'up',
+  distance = 24,
+  delay = 0,
+  duration = DURATION.base,
+  repeat = false,
+  className,
+}: RevealProps) {
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  if (prefersReducedMotion) {
+    return <div className={cn('reveal', className)}>{children}</div>;
+  }
+
+  const offset = OFFSETS[direction];
+
+  return (
+    <motion.div
+      className={cn('reveal', className)}
+      initial={{
+        opacity: 0,
+        x: (offset.x ?? 0) * distance,
+        y: (offset.y ?? 0) * distance,
+      }}
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      viewport={{ once: !repeat, amount: 0.2 }}
+      transition={{ duration, delay, ease: [...EASE_OUT] }}
+    >
+      {children}
+    </motion.div>
+  );
 }

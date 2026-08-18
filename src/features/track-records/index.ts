@@ -12,4 +12,4 @@
 export { TrackRecords } from './components/TrackRecords';
 export type { TrackRecordsProps } from './components/TrackRecords';
 
-export type { Track, TrackId, TrackSeries, SectorSplit } from './data/types';
+export type { Track, TrackId, TrackRegion } from './data/types';

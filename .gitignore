@@ -52,3 +52,6 @@ yarn-error.log*
 # --- Media awaiting usage rights ------------------------------------------
 # Photos whose publishing permission is not settled yet.
 public/images/private/
+
+# Local preview server config (machine-specific)
+.claude/

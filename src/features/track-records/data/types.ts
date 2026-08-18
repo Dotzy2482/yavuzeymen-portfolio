@@ -3,70 +3,75 @@
  *
  * These are internal to the module except for the handful re-exported from
  * `features/track-records/index.ts`.
+ *
+ * The shape mirrors the design's `tracks.js`, which is the single source of
+ * truth shared by the desktop and mobile prototypes: lap times and lengths
+ * are authored as display strings, and the country flag is a CSS gradient
+ * rather than an image.
  */
 
-/** Geographic grouping used to filter the track list. */
-export type TrackSeries = 'europe' | 'america' | 'asia';
+import type { CountryCode } from './flags';
+
+/** Geographic grouping used by the region tabs. */
+export type TrackRegion = 'EUROPE' | 'AMERICA' | 'ASIA';
 
 export type TrackId = string;
 
-/**
- * Sector split as percentages of the lap, in order [S1, S2, S3].
- * Must sum to 100.
- */
-export type SectorSplit = readonly [number, number, number];
-
 export interface Track {
   id: TrackId;
+  region: TrackRegion;
   name: string;
-  country: string;
-  series: TrackSeries;
 
   /**
-   * The `d` attribute of the circuit outline. A single closed subpath — the
-   * car marker is positioned with getPointAtLength(), which needs one
-   * continuous path to walk along.
+   * Personal best, authored as `M:SS.mmm`. Kept as a string because that is
+   * what gets displayed; the chronometer parses it to milliseconds.
    */
-  svgPath: string;
-  /** viewBox for the SVG the path was authored in, e.g. `'0 0 1000 600'`. */
-  viewBox: string;
-
-  lengthKm: number;
-  turns: number;
+  lap: string;
+  /** Circuit length with the unit baked in, e.g. `'5.148 KM'`. */
+  length: string;
+  corners: number;
 
   /**
-   * The real lap time in milliseconds — what gets displayed on the timer.
+   * Country the circuit is in. Resolves through `COUNTRIES` in `flags.ts` to
+   * both the flag gradient and the country's name — the name is what makes
+   * the flag chip accessible to anyone who cannot see it or does not
+   * recognise it.
    */
-  lapTimeMs: number;
-  /**
-   * How long the on-screen animation takes, in milliseconds.
-   *
-   * Deliberately separate from `lapTimeMs`: an endurance lap can run to eight
-   * real minutes, but nobody watches a dot for eight minutes. The animation
-   * finishes in ~12s while the timer still counts out the true lap time. The
-   * two are related only by the ratio lapTimeMs / displayDurationMs.
-   */
-  displayDurationMs: number;
-
-  /** [S1, S2, S3] as percentages of the lap. Sums to 100. */
-  sectors: SectorSplit;
+  country: CountryCode;
 
   /**
-   * Where the start/finish line sits along the path, 0–1.
-   * getPointAtLength() starts at the path's own origin, which is rarely the
-   * start/finish line; this offset rotates the lap so it begins in the right
-   * place.
+   * The `d` attribute of the circuit outline: one continuous closed subpath,
+   * authored in the shared 1000×620 viewBox. The car marker is positioned
+   * with getPointAtLength(), which needs a single path to walk along.
    */
-  startFinishOffset: number;
+  path: string;
 }
 
 /** A point on the circuit plus the heading at that point, for the car marker. */
 export interface PathPoint {
   x: number;
   y: number;
-  /** Tangent angle in degrees, for rotating the marker. */
+  /** Tangent angle in degrees. */
   angle: number;
 }
 
 /** Which of the three sectors a lap position falls in. */
 export type SectorIndex = 0 | 1 | 2;
+
+/** Every circuit outline is authored in this coordinate space. */
+export const TRACK_VIEW_WIDTH = 1000;
+export const TRACK_VIEW_HEIGHT = 620;
+export const TRACK_VIEWBOX = `0 0 ${TRACK_VIEW_WIDTH} ${TRACK_VIEW_HEIGHT}`;
+
+/**
+ * How long one on-screen lap takes at 1×, in milliseconds.
+ *
+ * Deliberately independent of the real lap time: an endurance lap can run to
+ * minutes, but nobody watches a dot for that long. The dot always completes a
+ * circuit in ~12s while the chronometer counts out the true lap time, landing
+ * exactly on the personal best as the dot crosses the line.
+ */
+export const LAP_DURATION_MS = 12_000;
+
+/** Length of the bright trail behind the car dot, in path units. */
+export const TRAIL_LENGTH = 70;

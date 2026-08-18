@@ -1,13 +1,17 @@
 /**
  * Moves its children at a different rate to the scroll, creating depth.
  *
- * TODO: implement with useScrollProgress + motion's `useTransform`, writing to
- *       a MotionValue so no React re-render happens per frame.
- * TODO: disable outright on touch/small screens and under reduced motion —
- *       parallax is the first thing to cut when frames get expensive.
+ * Writes to a MotionValue via useTransform, so no React re-render happens per
+ * frame. Disabled on small screens and under reduced motion — parallax is the
+ * first thing to cut when frames get expensive.
  */
 
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'motion/react';
+
 import { cn } from '@/lib/cn';
+import { BREAKPOINTS } from '@/lib/constants';
+import { useMediaQuery, usePrefersReducedMotion } from '@/hooks';
 
 export interface ParallaxLayerProps {
   children: React.ReactNode;
@@ -22,6 +26,37 @@ export interface ParallaxLayerProps {
   className?: string;
 }
 
-export function ParallaxLayer({ children, className }: ParallaxLayerProps) {
-  return <div className={cn('parallax-layer', className)}>{children}</div>;
+export function ParallaxLayer({
+  children,
+  speed = 0.5,
+  axis = 'y',
+  className,
+}: ParallaxLayerProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const isDesktop = useMediaQuery(BREAKPOINTS.md);
+
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+
+  // Total drift over the element's pass through the viewport, in px.
+  const drift = (1 - speed) * 120;
+  const offset = useTransform(scrollYProgress, [0, 1], [drift, -drift]);
+
+  if (prefersReducedMotion || !isDesktop) {
+    return (
+      <div ref={ref} className={cn('parallax-layer', className)}>
+        {children}
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      ref={ref}
+      className={cn('parallax-layer will-change-transform', className)}
+      style={axis === 'y' ? { y: offset } : { x: offset }}
+    >
+      {children}
+    </motion.div>
+  );
 }

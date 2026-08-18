@@ -1,36 +1,25 @@
 /**
- * Sim rig hardware and the software stack.
+ * Sim rig hardware — the technical-document list of the Setup section.
  *
- * Rendered by the Setup section, grouped by category.
- *
- * TODO: replace with the real rig.
+ * All values are explicit placeholders per the handoff ("MODEL — YER
+ * TUTUCU"); real models are still to come. `placeholder: false` once a row
+ * has its real value, which switches the text from 45% white to full white.
  */
-
-export type SetupCategory =
-  'wheelbase' | 'wheel' | 'pedals' | 'shifter' | 'rig' | 'display' | 'audio' | 'pc' | 'software';
 
 export interface SetupItem {
   id: string;
-  category: SetupCategory;
-  brand: string;
-  model: string;
-  /** One line on why this part is in the rig. */
-  note: string;
+  /** Mono component label, e.g. "STEERING WHEEL". */
+  label: string;
+  /** Bold value on the right. */
+  value: string;
+  /** Renders the value dimmed until the real model is filled in. */
+  placeholder: boolean;
 }
 
-/** Display order and labels for the category groups. */
-export const SETUP_CATEGORY_ORDER: readonly SetupCategory[] = [
-  'wheelbase',
-  'wheel',
-  'pedals',
-  'shifter',
-  'rig',
-  'display',
-  'audio',
-  'pc',
-  'software',
-];
-
 export const setupItems: SetupItem[] = [
-  // TODO: real entries.
+  { id: 'wheel', label: 'STEERING WHEEL', value: 'MODEL — YER TUTUCU', placeholder: true },
+  { id: 'pedals', label: 'PEDALS', value: 'MODEL — YER TUTUCU', placeholder: true },
+  { id: 'rig', label: 'RIG & SEAT', value: 'MODEL — YER TUTUCU', placeholder: true },
+  { id: 'display', label: 'DISPLAY', value: 'MODEL — YER TUTUCU', placeholder: true },
+  { id: 'pc', label: 'PC', value: 'MODEL — YER TUTUCU', placeholder: true },
 ];

@@ -31,16 +31,16 @@ export function App() {
       <main id="main">
         <Hero />
         <About />
-        <TrackRecords />
         <Career />
         <Achievements />
+        <TrackRecords />
         <SimToReal />
         <Content />
         <Setup />
         <Partners />
         <Contact />
       </main>
-      {/* TODO: footer — credits, licence, back-to-top */}
+      {/* Footer lives inside Contact, as in the design. */}
     </Providers>
   );
 }
