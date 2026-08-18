@@ -11,3 +11,9 @@ export type { ParallaxLayerProps } from './ParallaxLayer';
 
 export { CountUp } from './CountUp';
 export type { CountUpProps } from './CountUp';
+
+export { Marquee } from './Marquee';
+export type { MarqueeProps } from './Marquee';
+
+export { Pinned } from './Pinned';
+export type { PinnedProps } from './Pinned';

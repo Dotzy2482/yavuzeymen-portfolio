@@ -8,35 +8,29 @@
 
 import type { NavItem, SectionId } from '@/types';
 
-/** Document order of the single page. */
+/** Document order of the single page — the design's 01–09 numbering. */
 export const SECTION_IDS = [
   'hero',
-  'about',
-  'track-records',
-  'career',
-  'achievements',
-  'sim-to-real',
-  'content',
-  'setup',
-  'partners',
-  'contact',
+  'about', // 01 WHO IS
+  'career', // 02
+  'achievements', // 03
+  'track-records', // 04
+  'sim-to-real', // 05
+  'content', // 06
+  'setup', // 07
+  'partners', // 08
+  'contact', // 09
 ] as const satisfies readonly SectionId[];
 
 /**
- * Navigation entries.
- * TODO: settle the final copy — these labels are placeholders.
- * TODO: decide whether every section appears in the nav or only a subset.
+ * Navigation entries — the design's "PAGES" column: a curated four, not every
+ * section.
  */
 export const NAV_ITEMS: readonly NavItem[] = [
-  { id: 'about', label: 'About' },
-  { id: 'track-records', label: 'Track Records' },
-  { id: 'career', label: 'Career' },
-  { id: 'achievements', label: 'Achievements' },
+  { id: 'hero', label: 'Home' },
+  { id: 'track-records', label: 'On Track' },
   { id: 'sim-to-real', label: 'Sim to Real' },
-  { id: 'content', label: 'Content' },
-  { id: 'setup', label: 'Setup' },
-  { id: 'partners', label: 'Partners' },
-  { id: 'contact', label: 'Contact' },
+  { id: 'career', label: 'Career' },
 ];
 
 /** Breakpoints, mirroring Tailwind's defaults. Used by useMediaQuery. */

@@ -4,31 +4,86 @@
  * This file is the single source of truth for colour, typography, spacing and
  * radius. `globals.css` maps these into Tailwind's theme so that utilities
  * (`bg-bg`, `text-accent-primary`, `font-display`, …) resolve to the same
- * variables. Nothing here is final — the visual design is still in progress.
+ * variables.
  *
- * TODO: replace every value once the design is delivered.
- * TODO: decide whether a light theme is needed at all (currently dark-only).
+ * Values come from the design handoff (Style Guide.dc.html + the two
+ * Yavuz Eymen prototypes). Direction: "PIT WALL" — Archivo variable for
+ * display/UI, Instrument Serif italic as the one-word accent, Martian Mono
+ * for every numeric value and tracking label.
  */
 
 :root {
-  /* --- Surfaces & text --------------------------------------------------- */
-  --bg: #07090b;
-  --surface: #101418;
-  --surface-raised: #171c22;
-  --border: #232a32;
+  /* --- Surfaces ---------------------------------------------------------- */
+  --bg: #0a0b0d; /* Track Black — page ground */
+  --surface: #121418; /* cards, panels */
+  --surface-2: #0e1013; /* track list, driver plate */
 
-  --text: #f2f5f7;
-  --text-muted: #8b959f;
+  /* --- Text -------------------------------------------------------------- */
+  --text: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --text-tertiary: rgba(255, 255, 255, 0.45);
+  /* 0.45 is the floor: on --bg that is 4.51:1, just past WCAG AA for body
+     text. The design used 0.4 (3.78:1), which fails at the 9-11px sizes this
+     token is actually used at. */
+  --text-faint: rgba(255, 255, 255, 0.45);
+  --text-quiet: rgba(255, 255, 255, 0.5);
+  --text-muted: rgba(255, 255, 255, 0.55);
+  --text-strong: rgba(255, 255, 255, 0.7);
+  --text-body: rgba(255, 255, 255, 0.85); /* long-form Turkish copy */
 
-  /* --- Accents ----------------------------------------------------------- */
-  --accent-primary: #00e0c6; /* cyan  — primary highlight, data, lap lines */
-  --accent-secondary: #e8232a; /* red   — secondary highlight, alerts, livery */
+  /* --- Lines & borders ---------------------------------------------------- */
+  --hairline: rgba(255, 255, 255, 0.08);
+  --hairline-mid: rgba(255, 255, 255, 0.1);
+  --hairline-strong: rgba(255, 255, 255, 0.12);
+  --border-chip: rgba(255, 255, 255, 0.15);
+  --border-emphasis: rgba(255, 255, 255, 0.2); /* centre card of the fan */
+  --border-flag: rgba(255, 255, 255, 0.18);
+  --border-btn: rgba(255, 255, 255, 0.25);
+  --border-dashed: rgba(255, 255, 255, 0.25); /* "YOUR BRAND HERE" slots */
 
-  /* --- Typography -------------------------------------------------------- */
-  /* TODO: swap for the licensed display/body faces once chosen. */
-  --font-display: 'Archivo Expanded', 'Archivo', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+  /* --- Accents ------------------------------------------------------------ */
+  /* Cyan is the working colour: lines, active states, progress, hovers.
+     Red speaks only in earned moments: championship cards, records, the main
+     CTA. The two never appear on the same element. */
+  --accent-primary: #00e0c6; /* Signal Cyan */
+  --accent-primary-glow: rgba(0, 224, 198, 0.5);
+  --accent-primary-dim: rgba(0, 224, 198, 0.08); /* active list-row bg */
+  --accent-secondary: #e8232a; /* Race Red */
+  --accent-secondary-hover: #ff3b42;
+  --accent-secondary-border: rgba(232, 35, 42, 0.45); /* champion card edge */
+
+  /* --- Track map ---------------------------------------------------------- */
+  --track-base: rgba(255, 255, 255, 0.22); /* circuit outline */
+  --track-trail: #b2fff4; /* bright trail behind the dot */
+  --track-dot: #cffff7; /* car dot core */
+  --track-sf: rgba(255, 255, 255, 0.55); /* "S/F" label */
+  --track-row-hover: rgba(255, 255, 255, 0.04);
+  --track-row-line: rgba(255, 255, 255, 0.06);
+  --track-sector-track: rgba(255, 255, 255, 0.12); /* unfilled sector bar */
+
+  /* --- Ambient hero background -------------------------------------------- */
+  --ambient-red: rgba(232, 35, 42, 0.13);
+  --ambient-blue: rgba(43, 88, 255, 0.12);
+  /* The four static "racing lines"; the cyan runners use --accent-primary. */
+  --ambient-line-1: rgba(255, 255, 255, 0.055);
+  --ambient-line-2: rgba(255, 255, 255, 0.045);
+  --ambient-line-3: rgba(255, 255, 255, 0.04);
+  --ambient-line-4: rgba(255, 255, 255, 0.035);
+  --hero-headline-shadow: 0 4px 60px rgba(10, 11, 13, 0.55);
+
+  /* --- Typography --------------------------------------------------------- */
+  /* Archivo is a variable font (wdth 62–125, wght 100–900); headings run at
+     900/125%, UI labels at 800/115–120%. Loaded via Google Fonts in
+     index.html. */
+  --font-display: 'Archivo', system-ui, sans-serif;
+  --font-body: 'Archivo', system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, serif;
+  --font-mono: 'Martian Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* font-stretch maps onto Archivo's wdth axis. */
+  --stretch-ui: 115%;
+  --stretch-wide: 120%;
+  --stretch-display: 125%;
 
   /* --- Spacing scale (4px base) ------------------------------------------ */
   --space-1: 0.25rem;
@@ -42,23 +97,36 @@
   --space-24: 6rem;
   --space-32: 8rem;
 
-  /* --- Radius scale ------------------------------------------------------ */
+  /* --- Radius ------------------------------------------------------------- */
+  /* The design has sharp corners everywhere; the single exception is the
+     1px-radius country-flag chip in the track list. */
   --radius-none: 0px;
-  --radius-sm: 2px;
-  --radius-md: 6px;
-  --radius-lg: 12px;
-  --radius-xl: 20px;
-  --radius-full: 9999px;
+  --radius-flag: 1px;
+  --radius-full: 9999px; /* timeline dots */
 
-  /* --- Motion ------------------------------------------------------------ */
-  /* TODO: tune once the animation choreography is defined. */
+  /* --- Shadows & glows ---------------------------------------------------- */
+  --shadow-fan: 0 30px 80px rgba(0, 0, 0, 0.55); /* centre card of the fan */
+  --glow-line: 0 0 12px rgba(0, 224, 198, 0.5); /* career timeline fill */
+  --glow-dot: 0 0 10px rgba(0, 224, 198, 0.6); /* active timeline node */
+
+  /* --- Motion ------------------------------------------------------------- */
   --duration-fast: 150ms;
-  --duration-base: 320ms;
-  --duration-slow: 700ms;
+  --duration-base: 250ms; /* hovers */
+  --duration-slow: 400ms; /* timeline dot state change */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* --- Layout ------------------------------------------------------------ */
+  /* --- Layout ------------------------------------------------------------- */
   --content-max: 1280px;
-  --gutter: var(--space-6);
+  --content-max-wide: 1360px; /* Track Records + Sim to Real + Content */
+  --gutter: 72px;
+  --section-pt: 150px;
+}
+
+/* Mobile measures (~390px design). */
+@media (max-width: 47.9375rem) {
+  :root {
+    --gutter: 20px;
+    --section-pt: 90px;
+  }
 }

@@ -1,18 +1,24 @@
 /**
  * Animates a number from `from` to `to` when it scrolls into view.
  *
- * Used by the Achievements and Content stat rows.
+ * Implemented with motion's `animate()` writing the formatted result straight
+ * to the DOM node — React never re-renders during the count. Formatting is
+ * Turkish (dot thousands, comma decimals) via lib/format.
  *
- * TODO: implement with motion's `animate()` on a MotionValue and write the
- *       formatted result straight to the DOM node — re-rendering React 60
- *       times a second for a counter is not acceptable.
- * TODO: under reduced motion, render the final value immediately.
- *
- * Renders the final value with no animation for now, which is also the correct
- * reduced-motion behaviour.
+ * Under reduced motion the final value renders immediately (useInView already
+ * reports "visible" in that case, and the effect skips the tween).
  */
 
+import { useEffect, useRef } from 'react';
+import { animate } from 'motion/react';
+
 import { cn } from '@/lib/cn';
+import { formatNumber } from '@/lib/format';
+import { DURATION } from '@/lib/constants';
+import { useInView, usePrefersReducedMotion } from '@/hooks';
+
+/** easeOutCubic — the curve the design's counters use. */
+const COUNT_EASE = [0.33, 1, 0.68, 1] as const;
 
 export interface CountUpProps {
   /** Target value. */
@@ -29,11 +35,42 @@ export interface CountUpProps {
   className?: string;
 }
 
-export function CountUp({ to, prefix, suffix, className }: CountUpProps) {
+export function CountUp({
+  to,
+  from = 0,
+  duration = DURATION.slow,
+  decimals = 0,
+  prefix,
+  suffix,
+  className,
+}: CountUpProps) {
+  const numberRef = useRef<HTMLSpanElement>(null);
+  const { ref, inView } = useInView<HTMLSpanElement>({ threshold: 0.5 });
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  useEffect(() => {
+    const node = numberRef.current;
+    if (!node || !inView) return;
+
+    if (prefersReducedMotion) {
+      node.textContent = formatNumber(to, decimals);
+      return;
+    }
+
+    const controls = animate(from, to, {
+      duration,
+      ease: [...COUNT_EASE],
+      onUpdate: (v) => {
+        node.textContent = formatNumber(v, decimals);
+      },
+    });
+    return () => controls.stop();
+  }, [inView, prefersReducedMotion, from, to, duration, decimals]);
+
   return (
-    <span className={cn('num', className)}>
+    <span ref={ref} className={cn('num', className)}>
       {prefix}
-      {to}
+      <span ref={numberRef}>{formatNumber(prefersReducedMotion ? to : from, decimals)}</span>
       {suffix}
     </span>
   );

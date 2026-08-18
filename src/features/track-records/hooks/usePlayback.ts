@@ -1,45 +1,36 @@
 /**
- * Transport controls for the lap animation: play/pause, restart, scrub, speed.
+ * Transport controls for the lap animation: play/pause and speed.
  *
  * Deliberately separate from useLapAnimation. This hook owns *intent* (should
- * it be running, how fast, where did the user scrub to); useLapAnimation owns
- * the frame loop that acts on it. Keeping them apart means the controls can be
- * tested without a running rAF loop.
+ * it be running, how fast); useLapAnimation owns the frame loop that acts on
+ * it. Keeping them apart means the controls can be tested without a running
+ * rAF loop.
  *
- * TODO: implement with useState + useCallback.
- * TODO: pause automatically when the section scrolls out of view, and when the
- *       tab is hidden — no point burning frames nobody sees.
- * TODO: reset progress to 0 when the selected track changes.
+ * Under prefers-reduced-motion playback starts paused: the design auto-plays,
+ * but "reduce motion" means nothing moves until the visitor asks for it.
  */
 
-/** Playback rate multiplier applied to the track's displayDurationMs. */
-export type PlaybackSpeed = 0.5 | 1 | 2;
+import { useCallback, useState } from 'react';
+
+import { usePrefersReducedMotion } from '@/hooks';
+
+/** Playback rate multiplier applied to the on-screen lap duration. */
+export type PlaybackSpeed = 1 | 2;
 
 export interface UsePlaybackResult {
   isPlaying: boolean;
-  /** Current position in the lap, 0–1. */
-  progress: number;
   speed: PlaybackSpeed;
-  play: () => void;
-  pause: () => void;
   toggle: () => void;
-  restart: () => void;
-  /** Jump to a position, 0–1. Used by the scrubber. */
-  seek: (progress: number) => void;
-  setSpeed: (speed: PlaybackSpeed) => void;
+  toggleSpeed: () => void;
 }
 
 export function usePlayback(): UsePlaybackResult {
-  // Stub: paused at the start line.
-  return {
-    isPlaying: false,
-    progress: 0,
-    speed: 1,
-    play: () => {},
-    pause: () => {},
-    toggle: () => {},
-    restart: () => {},
-    seek: () => {},
-    setSpeed: () => {},
-  };
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [isPlaying, setIsPlaying] = useState(!prefersReducedMotion);
+  const [speed, setSpeed] = useState<PlaybackSpeed>(1);
+
+  const toggle = useCallback(() => setIsPlaying((playing) => !playing), []);
+  const toggleSpeed = useCallback(() => setSpeed((s) => (s === 1 ? 2 : 1)), []);
+
+  return { isPlaying, speed, toggle, toggleSpeed };
 }

@@ -1,62 +1,141 @@
 /**
- * Placeholder track data.
+ * Circuit data — generated from the design handoff's `tracks.js`, which both
+ * prototypes treat as the single source of truth. Do not hand-edit the paths:
+ * each is one continuous closed subpath authored in the shared 1000x620
+ * viewBox.
  *
- * Three records exist only so the list, panel and filters have something to
- * render. Every geometric and timing field is a stand-in.
- *
- * TODO: author the real `svgPath` outlines (single closed subpath each) and
- *       set the matching `viewBox`.
- * TODO: enter the real lap times and sector splits.
- * TODO: measure `startFinishOffset` per track once the paths exist.
- * TODO: add the remaining circuits.
+ * Lap times, lengths and corner counts are placeholder values per the handoff;
+ * the structure is final. The flag gradient lives in `flags.ts`, keyed by
+ * `country` — see docs/TRACK_RECORDS.md.
  */
 
-import type { Track } from './types';
+import type { Track, TrackRegion } from './types';
 
 export const tracks: Track[] = [
   {
-    id: 'spa-francorchamps',
-    name: 'Spa-Francorchamps',
-    country: 'Belgium',
-    series: 'europe',
-    svgPath: '',
-    viewBox: '0 0 1000 600',
-    lengthKm: 0,
-    turns: 0,
-    lapTimeMs: 0,
-    displayDurationMs: 12000,
-    sectors: [0, 0, 0],
-    startFinishOffset: 0,
+    id: 'NUR',
+    region: 'EUROPE',
+    country: 'DE',
+    name: 'Nürburgring GP',
+    lap: '1:54.318',
+    length: '5.148 KM',
+    corners: 15,
+    path: 'M150 500 L640 500 C700 500 720 470 735 430 L790 300 C800 270 790 250 760 246 L640 232 C610 228 605 205 625 185 L700 120 C715 105 710 85 685 82 L360 55 C330 52 315 65 312 90 L305 150 C302 172 288 182 265 180 L180 172 C150 170 135 185 138 212 L145 265 C148 292 135 305 112 315 C88 326 82 352 100 372 L128 400 C146 418 140 470 150 500 Z',
   },
   {
-    id: 'watkins-glen',
+    id: 'ZAN',
+    region: 'EUROPE',
+    country: 'NL',
+    name: 'Zandvoort',
+    lap: '1:35.774',
+    length: '4.259 KM',
+    corners: 14,
+    path: 'M200 520 L700 520 C770 520 800 480 780 430 L735 330 C720 295 745 270 780 275 C830 282 860 240 840 195 L800 115 C785 85 750 75 720 95 L640 150 C610 170 575 160 560 128 L540 90 C525 60 480 55 455 80 L390 150 C370 172 340 172 320 150 L260 90 C235 65 195 70 180 100 L120 230 C105 262 118 292 152 300 L220 318 C255 326 268 355 250 385 L185 465 C165 495 165 520 200 520 Z',
+  },
+  {
+    id: 'IMO',
+    region: 'EUROPE',
+    country: 'IT',
+    name: 'Imola',
+    lap: '1:41.925',
+    length: '4.909 KM',
+    corners: 19,
+    path: 'M140 320 C110 320 95 295 108 270 L150 190 C162 165 190 158 212 172 L290 220 C315 235 345 228 360 205 L420 115 C438 88 475 85 495 108 L560 180 C578 200 610 202 630 185 L700 128 C725 108 760 115 772 142 L830 270 C842 298 828 322 798 325 L720 332 C692 335 678 355 685 382 L705 450 C712 478 692 500 663 498 L280 470 C250 468 240 448 252 424 L275 380 C287 355 272 335 245 333 Z',
+  },
+  {
+    id: 'SIL',
+    region: 'EUROPE',
+    country: 'GB',
+    name: 'Silverstone',
+    lap: '1:57.930',
+    length: '5.891 KM',
+    corners: 18,
+    path: 'M170 480 L520 500 C560 502 580 480 575 448 L565 400 C560 372 580 352 608 355 L760 372 C800 376 828 350 820 312 L800 230 C792 195 810 168 845 165 C880 162 895 130 878 102 L860 78 C845 55 810 52 790 72 L720 135 C700 152 668 148 655 125 L620 70 C605 45 565 42 548 66 L500 130 C485 150 455 152 438 133 L390 82 C370 60 335 62 320 88 L285 150 C272 172 245 178 225 163 L185 135 C158 116 120 130 115 162 L92 300 C86 335 108 360 143 358 L200 355 C230 353 248 375 240 403 L222 440 C210 465 140 452 170 480 Z',
+  },
+  {
+    id: 'RBR',
+    region: 'EUROPE',
+    country: 'AT',
+    name: 'Red Bull Ring',
+    lap: '1:28.641',
+    length: '4.318 KM',
+    corners: 10,
+    path: 'M180 500 L760 500 C800 500 820 470 806 434 L740 270 C728 240 745 215 778 212 L840 206 C875 202 890 170 872 140 L830 80 C812 52 772 50 750 75 L640 190 C620 212 585 212 565 190 L420 45 C398 22 358 26 344 54 L160 420 C140 462 140 500 180 500 Z',
+  },
+  {
+    id: 'COT',
+    region: 'AMERICA',
+    country: 'US',
+    name: 'COTA',
+    lap: '2:02.187',
+    length: '5.513 KM',
+    corners: 20,
+    path: 'M170 520 L640 520 C680 520 700 495 692 460 L660 330 C652 300 670 278 700 280 L820 292 C858 295 880 262 862 228 L790 100 C775 72 738 68 718 92 L660 160 C640 182 610 180 592 158 L560 118 C540 92 505 92 488 118 L455 168 C440 190 410 195 390 178 L330 130 C305 110 270 118 258 148 L240 195 C230 220 205 230 180 220 C140 205 108 235 118 275 L160 460 C168 495 135 520 170 520 Z',
+  },
+  {
+    id: 'WGL',
+    region: 'AMERICA',
+    country: 'US',
     name: 'Watkins Glen',
-    country: 'United States',
-    series: 'america',
-    svgPath: '',
-    viewBox: '0 0 1000 600',
-    lengthKm: 0,
-    turns: 0,
-    lapTimeMs: 0,
-    displayDurationMs: 12000,
-    sectors: [0, 0, 0],
-    startFinishOffset: 0,
+    lap: '1:44.912',
+    length: '5.552 KM',
+    corners: 11,
+    path: 'M200 480 L560 500 C600 502 622 480 618 445 L600 330 C596 300 615 282 645 288 L790 315 C828 322 855 295 845 258 L810 140 C800 105 762 92 735 115 L680 162 C658 180 628 172 618 145 L595 88 C583 58 542 50 522 75 L465 142 C448 162 418 162 400 143 L340 80 C318 55 278 60 265 90 L150 380 C138 412 158 440 192 442 Z',
   },
   {
-    id: 'suzuka',
+    id: 'RAT',
+    region: 'AMERICA',
+    country: 'US',
+    name: 'Road Atlanta',
+    lap: '1:22.503',
+    length: '4.088 KM',
+    corners: 12,
+    path: 'M160 470 L680 500 C730 503 760 470 748 424 L700 250 C690 215 712 190 748 195 L800 202 C840 208 865 175 850 138 L825 90 C810 58 768 52 745 80 L640 205 C620 228 585 225 570 198 L480 60 C462 32 420 32 405 62 L330 210 C318 235 290 242 268 226 L215 188 C188 168 152 182 145 214 Z',
+  },
+  {
+    id: 'LAG',
+    region: 'AMERICA',
+    country: 'US',
+    name: 'Laguna Seca',
+    lap: '1:22.940',
+    length: '3.602 KM',
+    corners: 11,
+    path: 'M220 460 L620 480 C670 483 700 450 688 405 L640 250 C630 215 655 190 690 198 L760 215 C800 224 830 190 815 152 L790 100 C775 65 730 62 710 95 L660 175 C645 200 610 200 595 175 L540 85 C522 55 480 58 468 90 L430 195 C420 222 390 232 368 215 L310 172 C282 152 245 165 238 198 L200 390 C193 425 185 458 220 460 Z',
+  },
+  {
+    id: 'INT',
+    region: 'AMERICA',
+    country: 'BR',
+    name: 'Interlagos',
+    lap: '1:31.276',
+    length: '4.309 KM',
+    corners: 15,
+    path: 'M240 420 C200 420 180 390 195 355 L230 280 C242 252 228 228 198 222 L150 212 C115 205 100 170 122 142 L165 90 C185 65 222 65 242 90 L300 165 C318 188 350 188 368 165 L430 85 C450 60 488 62 505 90 L545 158 C558 180 588 185 608 168 L680 110 C705 90 742 100 752 130 L790 260 C800 292 780 318 748 318 L640 318 C610 318 595 340 605 368 L625 420 C635 450 615 475 585 472 Z',
+  },
+  {
+    id: 'BAT',
+    region: 'ASIA',
+    country: 'AU',
+    name: 'Mount Panorama',
+    lap: '2:01.947',
+    length: '6.213 KM',
+    corners: 23,
+    path: 'M120 500 L780 520 C820 522 845 495 838 458 L800 250 C795 220 812 200 842 198 C875 196 890 165 872 138 L850 108 C835 85 800 82 782 103 L740 150 C725 168 698 168 684 150 L660 120 C645 100 618 98 602 118 L575 150 C560 168 535 168 520 150 L490 112 C475 92 448 92 434 112 L410 145 C395 165 368 165 355 145 L330 108 C315 85 282 85 268 110 L100 430 C82 465 85 498 120 500 Z',
+  },
+  {
+    id: 'SUZ',
+    region: 'ASIA',
+    country: 'JP',
     name: 'Suzuka',
-    country: 'Japan',
-    series: 'asia',
-    svgPath: '',
-    viewBox: '0 0 1000 600',
-    lengthKm: 0,
-    turns: 0,
-    lapTimeMs: 0,
-    displayDurationMs: 12000,
-    sectors: [0, 0, 0],
-    startFinishOffset: 0,
+    lap: '1:57.203',
+    length: '5.807 KM',
+    corners: 18,
+    path: 'M200 480 L560 500 C610 503 640 470 630 425 L595 290 C588 260 605 238 636 240 L760 250 C800 253 825 222 810 185 L780 118 C765 82 720 75 698 105 L640 185 C622 210 588 210 570 185 L480 62 C460 35 418 38 404 68 L340 205 C330 228 302 235 282 220 L230 182 C202 162 165 175 158 208 L120 400 C112 438 135 470 174 472 Z',
   },
 ];
+
+/** Tab order of the region filter. */
+export const TRACK_REGIONS: readonly TrackRegion[] = ['EUROPE', 'AMERICA', 'ASIA'];
 
 /** First track shown before the visitor picks one. */
 export const defaultTrackId = tracks[0]?.id ?? '';

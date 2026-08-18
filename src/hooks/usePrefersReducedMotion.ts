@@ -4,11 +4,12 @@
  * This site is animation-heavy by design, which makes the opt-out mandatory
  * rather than optional. Every motion component must consult this hook and fall
  * back to a static, immediately-visible state.
- *
- * TODO: implement on top of useMediaQuery(REDUCED_MOTION_QUERY).
  */
 
+import { REDUCED_MOTION_QUERY } from '@/lib/constants';
+
+import { useMediaQuery } from './useMediaQuery';
+
 export function usePrefersReducedMotion(): boolean {
-  // Stub: assume motion is allowed until implemented.
-  return false;
+  return useMediaQuery(REDUCED_MOTION_QUERY);
 }
