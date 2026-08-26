@@ -48,6 +48,16 @@ jobs:
   secret-scan:
     name: Secret scan (gitleaks)
     runs-on: ubuntu-latest
+    # On a pull_request event gitleaks-action lists the PR's commits so it can
+    # scan just the new range, which needs pull-requests: read. Without it the
+    # action takes a 403 from the API and exits non-zero — a red check that says
+    # nothing about whether the diff contains a secret.
+    #
+    # Job-level permissions replace the workflow-level block rather than adding
+    # to it, so contents: read is restated here on purpose.
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - name: Checkout (full history)
         uses: actions/checkout@v4
