@@ -59,6 +59,8 @@ export function About({ id = 'about', className }: SectionProps) {
             src="/images/portraits/studio-seated.jpg"
             alt="Yavuz Eymen — stüdyo portresi"
             loading="lazy"
+            width={1023}
+            height={1537}
             className="block h-auto w-full [mask-image:linear-gradient(#000_78%,transparent_100%)]"
           />
           <div className="border-hairline-mid bg-surface relative z-[1] -mt-14 grid grid-cols-2 gap-x-6 gap-y-3.5 border p-[18px] md:absolute md:bottom-9 md:-left-7 md:mt-0 md:gap-x-9 md:px-[26px] md:py-[22px]">

@@ -7,6 +7,11 @@
  * of the pin. Photos are bottom-aligned, sim → real, ending on the empty
  * karting slot.
  *
+ * Desktop under reduced motion: no pin and no scrub. The row keeps its
+ * left-to-right reading but becomes a plainly scrollable strip — pinning it
+ * without the scrub would leave most of the gallery clipped inside an
+ * overflow-hidden stage with no way to reach it.
+ *
  * Mobile: a plain vertical stack, no pinning (and no pit-pass shot, per the
  * mobile design).
  */
@@ -45,6 +50,10 @@ function GalleryPhoto({ item, mobile }: GalleryPhotoProps) {
           src={item.src}
           alt={item.alt}
           loading="lazy"
+          // Intrinsic size, so the photo occupies its final width before it
+          // decodes. The pinned row is measured to work out the scrub distance.
+          width={item.intrinsicWidth ?? undefined}
+          height={item.intrinsicHeight ?? undefined}
           style={mobile ? undefined : { height: item.height }}
           className={cn('block saturate-[0.92]', mobile ? 'h-auto w-full' : 'w-auto')}
         />
@@ -66,6 +75,17 @@ function GalleryPhoto({ item, mobile }: GalleryPhotoProps) {
   );
 }
 
+/** The desktop photo row, shared by the pinned stage and the reduced-motion strip. */
+function GalleryRow() {
+  return (
+    <>
+      {simToRealItems.map((item) => (
+        <GalleryPhoto key={item.id} item={item} mobile={false} />
+      ))}
+    </>
+  );
+}
+
 interface DesktopStageProps {
   progress: MotionValue<number>;
 }
@@ -73,17 +93,24 @@ interface DesktopStageProps {
 function DesktopStage({ progress }: DesktopStageProps) {
   const rowRef = useRef<HTMLDivElement>(null);
   const [overflow, setOverflow] = useState(0);
-  const prefersReducedMotion = usePrefersReducedMotion();
 
-  // Measure how far the row overflows the viewport; re-measure on resize.
+  // How far the row overflows the viewport, which is exactly how far the scrub
+  // has to travel. Re-measured on viewport resize *and* whenever the row's own
+  // size changes — a window listener alone misses the photos finishing decode.
   useEffect(() => {
-    const measure = () => {
-      const row = rowRef.current;
-      if (row) setOverflow(Math.max(0, row.scrollWidth - window.innerWidth));
-    };
+    const row = rowRef.current;
+    if (!row) return;
+
+    const measure = () => setOverflow(Math.max(0, row.scrollWidth - window.innerWidth));
     measure();
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(row);
     window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', measure);
+    };
   }, []);
 
   const x = useTransform(progress, (v) => -v * overflow);
@@ -96,11 +123,9 @@ function DesktopStage({ progress }: DesktopStageProps) {
       <motion.div
         ref={rowRef}
         className="mt-auto flex w-max items-end gap-10 px-[72px] pt-8 pb-[9vh] will-change-transform"
-        style={prefersReducedMotion ? undefined : { x }}
+        style={{ x }}
       >
-        {simToRealItems.map((item) => (
-          <GalleryPhoto key={item.id} item={item} mobile={false} />
-        ))}
+        <GalleryRow />
       </motion.div>
     </div>
   );
@@ -108,11 +133,25 @@ function DesktopStage({ progress }: DesktopStageProps) {
 
 export function SimToReal({ id = 'sim-to-real', className }: SectionProps) {
   const isDesktop = useMediaQuery(BREAKPOINTS.md);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
-  if (isDesktop) {
+  if (isDesktop && !prefersReducedMotion) {
     return (
       <section id={id} className={className}>
         <Pinned heightVh={240}>{(progress) => <DesktopStage progress={progress} />}</Pinned>
+      </section>
+    );
+  }
+
+  if (isDesktop) {
+    return (
+      <section id={id} className={cn('container-section container-wide', className)}>
+        <SectionHeading index="05" title="Sim to" accent="Real" lead={LEAD} />
+        <div className="-mx-[var(--gutter)] mt-11 overflow-x-auto px-[var(--gutter)] pb-4">
+          <div className="flex w-max items-end gap-10">
+            <GalleryRow />
+          </div>
+        </div>
       </section>
     );
   }

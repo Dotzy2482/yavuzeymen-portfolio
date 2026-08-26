@@ -58,6 +58,3 @@ export const DURATION = {
 
 /** Default easing curve for reveal-style animations. */
 export const EASE_OUT = [0.16, 1, 0.3, 1] as const;
-
-/** Default gap between children in a staggered reveal, in seconds. */
-export const STAGGER_STEP = 0.08;

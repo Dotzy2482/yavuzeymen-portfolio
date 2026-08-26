@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Yavuz Eymen">
+  <!--
+    PLACEHOLDER. A typographic mark derived from the existing wordmark — the
+    initial drawn as a path so it stays legible at 16px, where a two-letter
+    monogram turns to mush. Replace it when the real visual identity lands.
+
+    The two colours are literals because a favicon is a standalone document:
+    it cannot see the page's CSS, so styles/tokens.css is out of reach here.
+    They mirror --bg (#0a0b0d) and --accent-primary (#00e0c6); if those tokens
+    change, change them here too.
+  -->
+  <rect width="64" height="64" rx="12" fill="#0a0b0d" />
+  <path
+    d="M15 16 L32 36 L49 16"
+    fill="none"
+    stroke="#00e0c6"
+    stroke-width="9"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path d="M32 36 L32 49" fill="none" stroke="#00e0c6" stroke-width="9" stroke-linecap="round" />
+</svg>

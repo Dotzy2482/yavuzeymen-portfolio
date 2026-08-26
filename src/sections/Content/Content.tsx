@@ -20,14 +20,41 @@ import { usePrefersReducedMotion } from '@/hooks';
 import { contentCounters, reelCards, FAN_CENTER_INDEX } from '@/data';
 import type { SectionProps } from '@/types';
 
-/** Per-slot fan treatment, keyed by distance from the centre card. */
-const FAN_SLOTS = [
-  { width: 200, rotate: -13, y: 34, z: 1, margin: 'md:mr-[-44px]' },
-  { width: 230, rotate: -6, y: 12, z: 2, margin: 'md:mr-[-44px]' },
-  { width: 290, rotate: 0, y: 0, z: 5, margin: '' },
-  { width: 230, rotate: 6, y: 12, z: 2, margin: 'md:ml-[-44px]' },
-  { width: 200, rotate: 13, y: 34, z: 1, margin: 'md:ml-[-44px]' },
+/**
+ * Fan treatment by distance from the centre card: 0 = centre, 1 = neighbour,
+ * 2 = outer. Rotation and margin take their sign from which side the card is
+ * on, so this describes half the fan and the other half is its mirror.
+ *
+ * Keyed by distance rather than by card index on purpose — indexing a
+ * fixed-length table by position breaks the moment the number of reel cards
+ * changes, and it breaks by throwing.
+ */
+const FAN_RINGS = [
+  { width: 290, rotate: 0, y: 0, z: 5 },
+  { width: 230, rotate: 6, y: 12, z: 2 },
+  { width: 200, rotate: 13, y: 34, z: 1 },
 ] as const;
+
+interface FanSlot {
+  width: number;
+  rotate: number;
+  y: number;
+  z: number;
+  margin: string;
+}
+
+function fanSlot(index: number): FanSlot {
+  const offset = index - FAN_CENTER_INDEX;
+  // Anything beyond the outermost ring keeps the outermost treatment.
+  const ring = FAN_RINGS[Math.min(Math.abs(offset), FAN_RINGS.length - 1)];
+  return {
+    width: ring.width,
+    rotate: Math.sign(offset) * ring.rotate,
+    y: ring.y,
+    z: ring.z,
+    margin: offset < 0 ? 'md:mr-[-44px]' : offset > 0 ? 'md:ml-[-44px]' : '',
+  };
+}
 
 export function Content({ id = 'content', className }: SectionProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -70,7 +97,7 @@ export function Content({ id = 'content', className }: SectionProps) {
       {/* Desktop card fan */}
       <div className="mt-24 hidden items-end justify-center pb-10 md:flex">
         {reelCards.map((card, i) => {
-          const slot = FAN_SLOTS[i];
+          const slot = fanSlot(i);
           const emphasis = i === FAN_CENTER_INDEX;
           return (
             <motion.div

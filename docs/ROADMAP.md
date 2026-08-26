@@ -14,12 +14,14 @@
 
 **Primitives**
 
-- All five app-wide hooks implemented: `useInView`, `useMediaQuery`,
-  `usePrefersReducedMotion`, `useRafLoop`, `useScrollProgress`.
+- App-wide hooks: `useInView`, `useMediaQuery`, `usePrefersReducedMotion`,
+  `useRafLoop`.
 - UI primitives: `Button`, `Tag`, `MonoLabel`, `SectionHeading`, `StatValue`,
   `Divider`, `PhotoCard`.
-- Motion vocabulary: `Reveal`, `Stagger`, `Marquee`, `Pinned`, `CountUp`,
-  `ParallaxLayer` — every one honouring `prefers-reduced-motion`.
+- Motion vocabulary: `Marquee`, `Pinned`, `CountUp` — every one honouring
+  `prefers-reduced-motion`. (`Reveal`, `Stagger`, `ParallaxLayer` and a
+  scroll-progress hook were built and then removed unused; the design's scroll
+  language is scrub-linked, not entrance animations.)
 - `lib/format.ts` with Turkish number formatting.
 
 **Sections — all nine plus the hero**

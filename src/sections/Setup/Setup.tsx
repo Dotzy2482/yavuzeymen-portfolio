@@ -40,6 +40,8 @@ export function Setup({ id = 'setup', className }: SectionProps) {
           src="/images/simtoreal/rig.png"
           alt="Sim rig"
           loading="lazy"
+          width={433}
+          height={545}
           className="border-hairline block h-auto w-full border"
         />
       </div>

@@ -11,6 +11,11 @@
  * tablist owes the user `tabpanel` semantics and arrow-key roving focus, and
  * a half-implemented one promises a structure that is not there.
  * `aria-current` conveys the selection honestly.
+ *
+ * The driver plate is uppercased with the Turkish locale, not `toUpperCase()`.
+ * The plain method is locale-independent and maps `i` to `I`; in a `lang="tr"`
+ * document, where CSS `text-transform` would produce `İ`, that is the same trap
+ * the English UI labels dodge with `lang="en"` — just on the JavaScript side.
  */
 
 import { cn } from '@/lib/cn';
@@ -82,7 +87,7 @@ export function TrackRecords({ className }: TrackRecordsProps) {
         {selectedTrack && (
           <TrackPanel
             track={selectedTrack}
-            driverName={profile.name.toUpperCase()}
+            driverName={profile.name.toLocaleUpperCase('tr-TR')}
             isPlaying={isPlaying}
             speed={speed}
             onToggle={toggle}

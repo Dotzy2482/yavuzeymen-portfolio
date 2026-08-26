@@ -128,6 +128,44 @@
   max-width: var(--content-max-wide);
 }
 
+/**
+ * `.skip-link` — the keyboard shortcut past the nav chrome to the content.
+ *
+ * Plain, unlayered CSS on purpose. This is a component with two states, not a
+ * utility, and the obvious Tailwind spelling — `sr-only focus:not-sr-only`
+ * plus positioning utilities — makes the reveal depend on which of two
+ * conflicting utilities Tailwind happens to emit last for `position`,
+ * `clip-path` and `margin`. A skip link you cannot see is worse than none,
+ * because it silently swallows the first Tab, so it should not rest on
+ * emission order. Unlayered rules outrank everything Tailwind puts in a layer,
+ * which makes the focused state unconditional.
+ *
+ * Translated out of view rather than hidden, so it stays in the layout and in
+ * the accessibility tree and is reachable on the very first Tab. No transition:
+ * a control that appears instantly needs no reduced-motion caveat.
+ *
+ * z-index clears the nav chrome (30) and the mobile menu overlay (50).
+ */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 60;
+  padding: 0.75rem 1.25rem;
+  background: var(--accent-primary);
+  color: var(--bg);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: var(--tracking-btn);
+  text-transform: uppercase;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;

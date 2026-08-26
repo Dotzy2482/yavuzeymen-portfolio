@@ -1,14 +1,40 @@
 <!doctype html>
-<html lang="tr" class="dark">
+<html lang="tr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a0b0d" />
     <meta
       name="description"
       content="Yavuz Eymen — sim racing driver. Track records, career and content."
     />
-    <!-- TODO: add favicon assets once the visual identity is finalised. -->
+
+    <!--
+      Placeholder mark, see public/favicon.svg. Declaring an icon explicitly is
+      also what stops the browser probing /favicon.ico and taking a 404.
+      TODO: add an apple-touch-icon PNG — that one cannot be an SVG.
+    -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <!--
+      Social preview. og:image is deliberately absent: it wants a dedicated
+      1200×630 asset and none of the existing photography is that shape, so a
+      wrong-aspect image would be worse than none. The card degrades to
+      title + description, which is why twitter:card is `summary` rather than
+      `summary_large_image`.
+      TODO: add og:image + og:url once there is an asset and a final domain.
+    -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content="Yavuz Eymen" />
+    <meta property="og:title" content="Yavuz Eymen — Sim Racing" />
+    <meta
+      property="og:description"
+      content="Yavuz Eymen — sim racing driver. Track records, career and content."
+    />
+    <meta property="og:locale" content="tr_TR" />
+    <meta name="twitter:card" content="summary" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- PIT WALL type direction: Archivo variable (wdth 62–125, wght 100–900),
