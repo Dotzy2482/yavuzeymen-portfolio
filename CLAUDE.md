@@ -107,6 +107,8 @@ these by inventing values.
 | `data/simToReal.ts`                     | `karting` item has `src: null` (dashed slot)                    | Karting photo                   |
 | `data/contentStats.ts`                  | Hand-entered counters and reel captions                         | Instagram insights              |
 | Footer links                            | `Gizlilik` / `Şartlar` point at `#`                             | Legal pages                     |
+| `public/favicon.svg`                    | Placeholder mark drawn from the wordmark                        | Final visual identity           |
+| `index.html`                            | No `og:image`; `twitter:card` is `summary`                      | A 1200×630 social image         |
 
 The site must render with an empty `.env` — every variable is optional and
 resolves to an empty string.
