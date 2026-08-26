@@ -13,6 +13,15 @@ updates:
         dependency-type: development
       production-dependencies:
         dependency-type: production
+    ignore:
+      # typescript-eslint 8.x refuses TypeScript 7 outright — "typescript-eslint
+      # does not support TS 7.0" — and takes `pnpm lint` down with it. A TS major
+      # inside the dev-dependencies group therefore makes the whole group
+      # unmergeable, which is what happened to the 15-package PR.
+      # Drop this once typescript-eslint ships TS 7 support.
+      - dependency-name: typescript
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: github-actions
     directory: /
