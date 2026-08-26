@@ -28,8 +28,9 @@
 
 - Nav (top bar, desktop side columns, full-screen mobile menu).
 - Hero: ambient background, portrait + helmet with per-frame fit, headline,
-  info cards, sponsor marquee, CTA. Hover-fade helmet on desktop, scroll-scrub
-  reveal on mobile.
+  info cards, sponsor marquee, CTA. A diagonal scan band sweeps the helmet and
+  swaps the photo for its wireframe inside the band; scroll-scrub reveal on
+  mobile. (The desktop hover-fade this replaced is gone.)
 - About, Career (scroll-filled timeline), Achievements, Sim to Real (pinned
   horizontal gallery), Content (counters + card fan), Setup, Partners,
   Contact + footer.
@@ -108,16 +109,23 @@ Open questions to settle while doing it:
 
 ## Later
 
-- **Image pipeline.** WebP/AVIF with `<picture>` fallbacks and explicit
-  `width`/`height` on everything. Two assets are ~1.2 MB today; `fiat-front.png`
-  is a photograph stored as PNG for no reason.
+- **Image pipeline.** WebP/AVIF with `<picture>` fallbacks. `width`/`height`
+  are done — every raster now declares its intrinsic size, which the hero
+  marquee and the Sim to Real gallery both depend on for measurement. What is
+  left is the encoding: 3.6 MB across 13 files, with `fiat-front.png` at 1.1 MB
+  and `portrait-cutout.png` at another 1.1 MB, both photographs stored as PNG.
+  Needs an encode step and therefore a dependency.
 - **Lazy-load the track-records chunk.** It is the heaviest part of the bundle
   and sits below the fold.
 - **Real sector splits.** The bars are currently even thirds of path length.
   Actual splits need sector distances per circuit — worth doing once real
   geometry exists, not before.
 - **Legal pages.** `Gizlilik` and `Şartlar` link to `#`.
-- **Favicon and social preview image.** `index.html` still has the TODO.
+- **Social preview image.** `og:image` is deliberately absent — it wants a
+  dedicated 1200x630 asset and none of the existing photography is that shape,
+  so the card degrades to title + description. An `apple-touch-icon` PNG is
+  also still missing; that one cannot be an SVG. The favicon itself is in place
+  as a placeholder mark (`public/favicon.svg`), derived from the wordmark.
 - **Mount Panorama's region.** Filed under `ASIA`; Australia is Oceania. Either
   correct the region or rename the tab — leaving Asia with a single circuit is
   the trade-off.
