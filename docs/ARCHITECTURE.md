@@ -16,13 +16,12 @@ src/
     ui/                Presentational primitives with no domain knowledge:
                        Button, Tag, MonoLabel, SectionHeading, StatValue,
                        Divider, PhotoCard
-    motion/            The animation vocabulary: Reveal, Stagger, Marquee,
-                       Pinned, CountUp, ParallaxLayer
+    motion/            The animation vocabulary: Marquee, Pinned, CountUp
   features/
     track-records/     Self-contained module behind a single index.ts.
                        See docs/TRACK_RECORDS.md.
   hooks/               App-wide hooks: useInView, useMediaQuery, useRafLoop,
-                       useScrollProgress, usePrefersReducedMotion
+                       usePrefersReducedMotion
   lib/                 cn (class joiner), format (tr-TR number formatting),
                        constants (section order, breakpoints, timing)
   data/                Hand-maintained static content, one file per section
@@ -158,21 +157,18 @@ one-offs, not a system. Colours are always a system.
 `components/motion/` is a vocabulary layer, so sections compose animations
 rather than re-deriving them:
 
-| Wrapper         | Job                                                                                                   |
-| --------------- | ----------------------------------------------------------------------------------------------------- |
-| `Reveal`        | Fade + travel on scroll into view                                                                     |
-| `Stagger`       | Variants parent; motion computes the child delays                                                     |
-| `Marquee`       | Seamless infinite strip — repeats children until they cover its box, then scrolls by exactly one copy |
-| `Pinned`        | A sticky 100vh stage inside a tall wrapper; hands scroll progress to a render prop as a `MotionValue` |
-| `CountUp`       | Animates a number and writes it straight to the DOM node                                              |
-| `ParallaxLayer` | Scroll-linked drift, disabled below `md` and under reduced motion                                     |
+| Wrapper   | Job                                                                                                   |
+| --------- | ----------------------------------------------------------------------------------------------------- |
+| `Marquee` | Seamless infinite strip — repeats children until they cover its box, then scrolls by exactly one copy |
+| `Pinned`  | A sticky 100vh stage inside a tall wrapper; hands scroll progress to a render prop as a `MotionValue` |
+| `CountUp` | Animates a number and writes it straight to the DOM node                                              |
 
 Two performance rules run through all of it:
 
 1. **Scroll-linked values stay as `MotionValue`s.** `Pinned` hands out a
    `MotionValue`, consumers pipe it through `useTransform`, and nothing
-   re-renders per frame. `useScrollProgress` returns a plain number and is
-   therefore only for coarse consumers.
+   re-renders per frame. A hook that turned scroll into React state used to live
+   in `hooks/` and was removed — every consumer wanted the `MotionValue`.
 2. **Per-frame DOM work bypasses React entirely.** `useRafLoop` runs the
    callback; the callback mutates `style` and attributes directly. This is what
    drives the hero helmet fit, the helmet scan reveal and the whole lap

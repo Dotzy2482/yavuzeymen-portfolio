@@ -8,6 +8,10 @@
  * Lap-time formatting deliberately lives in the track-records feature
  * (`features/track-records/lib/formatLapTime.ts`) — it is domain logic, not a
  * general utility.
+ *
+ * Kept deliberately small: formatPercent, formatCompact and formatYearRange
+ * were removed because nothing called them. The counters that looked like they
+ * would need them carry their own pre-formatted prefixes in data/contentStats.
  */
 
 const LOCALE = 'tr-TR';
@@ -18,27 +22,6 @@ export function formatNumber(value: number, decimals = 0): string {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   });
-}
-
-/** `0.823` → `"%82,3"` — Turkish convention puts the sign in front. */
-export function formatPercent(ratio: number, decimals = 1): string {
-  return `%${formatNumber(ratio * 100, decimals)}`;
-}
-
-/** `123456` → `"123K"` — for follower / view counts (design uses K/M). */
-export function formatCompact(value: number): string {
-  if (Math.abs(value) >= 1_000_000) {
-    return `${formatNumber(value / 1_000_000, value % 1_000_000 === 0 ? 0 : 1)}M`;
-  }
-  if (Math.abs(value) >= 1_000) {
-    return `${Math.round(value / 1_000)}K`;
-  }
-  return formatNumber(value);
-}
-
-/** `(2019, null)` → `"2019 — BUGÜN"`, `(2019, 2026)` → `"2019 — 2026"`. */
-export function formatYearRange(start: number, end: number | null): string {
-  return `${start} — ${end ?? 'BUGÜN'}`;
 }
 
 /** Pads a number to a fixed digit count: `(7, 2)` → `"07"`. */

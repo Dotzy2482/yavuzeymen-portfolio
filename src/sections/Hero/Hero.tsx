@@ -9,7 +9,7 @@
  * across it. Mobile: a pinned 180vh wrapper; scrolling scrubs the helmet away.
  */
 
-import { useRef } from 'react';
+import { Fragment, useRef } from 'react';
 import { motion, useMotionValue, useTransform, type MotionValue } from 'motion/react';
 
 import { cn } from '@/lib/cn';
@@ -120,8 +120,12 @@ function HeroStage({ progress }: HeroStageProps) {
         lang="en"
         className="absolute right-10 bottom-[110px] z-[5] hidden max-w-[340px] text-right leading-loose md:block"
       >
-        Professional sim racing driver
-        <br />& content creator
+        {profile.tagline.map((line, i) => (
+          <Fragment key={line}>
+            {i > 0 && <br />}
+            {line}
+          </Fragment>
+        ))}
       </MonoLabel>
 
       {/* Sponsor marquee + CTA. */}

@@ -20,8 +20,8 @@ export interface HeroStat {
 
 export interface Profile {
   name: string;
-  /** Mono two-liner in the hero's bottom-right corner. */
-  tagline: string;
+  /** Mono two-liner in the hero's bottom-right corner; one entry per line. */
+  tagline: string[];
   /** The hero headline; serif accent is the last word. */
   headline: string;
   currentTeam: {
@@ -44,7 +44,7 @@ export interface Profile {
 
 export const profile: Profile = {
   name: 'Yavuz Eymen',
-  tagline: 'PROFESSIONAL SIM RACING DRIVER & CONTENT CREATOR',
+  tagline: ['PROFESSIONAL SIM RACING DRIVER', '& CONTENT CREATOR'],
   headline: 'ALWAYS ON THE LIMIT.',
   currentTeam: {
     label: 'CURRENT TEAM',
