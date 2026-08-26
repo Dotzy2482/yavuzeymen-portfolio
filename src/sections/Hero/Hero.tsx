@@ -5,8 +5,8 @@
  * helmet → info cards → sponsor marquee + CTA. The Nav chrome overlays this
  * section from outside.
  *
- * Desktop: a plain 100vh stage; the helmet fades away under the cursor.
- * Mobile: a pinned 180vh wrapper; scrolling scrubs the helmet reveal.
+ * Desktop: a plain 100vh stage, helmet always on with a scan reveal sweeping
+ * across it. Mobile: a pinned 180vh wrapper; scrolling scrubs the helmet away.
  */
 
 import { useRef } from 'react';
@@ -76,7 +76,7 @@ function HeroStage({ progress }: HeroStageProps) {
       <HeroAmbient mobile={!isDesktop} />
 
       <HeroPortrait
-        mode={isDesktop ? 'hover' : 'scroll'}
+        mode={isDesktop ? 'static' : 'scroll'}
         progress={progress ?? undefined}
         stageRef={stageRef}
       />

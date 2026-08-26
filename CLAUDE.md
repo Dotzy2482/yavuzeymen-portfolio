@@ -73,6 +73,18 @@ it. Either keep the ref in the component that renders the node, or use the
   `src/features/track-records/data/tracks.ts`.** They are generated, and each
   one must remain a single continuous closed subpath. See
   [docs/TRACK_RECORDS.md](docs/TRACK_RECORDS.md).
+- **Do not hand-edit `src/sections/Hero/HelmetWireframe.tsx`.** It is generated
+  from `docs/assets/helmet-wireframe.svg` by
+  `docs/assets/generate-helmet-wireframe.mjs` — 67 kB of coordinates, where a
+  hand edit silently breaks the drawing. Regenerate it instead:
+
+  ```bash
+  node docs/assets/generate-helmet-wireframe.mjs
+  ```
+
+  The script writes Prettier-clean output, so a regeneration leaves the tree
+  clean; `--check` asserts the component and the SVG are in sync.
+
 - **Do not hardcode contact details.** E-mail, phone and social URLs come from
   `import.meta.env` via `src/data/profile.ts`. This repo will be made public
   and its history will not be rewritten, so anything committed is committed
