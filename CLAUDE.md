@@ -41,8 +41,8 @@ props). One-off arbitrary values for _layout_ numbers taken from the design
 (`px-[72px]`, `text-[34px]`) are fine; one-off _colours_ are not.
 
 **Animation goes through `motion`.** Use `motion/react` components, or the
-wrappers in `src/components/motion/` (`Reveal`, `Stagger`, `Marquee`, `Pinned`,
-`CountUp`, `ParallaxLayer`). Do not write CSS `@keyframes`. Per-frame work that
+wrappers in `src/components/motion/` (`Marquee`, `Pinned`, `CountUp`). Do not
+write CSS `@keyframes`. Per-frame work that
 must not re-render React goes through `useRafLoop` and writes to the DOM
 directly — that is the established pattern in the hero helmet fit and the lap
 animation.

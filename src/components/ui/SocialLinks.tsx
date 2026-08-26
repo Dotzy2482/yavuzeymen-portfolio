@@ -4,6 +4,10 @@
  *
  * URLs come from the environment and fall back to `#` when unset, so the row
  * always renders — an unset link simply does not open a new tab.
+ *
+ * `noopener` alongside `noreferrer`: modern browsers imply it for
+ * `target="_blank"`, but stating it is what makes the guarantee independent of
+ * the browser, and it costs nothing.
  */
 
 import { cn } from '@/lib/cn';
@@ -27,7 +31,7 @@ export function SocialLinks({ linkClassName, className }: SocialLinksProps) {
             href={link.href}
             lang="en"
             target={isPlaceholder ? undefined : '_blank'}
-            rel={isPlaceholder ? undefined : 'noreferrer'}
+            rel={isPlaceholder ? undefined : 'noopener noreferrer'}
             className={cn(linkClassName, className)}
           >
             {link.label}

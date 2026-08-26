@@ -8,6 +8,9 @@
  *
  * The headline, kicker and CTA are English and carry `lang="en"`; the
  * invitation copy and the legal links stay Turkish.
+ *
+ * The copyright year is read at runtime rather than written in — a static build
+ * would otherwise keep claiming the year it was built in.
  */
 
 import { cn } from '@/lib/cn';
@@ -62,7 +65,7 @@ export function Contact({ id = 'contact', className }: SectionProps) {
       {/* Footer */}
       <footer className="border-hairline-mid mt-20 flex w-full max-w-[1280px] flex-col items-center gap-2.5 border-t pt-6 pb-8 md:mt-[130px] md:flex-row md:justify-between md:pt-7 md:pb-[34px]">
         <MonoLabel size="xs" tracking="chip" tone="faint" lang="en" className="md:text-[10px]">
-          © 2026 Yavuz Eymen
+          © {new Date().getFullYear()} Yavuz Eymen
         </MonoLabel>
         <MonoLabel size="xs" tracking="chip" tone="faint" lang="en" className="md:text-[10px]">
           NoGripSimRacing

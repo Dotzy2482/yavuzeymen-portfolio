@@ -8,7 +8,4 @@ export { useMediaQuery } from './useMediaQuery';
 export { useRafLoop } from './useRafLoop';
 export type { RafCallback } from './useRafLoop';
 
-export { useScrollProgress } from './useScrollProgress';
-export type { UseScrollProgressOptions } from './useScrollProgress';
-
 export { usePrefersReducedMotion } from './usePrefersReducedMotion';

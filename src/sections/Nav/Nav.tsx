@@ -16,11 +16,10 @@
 
 import { useState } from 'react';
 
-import { cn } from '@/lib/cn';
 import { NAV_ITEMS } from '@/lib/constants';
 import { MonoLabel, SocialLinks } from '@/components/ui';
 
-import { MobileMenu } from './MobileMenu';
+import { MobileMenu, MOBILE_MENU_ID } from './MobileMenu';
 
 const NAV_LINK_CLASSES =
   'text-[13px] font-extrabold tracking-nav uppercase stretch-ui transition-colors duration-[250ms] hover:text-accent-primary';
@@ -33,7 +32,7 @@ export function Nav({ className }: NavProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className={cn('z-30', className)} aria-label="Ana menü">
+    <nav className={className} aria-label="Ana menü">
       {/* Top bar */}
       <div className="fixed inset-x-0 top-0 z-30 flex items-center justify-between px-5 py-[14px] md:absolute md:px-10 md:py-[22px]">
         <a
@@ -47,6 +46,7 @@ export function Nav({ className }: NavProps) {
           type="button"
           aria-label={menuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
           aria-expanded={menuOpen}
+          aria-controls={MOBILE_MENU_ID}
           onClick={() => setMenuOpen((open) => !open)}
           className="flex cursor-pointer flex-col gap-1.5 px-1.5 py-3"
         >
