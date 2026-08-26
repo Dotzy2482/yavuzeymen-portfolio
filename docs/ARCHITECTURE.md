@@ -9,7 +9,7 @@ src/
   sections/            One folder per page section. A section owns its layout
                        and its copy, and nothing else. Barrel: sections/index.ts.
     Nav/               Top bar, desktop side columns, full-screen mobile menu
-    Hero/              Portrait + helmet + headline + sponsor marquee
+    Hero/              Portrait + helmet (scan reveal) + headline + marquee
     About/ Career/ Achievements/ TrackRecords/ SimToReal/
     Content/ Setup/ Partners/ Contact/
   components/
@@ -29,6 +29,11 @@ src/
   styles/              tokens.css (source of truth), globals.css (Tailwind bridge)
   types/               Types shared by more than one area
   test/                Vitest setup
+
+docs/
+  assets/              Source assets for generated code, and the generators
+                       that consume them. Nothing here is imported by the app
+                       or shipped in the bundle.
 ```
 
 Two rules keep this honest:
@@ -170,7 +175,14 @@ Two performance rules run through all of it:
    therefore only for coarse consumers.
 2. **Per-frame DOM work bypasses React entirely.** `useRafLoop` runs the
    callback; the callback mutates `style` and attributes directly. This is what
-   drives the hero helmet fit and the whole lap animation.
+   drives the hero helmet fit, the helmet scan reveal and the whole lap
+   animation.
+
+The hero's scan reveal is worth one note, because it is the only effect that
+shares a loop. `useHelmetScan` deliberately owns no `useRafLoop` of its own: it
+returns an `update(elapsed, damp)` that `HeroPortrait` calls from the loop it
+already runs for the helmet fit, so the fit and all three masked layers advance
+on the same frame. Tuning lives in `sections/Hero/helmetScan.ts`.
 
 Every wrapper checks `usePrefersReducedMotion()` and degrades to a static,
 visible state. On a site this animation-heavy the opt-out is a requirement, not
