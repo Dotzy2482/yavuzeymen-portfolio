@@ -211,3 +211,14 @@ includes the React Compiler rule set at **error** severity — notably "cannot
 access refs during render", which is what pushed `useLapAnimation` to the
 `data-*` attribute pattern instead of threading ref objects through props.
 Prettier owns formatting and sorts Tailwind classes; do not fight its output.
+
+CI runs the same gates on every push to `main` and every pull request, in this
+order: lint, format check, typecheck, **test**, build. The test step was missing
+for a long time, so the suite only ever ran on contributors' machines — if it
+disappears again, the 34 tests stop being enforced by anything. A second job
+runs gitleaks over the full history; it needs `pull-requests: read` to scan a
+PR's commit range, and without that permission it fails with a 403 that says
+nothing about whether a secret is present.
+
+`workflow_dispatch` is enabled, so a run can be requested for any ref when an
+automatic one does not report.
