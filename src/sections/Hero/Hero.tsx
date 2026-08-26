@@ -37,6 +37,8 @@ function PartnerLogo({ heightKey }: PartnerLogoProps) {
             <img
               src={partner.logoFallbackSrc}
               alt={partner.logoAlt}
+              width={partner.intrinsicWidth}
+              height={partner.intrinsicHeight}
               style={{ height: partner[heightKey] }}
               className={cn('w-auto', partner.marqueeClass)}
             />
@@ -46,6 +48,8 @@ function PartnerLogo({ heightKey }: PartnerLogoProps) {
             key={partner.id}
             src={partner.logoSrc}
             alt={partner.logoAlt}
+            width={partner.intrinsicWidth}
+            height={partner.intrinsicHeight}
             style={{ height: partner[heightKey] }}
             className={cn('w-auto', partner.marqueeClass)}
           />
@@ -122,7 +126,13 @@ function HeroStage({ progress }: HeroStageProps) {
 
       {/* Sponsor marquee + CTA. */}
       <div className="border-hairline-mid bg-bg absolute inset-x-0 bottom-0 z-[7] flex h-[60px] items-center border-t md:h-[76px]">
-        <Marquee duration={42} trackClassName="gap-12 pr-12 md:gap-[72px] md:pr-[72px]">
+        {/* flex-1 so the strip fills the bar; without it the marquee sizes to
+            its own content and the right of the bar stays empty. */}
+        <Marquee
+          duration={42}
+          className="min-w-0 flex-1"
+          trackClassName="gap-12 pr-12 md:gap-[72px] md:pr-[72px]"
+        >
           <PartnerLogo heightKey="marqueeHeight" />
         </Marquee>
         <a

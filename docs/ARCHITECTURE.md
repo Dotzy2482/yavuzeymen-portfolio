@@ -162,7 +162,7 @@ rather than re-deriving them:
 | --------------- | ----------------------------------------------------------------------------------------------------- |
 | `Reveal`        | Fade + travel on scroll into view                                                                     |
 | `Stagger`       | Variants parent; motion computes the child delays                                                     |
-| `Marquee`       | Seamless infinite strip — renders children twice and translates −50%                                  |
+| `Marquee`       | Seamless infinite strip — repeats children until they cover its box, then scrolls by exactly one copy |
 | `Pinned`        | A sticky 100vh stage inside a tall wrapper; hands scroll progress to a render prop as a `MotionValue` |
 | `CountUp`       | Animates a number and writes it straight to the DOM node                                              |
 | `ParallaxLayer` | Scroll-linked drift, disabled below `md` and under reduced motion                                     |

@@ -23,6 +23,20 @@ export interface Partner {
   logoFallbackSrc?: string;
   /** Alt text — required, never decorative. */
   logoAlt: string;
+  /**
+   * The file's own pixel dimensions, rendered as `width`/`height` attributes.
+   *
+   * Both renderings set height in CSS and leave width `auto`, so these only
+   * supply the aspect ratio — but they supply it *before the image decodes*,
+   * which matters: the hero marquee measures its own content to decide how many
+   * copies it needs to cover the bar, and an image with no intrinsic size
+   * measures zero. They also stop the strip shifting as the logos land.
+   *
+   * For the `<picture>` entries these must match the AVIF and the PNG, which
+   * are the same size today (tch: 256×75 both).
+   */
+  intrinsicWidth: number;
+  intrinsicHeight: number;
   /** Logo height in the hero marquee, px. */
   marqueeHeight: number;
   /** Logo height in the Partners grid, px. */
@@ -37,6 +51,8 @@ export const partners: Partner[] = [
     name: 'gelbura',
     logoSrc: '/images/partners/gelbura.png',
     logoAlt: 'gelbura',
+    intrinsicWidth: 178,
+    intrinsicHeight: 63,
     marqueeHeight: 22,
     gridHeight: 34,
     marqueeClass: 'opacity-90',
@@ -46,6 +62,8 @@ export const partners: Partner[] = [
     name: 'SPARDOX',
     logoSrc: '/images/partners/spardox.png',
     logoAlt: 'SPARDOX',
+    intrinsicWidth: 500,
+    intrinsicHeight: 167,
     marqueeHeight: 17,
     gridHeight: 26,
     marqueeClass: 'invert opacity-85',
@@ -55,6 +73,8 @@ export const partners: Partner[] = [
     name: 'drivehunter',
     logoSrc: '/images/partners/drivehunter.svg',
     logoAlt: 'drivehunter',
+    intrinsicWidth: 360,
+    intrinsicHeight: 80,
     marqueeHeight: 23,
     gridHeight: 32,
     marqueeClass: 'opacity-85',
@@ -65,6 +85,8 @@ export const partners: Partner[] = [
     logoSrc: '/images/partners/tch.avif',
     logoFallbackSrc: '/images/partners/tch.png',
     logoAlt: 'Team Curve Hunters',
+    intrinsicWidth: 256,
+    intrinsicHeight: 75,
     marqueeHeight: 27,
     gridHeight: 40,
     marqueeClass: 'opacity-90',
