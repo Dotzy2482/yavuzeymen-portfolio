@@ -23,6 +23,8 @@ export function Partners({ id = 'partners', className }: SectionProps) {
             <img
               src={partner.logoFallbackSrc ?? partner.logoSrc}
               alt={partner.logoAlt}
+              width={partner.intrinsicWidth}
+              height={partner.intrinsicHeight}
               style={{ height: partner.gridHeight }}
               className="w-auto opacity-[0.92] brightness-0 invert"
             />
