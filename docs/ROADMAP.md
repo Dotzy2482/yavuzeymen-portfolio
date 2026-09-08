@@ -58,19 +58,31 @@
   and Sim to Real already use, so the gap reads as reserved rather than
   forgotten. The copy is unchanged and stays `sr-only`.
 
+**Social card and scroll-spy** — [workstream 02](plans/02-social-card-and-scroll-spy.md)
+
+- A shared link now carries a real card. `docs/assets/og-card.html` composes
+  1200×630 from the site's own vocabulary — the hero's ambient wash and racing
+  lines, the helmet wireframe, Signal Cyan, and copy quoted from
+  `data/profile.ts` — and `docs/assets/generate-og-images.mjs` rasterises it,
+  plus a 180×180 `apple-touch-icon.png` off `favicon.svg`, through headless
+  Chrome. `twitter:card` is `summary_large_image` at last.
+- `useActiveSection` gives the nav a scroll-spy, in both the desktop PAGES
+  column and the overlay menu, marked with `aria-current="location"` and not
+  colour alone. It watches a band across the middle of the viewport and lights
+  only the four sections `NAV_ITEMS` lists, so the six it does not list leave
+  the nav honestly dark rather than pointing at the wrong place. Eleven unit
+  tests; the comments in `App.tsx` and `constants.ts` that claimed all this
+  before it existed are now true.
+
 ## Planned work
 
-Three workstreams, each with a full plan in [plans/](plans/). The plan carries
+Two workstreams, each with a full plan in [plans/](plans/). The plan carries
 the reasoning; this list is only the map. Read the plan before starting one, and
 work one per session.
 
-Numbered to match the plan filenames, so `01` is missing rather than renumbered.
+Numbered to match the plan filenames, so `01` and `02` are missing rather than
+renumbered.
 
-2. **[Social card and scroll-spy](plans/02-social-card-and-scroll-spy.md)** —
-   `og:image` and `apple-touch-icon` are missing, so a shared link degrades to
-   title + description; the card can be composed from the site's own vocabulary
-   rather than waiting on photography. And the nav does not highlight the active
-   section, though `App.tsx` and `constants.ts` both claim it does.
 3. **[Weight and wiring](plans/03-weight-and-wiring.md)** — the image encode
    pass (3.6 MB across 13 files, two of them 1.1 MB photographs stored as PNG),
    self-hosted fonts, the lazy-loaded track-records chunk, plus the small
