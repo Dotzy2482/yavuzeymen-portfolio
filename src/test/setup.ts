@@ -4,7 +4,11 @@
  * Registers jest-dom matchers and stubs the browser APIs jsdom does not
  * implement but that this (heavily animated, scroll-driven) site relies on.
  *
- * No tests are written yet; this file only guarantees the harness is ready.
+ * Every stub here is `configurable`, so an individual test file can replace it
+ * with `vi.stubGlobal` — these are inert defaults that keep a component from
+ * throwing, not fakes a test can drive. A scroll-spy test needs an observer it
+ * can fire entries through, and a non-configurable property cannot be
+ * redefined.
  */
 
 import '@testing-library/jest-dom/vitest';
@@ -18,6 +22,7 @@ afterEach(() => {
 // jsdom has no matchMedia — useMediaQuery and usePrefersReducedMotion need it.
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
+  configurable: true,
   value: vi.fn().mockImplementation((query: string) => ({
     matches: false,
     media: query,
@@ -43,6 +48,7 @@ class IntersectionObserverStub implements IntersectionObserver {
 
 Object.defineProperty(window, 'IntersectionObserver', {
   writable: true,
+  configurable: true,
   value: IntersectionObserverStub,
 });
 

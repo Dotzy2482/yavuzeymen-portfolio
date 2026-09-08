@@ -17,6 +17,8 @@
 import { useState } from 'react';
 
 import { NAV_ITEMS } from '@/lib/constants';
+import { cn } from '@/lib/cn';
+import { useActiveSection } from '@/hooks';
 import { MonoLabel, SocialLinks } from '@/components/ui';
 
 import { MobileMenu, MOBILE_MENU_ID } from './MobileMenu';
@@ -30,6 +32,9 @@ export interface NavProps {
 
 export function Nav({ className }: NavProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  // One observer for both lists — the mobile menu is handed the result rather
+  // than spying on its own, so opening it does not start a second one.
+  const activeId = useActiveSection(NAV_ITEMS.map((item) => item.id));
 
   return (
     <nav className={className} aria-label="Ana menü">
@@ -61,7 +66,14 @@ export function Nav({ className }: NavProps) {
           Pages
         </MonoLabel>
         {NAV_ITEMS.map((item) => (
-          <a key={item.id} href={`#${item.id}`} lang="en" className={NAV_LINK_CLASSES}>
+          <a
+            key={item.id}
+            href={`#${item.id}`}
+            lang="en"
+            // `location`, not `page`: these are anchors within one document.
+            aria-current={item.id === activeId ? 'location' : undefined}
+            className={cn(NAV_LINK_CLASSES, item.id === activeId && 'text-accent-primary')}
+          >
             {item.label}
           </a>
         ))}
@@ -73,7 +85,7 @@ export function Nav({ className }: NavProps) {
         <SocialLinks linkClassName={NAV_LINK_CLASSES} />
       </div>
 
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} activeId={activeId} />
     </nav>
   );
 }

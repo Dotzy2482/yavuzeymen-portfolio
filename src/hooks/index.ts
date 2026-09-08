@@ -1,5 +1,7 @@
 /** Barrel for the app-wide hooks. Feature-local hooks are not re-exported. */
 
+export { useActiveSection } from './useActiveSection';
+
 export { useInView } from './useInView';
 export type { UseInViewOptions, UseInViewResult } from './useInView';
 

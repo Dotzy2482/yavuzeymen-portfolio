@@ -2,8 +2,9 @@
  * App-wide constants: section order, navigation labels, breakpoints and the
  * shared animation timing vocabulary.
  *
- * Section order here is the source of truth — App.tsx renders in this order and
- * the nav highlights against it.
+ * Section order here is the source of truth: App.tsx renders in this order.
+ * The nav highlights against it, but only for the four sections NAV_ITEMS
+ * lists — see useActiveSection for what that costs and buys.
  */
 
 import type { NavItem, SectionId } from '@/types';
@@ -24,7 +25,12 @@ export const SECTION_IDS = [
 
 /**
  * Navigation entries — the design's "PAGES" column: a curated four, not every
- * section.
+ * section, and deliberately not in document order: Career is second in the
+ * document and last here.
+ *
+ * Both are design decisions the scroll-spy adapts to rather than the other way
+ * round. Six of the ten sections have no entry here, and while the reader is
+ * in one of those the nav highlights nothing at all.
  */
 export const NAV_ITEMS: readonly NavItem[] = [
   { id: 'hero', label: 'Home' },
