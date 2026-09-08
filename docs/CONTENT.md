@@ -9,28 +9,28 @@ layout or a crash.
 
 ## Copy and data
 
-| Where                       | Field                                                | Status              | Source of truth                                    |
-| --------------------------- | ---------------------------------------------------- | ------------------- | -------------------------------------------------- |
-| `data/profile.ts`           | Name, tagline, headline                              | **Real**            | Design handoff, signed off                         |
-| `data/profile.ts`           | Current team + "main driver since"                   | **Real**            | Team Curve Hunters                                 |
-| `data/profile.ts`           | iRating 4.020, License A 1.39, Türkiye Top 50, 7 yrs | **Real** (snapshot) | iRacing profile — re-check before launch           |
-| `data/profile.ts`           | E-mail, phone                                        | **Env-driven**      | `.env.local`; empty string when unset              |
-| `data/profile.ts`           | Instagram / YouTube / TikTok URLs                    | **Env-driven**      | `.env.local`; fall back to `#`                     |
-| `sections/About/About.tsx`  | Four Turkish bio paragraphs                          | **Real**            | Design handoff, final copy                         |
-| `data/career.ts`            | Six timeline entries, 2019–2025                      | **Real**            | Design handoff, final copy                         |
-| `data/achievements.ts`      | Six result cards                                     | **Real**            | Design handoff, final copy                         |
-| `data/partners.ts`          | Four sponsors                                        | **Real**            | Logos supplied; see assets below                   |
-| `data/partners.ts`          | Two "YOUR BRAND HERE" slots                          | **Intentional**     | Not a placeholder — the section doubles as a pitch |
-| `data/contentStats.ts`      | 146.848 views / 797.000 top reel / %82,3 reels       | **Placeholder**     | Instagram insights export                          |
-| `data/contentStats.ts`      | Five reel cards (captions + covers)                  | **Placeholder**     | Real reel thumbnails + real captions               |
-| `data/setup.ts`             | All five rows: `MODEL — YER TUTUCU`                  | **Placeholder**     | Yavuz's actual hardware list                       |
-| `data/simToReal.ts`         | Five photos + labels                                 | **Real** (low-res)  | Photos supplied; see assets below                  |
-| `data/simToReal.ts`         | `karting` — `src: null`                              | **Placeholder**     | Karting photo, renders as a dashed empty slot      |
-| `features/…/data/tracks.ts` | 12 circuit names + regions                           | **Real**            | Yavuz's circuit list                               |
-| `features/…/data/tracks.ts` | Lap times, lengths, corner counts                    | **Placeholder**     | iRacing personal-best export                       |
-| `features/…/data/tracks.ts` | Circuit `path` geometry                              | **Placeholder**     | OpenStreetMap / Overpass — see below               |
-| `sections/Contact`          | Invitation paragraph                                 | **Real**            | Design handoff, final copy                         |
-| `sections/Contact`          | `Gizlilik` / `Şartlar` footer links                  | **Placeholder**     | Legal pages not written                            |
+| Where                       | Field                                                | Status              | Source of truth                                        |
+| --------------------------- | ---------------------------------------------------- | ------------------- | ------------------------------------------------------ |
+| `data/profile.ts`           | Name, tagline, headline                              | **Real**            | Design handoff, signed off                             |
+| `data/profile.ts`           | Current team + "main driver since"                   | **Real**            | Team Curve Hunters                                     |
+| `data/profile.ts`           | iRating 4.020, License A 1.39, Türkiye Top 50, 7 yrs | **Real** (snapshot) | iRacing profile — re-check before launch               |
+| `data/profile.ts`           | E-mail, phone                                        | **Env-driven**      | `.env.local`; empty string when unset                  |
+| `data/profile.ts`           | Instagram / YouTube / TikTok URLs                    | **Env-driven**      | `.env.local`; fall back to `#`                         |
+| `sections/About/About.tsx`  | Four Turkish bio paragraphs                          | **Real**            | Design handoff, final copy                             |
+| `data/career.ts`            | Six timeline entries, 2019–2025                      | **Real**            | Design handoff, final copy                             |
+| `data/achievements.ts`      | Six result cards                                     | **Real**            | Design handoff, final copy                             |
+| `data/partners.ts`          | Four sponsors                                        | **Real**            | Logos supplied; see assets below                       |
+| `data/partners.ts`          | Two "YOUR BRAND HERE" slots                          | **Intentional**     | Not a placeholder — the section doubles as a pitch     |
+| `data/contentStats.ts`      | 146.848 views / 797.000 top reel / %82,3 reels       | **Placeholder**     | Instagram insights export                              |
+| `data/contentStats.ts`      | Five reel cards (captions + covers)                  | **Placeholder**     | Real reel thumbnails + real captions                   |
+| `data/setup.ts`             | All five rows: `MODEL — YER TUTUCU`                  | **Placeholder**     | Yavuz's actual hardware list; renders as a dashed slot |
+| `data/simToReal.ts`         | Five photos + labels                                 | **Real** (low-res)  | Photos supplied; see assets below                      |
+| `data/simToReal.ts`         | `karting` — `src: null`                              | **Placeholder**     | Karting photo, renders as a dashed empty slot          |
+| `features/…/data/tracks.ts` | 12 circuit names + regions                           | **Real**            | Yavuz's circuit list                                   |
+| `features/…/data/tracks.ts` | Lap times, lengths, corner counts                    | **Placeholder**     | iRacing personal-best export                           |
+| `features/…/data/tracks.ts` | Circuit `path` geometry                              | **Placeholder**     | OpenStreetMap / Overpass — see below                   |
+| `sections/Contact`          | Invitation paragraph                                 | **Real**            | Design handoff, final copy                             |
+| `sections/Contact`          | `Gizlilik` / `Şartlar` footer links                  | **Placeholder**     | Legal pages not written                                |
 
 ## Where the real data comes from
 
@@ -51,9 +51,11 @@ hi-res versions replace them **at identical crops**, so no layout changes are
 needed. The karting slot is waiting on a shoot that has not happened.
 
 **Yavuz directly** — the Setup list (wheel, pedals, rig, display, PC). Five
-strings, currently all reading `MODEL — YER TUTUCU`. Setting `placeholder:
-false` on a row switches its value from 45% white to full white, so the section
-can be filled in one row at a time.
+strings, currently all reading `MODEL — YER TUTUCU`. Each row renders as a
+dashed reserved slot — the same empty-slot language as the Partners cells and
+the karting photo — sized to roughly the width a model name occupies. Setting
+`placeholder: false` on a row swaps the slot for the real value with no layout
+shift, so the section can be filled in one row at a time.
 
 **OpenStreetMap via Overpass** — real circuit geometry to replace the
 approximate shapes currently in `tracks.ts`. This is the largest outstanding

@@ -2,22 +2,40 @@
  * 08 — PARTNERS: hairline-bordered logo wall.
  *
  * Every logo is forced pure white (`brightness-0 invert`); the two dashed
- * "YOUR BRAND HERE" cells double as a sponsorship pitch and hover to cyan.
- * 3 columns on desktop, 2 on mobile.
+ * "YOUR BRAND HERE" cells double as a sponsorship pitch, crawl their dashes
+ * with scroll and hover to cyan (see OpenSlot). 3 columns on desktop, 2 on
+ * mobile.
  */
 
+import { useRef } from 'react';
+import { useScroll } from 'motion/react';
+
 import { cn } from '@/lib/cn';
-import { MonoLabel, SectionHeading } from '@/components/ui';
+import { SectionHeading } from '@/components/ui';
+import { StretchScrub } from '@/components/motion';
 import { partners, emptySlots } from '@/data';
 import type { SectionProps } from '@/types';
+
+import { OpenSlot } from './OpenSlot';
 
 const CELL_CLASSES = 'flex h-[110px] items-center justify-center md:h-[160px]';
 
 export function Partners({ id = 'partners', className }: SectionProps) {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: gridRef,
+    offset: ['start end', 'end start'],
+  });
+
   return (
     <section id={id} className={cn('container-section', className)}>
-      <SectionHeading index="08" title="Partners" />
-      <div className="mt-9 grid grid-cols-2 gap-3 md:mt-[72px] md:grid-cols-3 md:gap-5">
+      <StretchScrub>
+        <SectionHeading index="08" title="Partners" stretch="scrub" />
+      </StretchScrub>
+      <div
+        ref={gridRef}
+        className="mt-9 grid grid-cols-2 gap-3 md:mt-[72px] md:grid-cols-3 md:gap-5"
+      >
         {partners.map((partner) => {
           const img = (
             <img
@@ -43,23 +61,7 @@ export function Partners({ id = 'partners', className }: SectionProps) {
           );
         })}
         {Array.from({ length: emptySlots }, (_, i) => (
-          <div
-            key={`slot-${i}`}
-            className={cn(
-              CELL_CLASSES,
-              'group border-border-dashed hover:border-accent-primary cursor-default border border-dashed transition-colors duration-[250ms]',
-            )}
-          >
-            <MonoLabel
-              size="xs"
-              tracking="mono"
-              tone="faint"
-              lang="en"
-              className="group-hover:text-accent-primary md:tracking-mono-xl transition-colors duration-[250ms] md:text-[11px]"
-            >
-              Your brand here
-            </MonoLabel>
-          </div>
+          <OpenSlot key={`slot-${i}`} progress={scrollYProgress} className={CELL_CLASSES} />
         ))}
       </div>
     </section>

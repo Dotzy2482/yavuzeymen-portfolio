@@ -273,11 +273,27 @@ getting it wrong leaves something visibly broken rather than merely static.
 
 ## Progress
 
-- [ ] 1. Axis tokens in `tokens.css`
-- [ ] 2. `stretch-scrub` utility in `globals.css`
-- [ ] 3. `StretchScrub` primitive + barrel export
-- [ ] 4. `SectionHeading` `stretch` prop
-- [ ] 5. Setup: `SpecRow`, dashed placeholder, row scrub
-- [ ] 6. Partners: `OpenSlot` crawling dashes
-- [ ] 7. Contact: width scrub + finish line
-- [ ] 8. Verified at both viewports, and with reduced motion forced
+- [x] 1. Axis tokens in `tokens.css`
+- [x] 2. `stretch-scrub` utility in `globals.css`
+- [x] 3. `StretchScrub` primitive + barrel export
+- [x] 4. `SectionHeading` `stretch` prop
+- [x] 5. Setup: `SpecRow`, dashed placeholder, row scrub
+- [x] 6. Partners: `OpenSlot` crawling dashes
+- [x] 7. Contact: width scrub + finish line
+- [x] 8. Verified at both viewports, and with reduced motion forced
+
+Verified in the browser at 1280×720 and at 390×844 (a same-origin iframe;
+the pane's own device emulation pins the viewport width). All three scrubs
+run forwards and reverse on scroll-up at both sizes, the Contact finish line
+reaches 100% of the footer rule at both, and it still does when the viewport
+height changes mid-page (844 → 760 → 844, the mobile URL bar). With
+`prefers-reduced-motion: reduce` forced, `StretchScrub` renders a plain div
+and publishes no axis, all three headings sit at `wdth 125`, every Setup row
+is at scale 1, the dashes are at offset 0 and the finish line is full width.
+
+One measurement worth recording: at 390 the page has pre-existing horizontal
+overflow (`ACHIEVEMENTS` at 32px, and the track-list flag chips), which on a
+classic scrollbar steals 15px of viewport height and leaves the finish line
+at 98%. Overlay scrollbars — every phone — are unaffected, and nothing in
+this workstream contributes to that overflow. It belongs to whoever fixes
+the 01–06 sections.

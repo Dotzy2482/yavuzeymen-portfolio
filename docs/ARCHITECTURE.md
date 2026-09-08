@@ -141,11 +141,12 @@ same variables stay readable from raw CSS and from inline SVG attributes.
 
 The same file defines the few utilities Tailwind has no equivalent for:
 
-| Utility                                  | Why it exists                                                                         |
-| ---------------------------------------- | ------------------------------------------------------------------------------------- |
-| `.num`                                   | Tabular, slashed-zero mono figures — stops the chronometer jittering as digits change |
-| `.stretch-ui` / `-wide` / `-display`     | Archivo's `wdth` variable axis; Tailwind ships no font-stretch utility                |
-| `.container-section` / `.container-wide` | The recurring section shell (max width, responsive gutter, 150px top padding)         |
+| Utility                                  | Why it exists                                                                           |
+| ---------------------------------------- | --------------------------------------------------------------------------------------- |
+| `.num`                                   | Tabular, slashed-zero mono figures — stops the chronometer jittering as digits change   |
+| `.stretch-ui` / `-wide` / `-display`     | Archivo's `wdth` variable axis; Tailwind ships no font-stretch utility                  |
+| `.stretch-scrub`                         | The same axis, read live from `--axis-wdth` so scroll can drive it (see `StretchScrub`) |
+| `.container-section` / `.container-wide` | The recurring section shell (max width, responsive gutter, 150px top padding)           |
 
 **The rule for contributors:** a colour or a typeface never appears literally
 in a component. Layout numbers lifted straight from the design (`px-[72px]`,
@@ -157,11 +158,12 @@ one-offs, not a system. Colours are always a system.
 `components/motion/` is a vocabulary layer, so sections compose animations
 rather than re-deriving them:
 
-| Wrapper   | Job                                                                                                   |
-| --------- | ----------------------------------------------------------------------------------------------------- |
-| `Marquee` | Seamless infinite strip — repeats children until they cover its box, then scrolls by exactly one copy |
-| `Pinned`  | A sticky 100vh stage inside a tall wrapper; hands scroll progress to a render prop as a `MotionValue` |
-| `CountUp` | Animates a number and writes it straight to the DOM node                                              |
+| Wrapper        | Job                                                                                                           |
+| -------------- | ------------------------------------------------------------------------------------------------------------- |
+| `Marquee`      | Seamless infinite strip — repeats children until they cover its box, then scrolls by exactly one copy         |
+| `Pinned`       | A sticky 100vh stage inside a tall wrapper; hands scroll progress to a render prop as a `MotionValue`         |
+| `CountUp`      | Animates a number and writes it straight to the DOM node                                                      |
+| `StretchScrub` | Publishes a scroll-linked `--axis-wdth`, which `.stretch-scrub` reads — widening Archivo as a heading arrives |
 
 Two performance rules run through all of it:
 
