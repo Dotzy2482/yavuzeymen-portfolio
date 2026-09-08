@@ -18,14 +18,16 @@ the last one stopped.
 
 | #                                      | Workstream                 | Depends on | Touches                                          |
 | -------------------------------------- | -------------------------- | ---------- | ------------------------------------------------ |
-| [01](01-awaken-the-last-third.md)      | Awaken the last third      | —          | `components/motion`, sections 07–09, tokens      |
+| [01](01-awaken-the-last-third.md)      | Awaken the last third      | —          | **Landed.** Kept for the reasoning it records.   |
 | [02](02-social-card-and-scroll-spy.md) | Social card and scroll-spy | —          | `index.html`, `public/`, `sections/Nav`          |
 | [03](03-weight-and-wiring.md)          | Weight and wiring          | —          | assets, `index.html`, `app/App.tsx`, small fixes |
 | [04](04-real-circuit-geometry.md)      | Real circuit geometry      | `03`       | `docs/assets/`, `features/track-records/data`    |
 
-`01` and `02` are independent of everything and of each other. `03` is
-independent but must precede `04`, which adds ~36 kB of path data to a chunk
-`03` makes lazy, and which `03` spares from having to touch `TrackRegion`.
+`01` has landed; its file stays because the **Reasoning** section is the only
+record of why the scrub was built the way it was. `02` is independent of
+everything. `03` is independent but must precede `04`, which adds ~36 kB of path
+data to a chunk `03` makes lazy, and which `03` spares from having to touch
+`TrackRegion`.
 
 ## Why the reasoning sections are long
 

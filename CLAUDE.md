@@ -127,11 +127,11 @@ Code, comments and documentation are English.
 
 ## Multi-session work
 
-Four workstreams are planned out in [docs/plans/](docs/plans/), numbered in the
-order they must land. **Starting one:** read its plan before touching code — it
-carries the reasoning behind its decisions, which the code does not record.
-**Resuming one:** its Progress list says where the last session stopped. Work
-one plan per session.
+Workstreams are planned out in [docs/plans/](docs/plans/), numbered in the
+order they must land. `01` has landed; three remain. **Starting one:** read its
+plan before touching code — it carries the reasoning behind its decisions, which
+the code does not record. **Resuming one:** its Progress list says where the
+last session stopped. Work one plan per session.
 
 ## Further reading
 
