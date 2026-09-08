@@ -36,15 +36,24 @@ export function SectionHeading({
 }: SectionHeadingProps) {
   return (
     <div className={className}>
-      <header className="flex items-baseline gap-4 md:gap-7">
+      <header className="@container flex items-baseline gap-4 md:gap-7">
         {index && (
           <span className="text-accent-primary font-mono text-[13px] md:text-[16px]">{index}</span>
         )}
         {/* Section titles are English; the document is lang="tr", where
             uppercasing would turn "Achievements" into "ACHİEVEMENTS". */}
+        {/* The mobile size is fluid rather than a flat 32px. Archivo at wdth
+            125 sets "ACHIEVEMENTS" 10.64em wide — 339px at 32px, wider than
+            the whole 335px content box of a 375px viewport — and a title that
+            cannot break puts the page into horizontal scroll. 58px is what the
+            rest of the row costs: the index, the two gaps, and 8px so the
+            hairline stays visible. The measure is `cqi` and not `vw` because
+            a classic desktop scrollbar makes those differ by 15px, which is
+            exactly the margin this used to overflow by. The 32px cap comes
+            back at ~438px. */}
         <Tag
           lang="en"
-          className="font-display tracking-title stretch-display m-0 text-[32px] leading-none font-black uppercase md:text-[clamp(44px,4.6vw,72px)]"
+          className="font-display tracking-title stretch-display m-0 text-[length:min(32px,calc((100cqi-58px)/10.64))] leading-none font-black uppercase md:text-[clamp(44px,4.6vw,72px)]"
         >
           {title}
           {accent && (
