@@ -116,25 +116,32 @@
 /**
  * `.stretch-scrub` — the same wdth axis, but live.
  *
- * Reads the `--axis-wdth` / `--axis-wght` channel rather than a fixed step, so
- * an ancestor publishing a scroll-linked `--axis-wdth` (see
+ * Reads the `--axis-wdth` channel rather than a fixed step, so an ancestor
+ * publishing a scroll-linked `--axis-wdth` (see
  * `components/motion/StretchScrub`) animates the type. With no such ancestor
- * the channel falls back to the display values in tokens.css and this renders
+ * the channel falls back to the display value in tokens.css and this renders
  * identically to `.stretch-display`.
  *
- * `font-variation-settings` *overrides* `font-stretch` for the axes it names,
- * so this and `.stretch-display` must never sit on the same element — swap the
- * class, never stack it. It also inherits, which is why the driving value is
- * published as a custom property on the wrapper (inert until read) and this
- * utility goes on exactly one element.
+ * `wdth` is the only axis named here, and that is the whole point of the rule.
+ * `font-variation-settings` overrides the high-level property for every axis it
+ * names and leaves every other axis to its high-level property, so naming
+ * `wght` as well would pin the weight to whatever this rule says and make a
+ * `font-bold` on the same element silently do nothing — while buying nothing,
+ * because `font-weight: 900` already drives the wght axis. Measured on
+ * "SETUP" at 58.88px Archivo Black: `'wdth' 88` and `'wdth' 88, 'wght' 900`
+ * both set 191.484px, and `'wdth' 125, 'wght' 400` sets 248.422px against
+ * 260.438px for `'wdth' 125` alone — the override is real, so do not invite it.
+ *
+ * That same override is why this and `.stretch-display` must never sit on the
+ * same element — swap the class, never stack it. It also inherits, which is
+ * why the driving value is published as a custom property on the wrapper
+ * (inert until read) and this utility goes on exactly one element.
  *
  * No `@theme inline` entry: like the other stretch utilities, this is a
  * typographic mechanism rather than a theme value.
  */
 @utility stretch-scrub {
-  font-variation-settings:
-    'wdth' var(--axis-wdth),
-    'wght' var(--axis-wght);
+  font-variation-settings: 'wdth' var(--axis-wdth);
 }
 
 /**

@@ -91,15 +91,18 @@
      `'wdth' 125%` are both invalid — so the raw numbers are duplicated here on
      purpose. Keep the pairs in step if a --stretch-* value ever moves.
 
-     --axis-wdth / --axis-wght are the *live* channel the `stretch-scrub`
-     utility reads. They default to the display values, so an element carrying
-     that utility renders exactly like `stretch-display` when nothing above it
-     is publishing a scrubbed value. */
+     --axis-wdth is the *live* channel the `stretch-scrub` utility reads. It
+     defaults to the display value, so an element carrying that utility renders
+     exactly like `stretch-display` when nothing above it is publishing a
+     scrubbed value.
+
+     There is deliberately no --axis-wght beside it. Weight stays on
+     `font-weight`, which leaves `stretch-scrub` naming a single axis — see the
+     rule in globals.css for why naming a second one would cost a footgun and
+     buy nothing. */
   --axis-wdth-entry: 88; /* narrow end of the scroll scrub */
   --axis-wdth-display: 125; /* == --stretch-display */
-  --axis-wght-display: 900; /* Archivo Black, the display weight */
   --axis-wdth: var(--axis-wdth-display);
-  --axis-wght: var(--axis-wght-display);
 
   /* --- Spacing scale (4px base) ------------------------------------------ */
   --space-1: 0.25rem;
