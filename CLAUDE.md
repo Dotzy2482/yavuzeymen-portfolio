@@ -73,6 +73,19 @@ it. Either keep the ref in the component that renders the node, or use the
   `src/features/track-records/data/tracks.ts`.** They are generated, and each
   one must remain a single continuous closed subpath. See
   [docs/TRACK_RECORDS.md](docs/TRACK_RECORDS.md).
+- **Do not hand-edit `public/og-image.png` or `public/apple-touch-icon.png`.**
+  Both are rasterised by headless Chrome from sources in the repo — the card
+  from `docs/assets/og-card.html`, the icon from `public/favicon.svg`.
+  Regenerate them:
+
+  ```bash
+  node docs/assets/generate-og-images.mjs
+  ```
+
+  `--check` asserts both exist at the dimensions `index.html` advertises. It
+  deliberately does not compare bytes: a screenshot is not reproducible across
+  Chrome versions or font-cache states.
+
 - **Do not hand-edit `src/sections/Hero/HelmetWireframe.tsx`.** It is generated
   from `docs/assets/helmet-wireframe.svg` by
   `docs/assets/generate-helmet-wireframe.mjs` — 67 kB of coordinates, where a
@@ -113,8 +126,8 @@ these by inventing values.
 | `data/simToReal.ts`                     | `karting` item has `src: null` (dashed slot)                    | Karting photo                   |
 | `data/contentStats.ts`                  | Hand-entered counters and reel captions                         | Instagram insights              |
 | Footer links                            | `Gizlilik` / `Şartlar` point at `#`                             | Legal pages                     |
-| `public/favicon.svg`                    | Placeholder mark drawn from the wordmark                        | Final visual identity           |
-| `index.html`                            | No `og:image`; `twitter:card` is `summary`                      | A 1200×630 social image         |
+| `public/favicon.svg`                    | Placeholder mark, and the source of `apple-touch-icon.png`      | Final visual identity           |
+| `index.html`                            | No `og:url`, no canonical link                                  | A final domain                  |
 
 The site must render with an empty `.env` — every variable is optional and
 resolves to an empty string.
