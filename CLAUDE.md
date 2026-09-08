@@ -95,6 +95,7 @@ it. Either keep the ref in the component that renders the node, or use the
   personal address. The history was rewritten once to make that true, while the
   repository was still private and uncloned; that window is closed, so this is
   now a rule to keep rather than a thing that can be fixed later.
+
 - **Do not commit unreleased media.** `public/images/private/` is git-ignored
   and is the holding area until usage rights are confirmed.
 
