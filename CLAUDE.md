@@ -119,9 +119,18 @@ Headings and UI labels are **English**; body copy is **Turkish**. Keep that
 split exactly as it is — it is a deliberate design decision, not an oversight.
 Code, comments and documentation are English.
 
+## Multi-session work
+
+Four workstreams are planned out in [docs/plans/](docs/plans/), numbered in the
+order they must land. **Starting one:** read its plan before touching code — it
+carries the reasoning behind its decisions, which the code does not record.
+**Resuming one:** its Progress list says where the last session stopped. Work
+one plan per session.
+
 ## Further reading
 
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — layout, data flow, tokens
 - [docs/TRACK_RECORDS.md](docs/TRACK_RECORDS.md) — the animated circuit module
 - [docs/CONTENT.md](docs/CONTENT.md) — what is real, what is placeholder
-- [docs/ROADMAP.md](docs/ROADMAP.md) — what is next
+- [docs/ROADMAP.md](docs/ROADMAP.md) — what is next, and what is blocked
+- [docs/plans/](docs/plans/) — the four planned workstreams, in landing order
