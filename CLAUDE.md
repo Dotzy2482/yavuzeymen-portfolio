@@ -86,10 +86,15 @@ it. Either keep the ref in the component that renders the node, or use the
   clean; `--check` asserts the component and the SVG are in sync.
 
 - **Do not hardcode contact details.** E-mail, phone and social URLs come from
-  `import.meta.env` via `src/data/profile.ts`. This repo will be made public
-  and its history will not be rewritten, so anything committed is committed
-  forever. `VITE_`-prefixed variables are inlined into the bundle — they are
-  "not in git", not "secret".
+  `import.meta.env` via `src/data/profile.ts`. This repo is **public** and its
+  history will not be rewritten, so anything committed is committed forever.
+  `VITE_`-prefixed variables are inlined into the bundle — they are "not in
+  git", not "secret".
+
+  Commits are authored as `158623821+Dotzy2482@users.noreply.github.com`, not a
+  personal address. The history was rewritten once to make that true, while the
+  repository was still private and uncloned; that window is closed, so this is
+  now a rule to keep rather than a thing that can be fixed later.
 - **Do not commit unreleased media.** `public/images/private/` is git-ignored
   and is the holding area until usage rights are confirmed.
 
