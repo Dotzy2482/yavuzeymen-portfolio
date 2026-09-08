@@ -11,13 +11,20 @@
  *
  * The nav labels are English and carry `lang="en"`; the close button is
  * Turkish, like the rest of the site's interface copy.
+ *
+ * The active section arrives as a prop rather than from `useActiveSection`
+ * here: the menu unmounts when closed, and a spy inside it would tear its
+ * observer down and rebuild it on every open. Nav owns the one observer.
  */
 
 import { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 
 import { DURATION, NAV_ITEMS } from '@/lib/constants';
+import { cn } from '@/lib/cn';
 import { MonoLabel, SocialLinks } from '@/components/ui';
+
+import type { SectionId } from '@/types';
 
 /** Everything in here is a link or a button; no inputs to worry about. */
 const FOCUSABLE = 'a[href], button:not([disabled])';
@@ -27,9 +34,11 @@ export const MOBILE_MENU_ID = 'mobile-menu';
 export interface MobileMenuProps {
   open: boolean;
   onClose: () => void;
+  /** The section the reader is in, or null when it is not one the nav lists. */
+  activeId: SectionId | null;
 }
 
-export function MobileMenu({ open, onClose }: MobileMenuProps) {
+export function MobileMenu({ open, onClose, activeId }: MobileMenuProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -126,7 +135,12 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
               href={`#${item.id}`}
               lang="en"
               onClick={onClose}
-              className="tracking-caps stretch-display hover:text-accent-primary py-1.5 text-[30px] font-black uppercase transition-colors"
+              // `location`, not `page`: these are anchors within one document.
+              aria-current={item.id === activeId ? 'location' : undefined}
+              className={cn(
+                'tracking-caps stretch-display hover:text-accent-primary py-1.5 text-[30px] font-black uppercase transition-colors',
+                item.id === activeId && 'text-accent-primary',
+              )}
             >
               {item.label}
             </a>

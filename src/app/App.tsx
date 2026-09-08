@@ -2,7 +2,9 @@
  * The page. One route, one scroll, ten sections plus the nav chrome.
  *
  * Section order here is the source of truth for the document and must stay in
- * step with SECTION_IDS in lib/constants.ts — the nav highlights against it.
+ * step with SECTION_IDS in lib/constants.ts — the nav's scroll-spy finds these
+ * sections by id. It lights only the four NAV_ITEMS lists, and goes dark in
+ * the six it does not; see useActiveSection.
  *
  * TODO: consider lazy-loading the track-records feature; it will be the
  *       heaviest chunk by some distance.
