@@ -13,17 +13,29 @@
     <!--
       Placeholder mark, see public/favicon.svg. Declaring an icon explicitly is
       also what stops the browser probing /favicon.ico and taking a 404.
-      TODO: add an apple-touch-icon PNG — that one cannot be an SVG.
+
+      apple-touch-icon has to be a PNG — iOS will not take the SVG — so it is
+      rasterised from the same favicon.svg by
+      docs/assets/generate-og-images.mjs. No `sizes`: with a single icon
+      declared, iOS scales it for every slot it needs.
     -->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <!--
-      Social preview. og:image is deliberately absent: it wants a dedicated
-      1200×630 asset and none of the existing photography is that shape, so a
-      wrong-aspect image would be worse than none. The card degrades to
-      title + description, which is why twitter:card is `summary` rather than
-      `summary_large_image`.
-      TODO: add og:image + og:url once there is an asset and a final domain.
+      Social preview. The card is composed in docs/assets/og-card.html and
+      rasterised by docs/assets/generate-og-images.mjs — edit the source and
+      regenerate, never the PNG.
+
+      og:image is root-relative because there is no final domain to make it
+      absolute with. Crawlers generally resolve it against the page URL, but
+      Facebook's own documentation asks for an absolute URL, so treat this as
+      provisional: it must become absolute at the same moment og:url and a
+      canonical link arrive — which is the same wait, for the same reason.
+
+      NOTE: og:description and the `description` meta above are English inside
+      a lang="tr" document with og:locale tr_TR. That is a copy decision, not a
+      bug to fix in passing — see docs/CONTENT.md.
     -->
     <meta property="og:type" content="profile" />
     <meta property="og:site_name" content="Yavuz Eymen" />
@@ -33,7 +45,26 @@
       content="Yavuz Eymen — sim racing driver. Track records, career and content."
     />
     <meta property="og:locale" content="tr_TR" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Yavuz Eymen — professional sim racing driver and content creator, Team Curve Hunters."
+    />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Yavuz Eymen — Sim Racing" />
+    <meta
+      name="twitter:description"
+      content="Yavuz Eymen — sim racing driver. Track records, career and content."
+    />
+    <meta name="twitter:image" content="/og-image.png" />
+    <meta
+      name="twitter:image:alt"
+      content="Yavuz Eymen — professional sim racing driver and content creator, Team Curve Hunters."
+    />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

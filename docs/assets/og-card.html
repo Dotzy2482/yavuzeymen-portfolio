@@ -1,0 +1,323 @@
+<!doctype html>
+<!--
+  SOURCE for public/og-image.png — the 1200×630 social card. Not bundled, not
+  imported, never served: it lives here beside helmet-wireframe.svg because a
+  generated PNG whose origin nobody can reconstruct is worse than no PNG.
+
+  Regenerate after editing:
+
+    node docs/assets/generate-og-images.mjs
+
+  That script drives headless Chrome and also writes public/apple-touch-icon.png
+  off public/favicon.svg. Run `--check` to assert the committed PNGs are current.
+
+  Two rules this file has to keep:
+
+  1. STATIC. No script, no animation, no requestAnimationFrame, no
+     ResizeObserver. A screenshotter captures whatever the first frame holds,
+     so anything that moves is captured mid-nothing.
+  2. The copy is quoted from src/data/profile.ts and nowhere else. A social
+     card is the most-shared surface on the site; inventing a stat here would
+     put it in front of more people than putting it on the page would.
+
+  The composition is the hero's, cropped to 1.91:1 — the same ambient wash and
+  racing lines, the same wordmark, the same team plate. Someone who clicks
+  through should recognise where they have landed.
+
+  The values below are literals, for the same reason public/favicon.svg gives:
+  this is a standalone document that cannot see the page's CSS, so the token
+  files are out of reach. They mirror them exactly — colours and fonts from
+  src/styles/tokens.css, the --tracking-* scale from the @theme block in
+  src/styles/globals.css. If a token moves, move it here too.
+-->
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Yavuz Eymen — social card source</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- The same request index.html makes, so the card and the page render in
+         the same faces at the same axis positions. -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=Martian+Mono:wght@100..800&display=block"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* Mirrored from tokens.css and globals.css — see the note at the top. */
+        --bg: #0a0b0d;
+        --text: #ffffff;
+        --text-tertiary: rgba(255, 255, 255, 0.45);
+        --text-strong: rgba(255, 255, 255, 0.7);
+        --hairline-mid: rgba(255, 255, 255, 0.1);
+        --accent-primary: #00e0c6;
+        --ambient-red: rgba(232, 35, 42, 0.13);
+        --ambient-blue: rgba(43, 88, 255, 0.12);
+        --ambient-line-1: rgba(255, 255, 255, 0.055);
+        --ambient-line-2: rgba(255, 255, 255, 0.045);
+        --ambient-line-3: rgba(255, 255, 255, 0.04);
+        --ambient-line-4: rgba(255, 255, 255, 0.035);
+
+        --font-display: 'Archivo', system-ui, sans-serif;
+        --font-serif: 'Instrument Serif', Georgia, serif;
+        --font-mono: 'Martian Mono', ui-monospace, monospace;
+
+        --tracking-title: -0.01em;
+        --tracking-ui: 0.06em;
+        --tracking-mono: 0.18em;
+        --tracking-kicker: 0.3em;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Exactly the frame the screenshot takes; nothing may exceed it. */
+      .card {
+        position: relative;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-display);
+        font-variation-settings: 'wdth' 125;
+      }
+
+      /* --- Ambient, lifted from sections/Hero/HeroAmbient.tsx -------------- */
+      /* Frozen at the resting position of the two drifting colour fields. */
+      .wash {
+        position: absolute;
+        pointer-events: none;
+      }
+      .wash-red {
+        left: -18%;
+        top: 4%;
+        width: 60%;
+        height: 96%;
+        background: radial-gradient(ellipse at center, var(--ambient-red), transparent 62%);
+      }
+      .wash-blue {
+        right: -18%;
+        top: -8%;
+        width: 62%;
+        height: 100%;
+        background: radial-gradient(ellipse at center, var(--ambient-blue), transparent 62%);
+      }
+      .lines {
+        position: absolute;
+        inset: 0;
+      }
+
+      .helmet {
+        position: absolute;
+        top: 50%;
+        right: -78px;
+        height: 700px;
+        transform: translateY(-50%);
+        filter: invert(1);
+        opacity: 0.13;
+      }
+
+      /* --- Frame ---------------------------------------------------------- */
+      .content {
+        position: relative;
+        height: 100%;
+        padding: 54px 64px 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+      }
+
+      .kicker {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-kicker);
+        color: var(--accent-primary);
+      }
+
+      /* The name is the big type: at feed thumbnail size it is the only thing
+         that survives, and the card is a person, not a campaign. */
+      .name {
+        margin: 0;
+        font-size: 122px;
+        font-weight: 900;
+        line-height: 0.94;
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-title);
+      }
+
+      /* profile.headline, with its last word as the serif accent — the same
+         split the hero h1 makes. */
+      .headline {
+        margin-top: 18px;
+        font-size: 38px;
+        font-weight: 900;
+        line-height: 1;
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-ui);
+        color: var(--text-strong);
+      }
+      .headline em {
+        font-family: var(--font-serif);
+        font-variation-settings: normal;
+        font-weight: 400;
+        font-style: italic;
+        font-size: 46px;
+        letter-spacing: normal;
+        text-transform: none;
+        color: var(--text);
+      }
+
+      .foot {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+      }
+
+      /* The hero's bottom-left team plate, unchanged. */
+      .team {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        border-left: 2px solid var(--accent-primary);
+        padding-left: 18px;
+      }
+      .team-name {
+        font-size: 19px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-ui);
+        font-variation-settings: 'wdth' 120;
+      }
+
+      .mono {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-mono);
+        color: var(--text-tertiary);
+      }
+
+      .tagline {
+        text-align: right;
+        line-height: 2.1;
+      }
+
+      /* The hero's bottom bar has a rule above it; so does this. */
+      .rule {
+        position: absolute;
+        right: 64px;
+        bottom: 118px;
+        left: 64px;
+        height: 1px;
+        background: var(--hairline-mid);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="wash wash-red"></div>
+      <div class="wash wash-blue"></div>
+
+      <!-- The hero's desktop racing lines, at their resting dash offset. The
+           cyan runners sit a little brighter than on the page: there they are
+           found by movement, and a still image has none to offer. -->
+      <svg class="lines" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+        <path
+          d="M-120 640 C260 560 430 780 780 710 C1120 642 1160 430 1500 470 L1740 500"
+          fill="none"
+          stroke="var(--ambient-line-1)"
+          stroke-width="1.5"
+        />
+        <path
+          d="M-120 690 C260 610 430 830 780 760 C1120 692 1160 480 1500 520 L1740 550"
+          fill="none"
+          stroke="var(--ambient-line-3)"
+          stroke-width="1.5"
+        />
+        <path
+          d="M-120 220 C300 300 520 130 860 190 C1180 246 1260 120 1560 170 L1740 200"
+          fill="none"
+          stroke="var(--ambient-line-2)"
+          stroke-width="1.5"
+        />
+        <path
+          d="M-120 170 C300 250 520 80 860 140 C1180 196 1260 70 1560 120 L1740 150"
+          fill="none"
+          stroke="var(--ambient-line-4)"
+          stroke-width="1.5"
+        />
+        <path
+          d="M-120 640 C260 560 430 780 780 710 C1120 642 1160 430 1500 470 L1740 500"
+          fill="none"
+          stroke="var(--accent-primary)"
+          stroke-opacity="0.42"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-dasharray="150 2970"
+          stroke-dashoffset="-620"
+        />
+        <path
+          d="M-120 220 C300 300 520 130 860 190 C1180 246 1260 120 1560 170 L1740 200"
+          fill="none"
+          stroke="var(--accent-primary)"
+          stroke-opacity="0.26"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-dasharray="110 3010"
+          stroke-dashoffset="-1180"
+        />
+      </svg>
+
+      <!-- The hero's helmet line art. Loaded rather than inlined: it is 67 kB
+           of coordinates that generate-helmet-wireframe.mjs owns, and a copy
+           pasted in here is a copy that goes stale. The drawing is
+           fill="currentColor", which inside an <img> resolves to black — so it
+           is inverted to white and dropped back to a whisper. -->
+      <img class="helmet" src="helmet-wireframe.svg" alt="" />
+
+      <div class="content">
+        <!-- Section 05's title on the left, section 06's meta on the right.
+             Both are quoted; neither is copy written for this card. -->
+        <header class="head">
+          <div class="kicker" lang="en">Sim to Real</div>
+          <div class="mono" lang="en">@nogripsimracing</div>
+        </header>
+
+        <div>
+          <h1 class="name" lang="en">Yavuz<br />Eymen</h1>
+          <div class="headline" lang="en">Always on the <em>limit.</em></div>
+        </div>
+
+        <div class="rule"></div>
+
+        <div class="foot">
+          <div class="team">
+            <div class="mono" lang="en">Current team</div>
+            <div class="team-name" lang="en">Team Curve Hunters</div>
+            <div class="mono" lang="en">Main driver since 2024</div>
+          </div>
+          <div class="mono tagline" lang="en">
+            Professional sim racing driver<br />&amp; content creator
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

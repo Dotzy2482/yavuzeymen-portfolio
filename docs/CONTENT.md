@@ -31,6 +31,23 @@ layout or a crash.
 | `features/…/data/tracks.ts` | Circuit `path` geometry                              | **Placeholder**     | OpenStreetMap / Overpass — see below                   |
 | `sections/Contact`          | Invitation paragraph                                 | **Real**            | Design handoff, final copy                             |
 | `sections/Contact`          | `Gizlilik` / `Şartlar` footer links                  | **Placeholder**     | Legal pages not written                                |
+| `index.html`                | `description`, `og:*`, `twitter:*`                   | **Real, English**   | Design handoff — see the note below                    |
+
+### The document head is English, in a `lang="tr"` document
+
+`index.html` carries `lang="tr"` and `og:locale` `tr_TR`, and every string in
+its head — `description`, `og:title`, `og:description`, `og:image:alt` — is
+English.
+
+That is not the site's usual split. On the page, English is for headings and UI
+labels while body copy is Turkish; a meta description is body copy by any
+reading, so by that rule it would be Turkish.
+
+It is left alone deliberately. Which language a shared link speaks is a
+positioning decision about who the site is being shared _with_ — a Turkish
+audience, or the international sim racing scene the driver competes in — and
+that belongs to Yavuz, not to whoever is next in this file. Flagged here so the
+decision gets made rather than inherited.
 
 ## Where the real data comes from
 
@@ -82,6 +99,35 @@ loading.
 | `partners/spardox.png`          | 500 × 167     | 4 KB    | Marquee, Partners             | Black on transparent, inverted in CSS                                  |
 | `partners/drivehunter.svg`      | 360 × 80      | 9 KB    | Marquee, Partners             | Vector — ideal                                                         |
 | `partners/tch.avif` + `.png`    | 256 × 75      | 5/20 KB | Marquee, Partners             | AVIF with PNG fallback via `<picture>`                                 |
+
+### Generated assets
+
+Neither of these is photography, and neither is copied from anywhere. Both are
+rasterised from sources inside this repo, and both must be regenerated rather
+than edited:
+
+| File                          | Dimensions | Size   | Source                     |
+| ----------------------------- | ---------- | ------ | -------------------------- |
+| `public/og-image.png`         | 1200 × 630 | 280 KB | `docs/assets/og-card.html` |
+| `public/apple-touch-icon.png` | 180 × 180  | 3 KB   | `public/favicon.svg`       |
+
+```bash
+node docs/assets/generate-og-images.mjs
+```
+
+The card is composed from the site's own vocabulary — the hero's ambient wash
+and racing lines, the helmet wireframe, Signal Cyan, and copy quoted from
+`data/profile.ts` and the section headings. Nothing on it is written for the
+card, so nothing on it can drift away from the page.
+
+`og-image.png` is 280 KB, which is large for something that is 90% flat Track
+Black, and it is a PNG because headless Chrome only writes PNGs. Neither costs
+a visitor anything: the file is fetched by crawlers and never by the page. Once
+[03](plans/03-weight-and-wiring.md) adds `sharp`, re-encoding it is a one-liner
+worth taking.
+
+The touch icon inherits `favicon.svg`'s **placeholder** status — when the real
+visual identity lands, both change together.
 
 ### Resolution notes
 
