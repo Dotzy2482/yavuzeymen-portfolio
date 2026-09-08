@@ -47,17 +47,25 @@
 
 - 14 image assets in place; AVIF logo converted with a PNG fallback.
 
+**The last third** — [workstream 01](plans/01-awaken-the-last-third.md)
+
+- Sections 07 Setup, 08 Partners and 09 Contact scrub. `StretchScrub` publishes
+  a scroll-linked Archivo width axis as a custom property, which
+  `.stretch-scrub` reads on exactly one element; `SectionHeading` opts in
+  through a `stretch` prop. Setup's row underlines and Contact's finish line
+  fill on the same scroll.
+- Setup's five placeholder rows moved into the dashed-slot vocabulary Partners
+  and Sim to Real already use, so the gap reads as reserved rather than
+  forgotten. The copy is unchanged and stays `sr-only`.
+
 ## Planned work
 
-Four workstreams, each with a full plan in [plans/](plans/). The plan carries
+Three workstreams, each with a full plan in [plans/](plans/). The plan carries
 the reasoning; this list is only the map. Read the plan before starting one, and
 work one per session.
 
-1. **[Awaken the last third](plans/01-awaken-the-last-third.md)** — sections 07,
-   08 and 09 have no motion, so the page dies after Sim to Real. Adds a
-   scroll-linked variable-width type device built on the Archivo axis the site
-   already loads, and moves Setup's placeholder rows into the dashed-slot
-   vocabulary the design already uses twice.
+Numbered to match the plan filenames, so `01` is missing rather than renumbered.
+
 2. **[Social card and scroll-spy](plans/02-social-card-and-scroll-spy.md)** —
    `og:image` and `apple-touch-icon` are missing, so a shared link degrades to
    title + description; the card can be composed from the site's own vocabulary
@@ -82,7 +90,7 @@ are even thirds of path length today).
 ## Blocked on material we do not have
 
 No plan unblocks these — each is waiting on a person or a file, and none of the
-four workstreams above depends on any of them.
+three workstreams above depends on any of them.
 
 - **Real lap times, lengths and corner counts** from the iRacing profile,
   replacing the handoff's placeholder numbers. Cheap, high-value, and it makes

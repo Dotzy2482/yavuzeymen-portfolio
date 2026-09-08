@@ -291,9 +291,31 @@ height changes mid-page (844 → 760 → 844, the mobile URL bar). With
 and publishes no axis, all three headings sit at `wdth 125`, every Setup row
 is at scale 1, the dashes are at offset 0 and the finish line is full width.
 
-One measurement worth recording: at 390 the page has pre-existing horizontal
-overflow (`ACHIEVEMENTS` at 32px, and the track-list flag chips), which on a
-classic scrollbar steals 15px of viewport height and leaves the finish line
-at 98%. Overlay scrollbars — every phone — are unaffected, and nothing in
-this workstream contributes to that overflow. It belongs to whoever fixes
-the 01–06 sections.
+One measurement worth recording, and how it resolved. At 390 the page used to
+have horizontal overflow (`ACHIEVEMENTS` at 32px, and the track-list flag
+chips), which on a classic scrollbar stole 15px of viewport height and left the
+finish line at 98%. Overlay scrollbars — every phone — were unaffected, and
+nothing in this workstream contributed to it. `5b8ed49` "Stop the phone layout
+scrolling sideways" removed it, and this work is rebased onto that, so the
+finish line now lands on 100% with a classic scrollbar too.
+
+Re-measured after the rebase in a headless Chrome driven over CDP, which is
+the way to get a real frame loop — the Browser pane yields zero `rAF`
+callbacks while it is off screen, so every scroll-linked value there stays
+frozen at its initial state while layout reads stay perfectly correct. Both
+sizes, scrolled to the bottom, back to the top and down again:
+
+|                                         | 1280×720            | 390×844           |
+| --------------------------------------- | ------------------- | ----------------- |
+| horizontal overflow                     | none (1265 == 1265) | none (375 == 375) |
+| `clientHeight`                          | 720                 | 844               |
+| Contact bottom at max scroll            | 720.16              | 844.33            |
+| finish line vs footer rule              | 1121 == 1121        | 335 == 335        |
+| finish line at the top                  | 0                   | 0                 |
+| Setup / Partners `wdth`, top → bottom   | 88 → 125            | 88 → 125          |
+| Setup row underline scale, top → bottom | 0 → 1, all five     | 0 → 1, all five   |
+
+Contact's bottom edge landing a fraction _past_ the scrollport's is what puts
+the finish line on 100% rather than just short of it: progress clamps. With
+`prefers-reduced-motion: reduce` emulated, the same run reads `wdth 125`, row
+scale 1 and a full-width finish line at every scroll position, top included.
