@@ -18,38 +18,52 @@
  * existing hover-to-cyan survives as a `group-hover:stroke-*` utility with the
  * same 250ms it had as a border colour.
  *
- * Under reduced motion the offset is a fixed 0 — a static dashed outline,
- * i.e. exactly today's cell.
+ * Under reduced motion the caller passes a null progress and never subscribes
+ * to scroll; the offset pins to 0, a static dashed outline — exactly the cell
+ * the site shipped before this.
  */
 
-import { motion, useTransform, type MotionValue } from 'motion/react';
+import { motion, useMotionValue, useTransform, type MotionValue } from 'motion/react';
 
 import { cn } from '@/lib/cn';
 import { MonoLabel } from '@/components/ui';
-import { usePrefersReducedMotion } from '@/hooks';
 
 /** Dash and gap, in CSS pixels. */
-const DASH_PATTERN = '6 6';
+const DASH = 6;
+const GAP = 6;
+const DASH_PATTERN = `${DASH} ${GAP}`;
 /**
  * How far the dashes travel over the grid's full scroll range, in pixels.
  * Eight whole dash periods — enough to read as movement, and a whole number of
- * periods so the pattern lands back in phase.
+ * periods so the pattern lands back in phase. Derived from the pattern rather
+ * than written out, so re-tuning the dash cannot quietly break that.
  */
-const CRAWL_DISTANCE = 8 * 12;
+const CRAWL_DISTANCE = 8 * (DASH + GAP);
 
 export interface OpenSlotProps {
-  /** Scroll progress through the partners grid, 0–1. */
-  progress: MotionValue<number>;
+  /**
+   * Scroll progress through the partners grid, 0–1 — or `null` under reduced
+   * motion, where the caller does not subscribe to scroll at all.
+   */
+  progress: MotionValue<number> | null;
   /** Shared grid-cell classes. */
   className?: string;
 }
 
 export function OpenSlot({ progress, className }: OpenSlotProps) {
-  const prefersReducedMotion = usePrefersReducedMotion();
-  const dashOffset = useTransform(progress, [0, 1], [0, -CRAWL_DISTANCE]);
+  const pinned = useMotionValue(0);
+  const dashOffset = useTransform(progress ?? pinned, [0, 1], [0, -CRAWL_DISTANCE]);
 
   return (
     <div className={cn('group relative cursor-default', className)}>
+      {/* `h-full w-full` is not redundant beside `inset-0`. An `svg` is a
+          replaced element, so `width: auto` resolves to its *intrinsic* size —
+          the spec's 300x150 default, since this one carries no width/height
+          attributes — rather than being stretched by the four insets the way a
+          non-replaced box would be. Drop them and the overlay renders 300px
+          wide inside a ~170px cell, which on a 375px viewport puts the whole
+          page into horizontal scroll: measured scrollWidth 494 against a
+          clientWidth of 375. */}
       <svg
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
@@ -65,7 +79,7 @@ export function OpenSlot({ progress, className }: OpenSlotProps) {
           strokeDasharray={DASH_PATTERN}
           vectorEffect="non-scaling-stroke"
           className="group-hover:stroke-accent-primary transition-[stroke] duration-[250ms]"
-          style={{ strokeDashoffset: prefersReducedMotion ? 0 : dashOffset }}
+          style={{ strokeDashoffset: dashOffset }}
         />
       </svg>
       <MonoLabel

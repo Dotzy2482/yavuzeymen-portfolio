@@ -20,18 +20,18 @@
  * distinguishing an unfilled row from a filled one — a dashed box is not
  * announced.
  *
- * The slot is one cap-height tall and sits on the text baseline, so it
- * occupies exactly the box the model name will occupy. Flipping a row's
- * `placeholder` to `false` in data/setup.ts swaps in the real value with no
- * layout shift, which is how ROADMAP plans to fill the list — one row at a
- * time.
+ * The slot is one cap-height tall and sits on the text baseline, so it holds
+ * the line the model name will sit on and reserves roughly the width it will
+ * take. Flipping a row's `placeholder` to `false` in data/setup.ts swaps the
+ * real value into that space — which is how ROADMAP plans to fill the list,
+ * one row at a time — shifting the row's right-hand column only by however
+ * far the real string differs from SLOT_WIDTH.
  */
 
-import { motion, useTransform, type MotionValue } from 'motion/react';
+import { motion, useMotionValue, useTransform, type MotionValue } from 'motion/react';
 
 import { cn } from '@/lib/cn';
 import { MonoLabel } from '@/components/ui';
-import { usePrefersReducedMotion } from '@/hooks';
 import type { SetupItem } from '@/data';
 
 /**
@@ -43,18 +43,25 @@ const SLOT_WIDTH = 'w-[120px] md:w-[150px]';
 
 export interface SpecRowProps {
   item: SetupItem;
-  /** Scroll progress through the whole rows container, 0–1. */
-  progress: MotionValue<number>;
+  /**
+   * Scroll progress through the whole rows container, 0–1 — or `null` under
+   * reduced motion, where the caller does not subscribe to scroll at all.
+   */
+  progress: MotionValue<number> | null;
   /** This row's position in the list, and the list's length. */
   index: number;
   count: number;
 }
 
 export function SpecRow({ item, progress, index, count }: SpecRowProps) {
-  const prefersReducedMotion = usePrefersReducedMotion();
+  // Reduced motion arrives as a null progress and is handled by pinning it to
+  // 1 rather than by branching: every row's window then clamps to a full
+  // underline, which is the static state, and the same one `useTransform` runs
+  // either way.
+  const pinned = useMotionValue(1);
   // The row's own 0–1 window carved out of the container's progress: row i
   // fills between i/n and (i+1)/n. Career's sequential fill, rotated 90°.
-  const scaleX = useTransform(progress, [index / count, (index + 1) / count], [0, 1]);
+  const scaleX = useTransform(progress ?? pinned, [index / count, (index + 1) / count], [0, 1]);
 
   return (
     <div className="border-hairline-mid relative flex items-baseline justify-between gap-5 border-b py-[18px] md:gap-8 md:py-6">
@@ -84,7 +91,7 @@ export function SpecRow({ item, progress, index, count }: SpecRowProps) {
       <motion.span
         aria-hidden="true"
         className="bg-accent-primary absolute inset-x-0 -bottom-px h-px origin-left"
-        style={{ scaleX: prefersReducedMotion ? 1 : scaleX }}
+        style={{ scaleX }}
       />
     </div>
   );
