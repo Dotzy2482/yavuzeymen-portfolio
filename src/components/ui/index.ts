@@ -1,7 +1,7 @@
 /** Barrel for the presentational primitives. */
 
 export { SectionHeading } from './SectionHeading';
-export type { SectionHeadingProps } from './SectionHeading';
+export type { SectionHeadingProps, SectionHeadingStretch } from './SectionHeading';
 
 export { StatValue } from './StatValue';
 export type { StatValueProps } from './StatValue';

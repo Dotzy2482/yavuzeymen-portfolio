@@ -114,6 +114,30 @@
 }
 
 /**
+ * `.stretch-scrub` — the same wdth axis, but live.
+ *
+ * Reads the `--axis-wdth` / `--axis-wght` channel rather than a fixed step, so
+ * an ancestor publishing a scroll-linked `--axis-wdth` (see
+ * `components/motion/StretchScrub`) animates the type. With no such ancestor
+ * the channel falls back to the display values in tokens.css and this renders
+ * identically to `.stretch-display`.
+ *
+ * `font-variation-settings` *overrides* `font-stretch` for the axes it names,
+ * so this and `.stretch-display` must never sit on the same element — swap the
+ * class, never stack it. It also inherits, which is why the driving value is
+ * published as a custom property on the wrapper (inert until read) and this
+ * utility goes on exactly one element.
+ *
+ * No `@theme inline` entry: like the other stretch utilities, this is a
+ * typographic mechanism rather than a theme value.
+ */
+@utility stretch-scrub {
+  font-variation-settings:
+    'wdth' var(--axis-wdth),
+    'wght' var(--axis-wght);
+}
+
+/**
  * `.container-section` — the recurring section shell: max width, responsive
  * gutter, 150px top padding (90px on mobile). Wide sections (Track Records,
  * Sim to Real, Content) override the max width with `.container-wide`.

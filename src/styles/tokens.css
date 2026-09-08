@@ -85,6 +85,22 @@
   --stretch-wide: 120%;
   --stretch-display: 125%;
 
+  /* The same axis, addressed the other way. `font-stretch` takes a percentage
+     (`125%`); `font-variation-settings` takes a bare axis number (`125`). The
+     two syntaxes cannot share one token — `font-stretch: 125` and
+     `'wdth' 125%` are both invalid — so the raw numbers are duplicated here on
+     purpose. Keep the pairs in step if a --stretch-* value ever moves.
+
+     --axis-wdth / --axis-wght are the *live* channel the `stretch-scrub`
+     utility reads. They default to the display values, so an element carrying
+     that utility renders exactly like `stretch-display` when nothing above it
+     is publishing a scrubbed value. */
+  --axis-wdth-entry: 88; /* narrow end of the scroll scrub */
+  --axis-wdth-display: 125; /* == --stretch-display */
+  --axis-wght-display: 900; /* Archivo Black, the display weight */
+  --axis-wdth: var(--axis-wdth-display);
+  --axis-wght: var(--axis-wght-display);
+
   /* --- Spacing scale (4px base) ------------------------------------------ */
   --space-1: 0.25rem;
   --space-2: 0.5rem;

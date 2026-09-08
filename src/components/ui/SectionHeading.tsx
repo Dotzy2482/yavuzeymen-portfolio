@@ -6,9 +6,30 @@
  * `accent` renders one word of the title in Instrument Serif italic
  * ("Who is *Yavuz Eymen?*", "Sim to *Real*") — never more than one word,
  * per the style guide.
+ *
+ * `stretch` picks which of the two width mechanisms the title uses. The
+ * component stays presentational either way: it knows nothing about scroll,
+ * and swaps one class. The scroll-linked value arrives from a `StretchScrub`
+ * ancestor as a custom property this heading's title happens to read.
  */
 
+import { cn } from '@/lib/cn';
+
 import { MonoLabel } from './MonoLabel';
+
+/**
+ * `display` is the fixed 125% width. `scrub` reads the live `--axis-wdth`
+ * channel instead, which falls back to the same 125 when no `StretchScrub`
+ * is publishing one. The two spell the same axis in incompatible syntaxes and
+ * `font-variation-settings` wins over `font-stretch`, so they are alternatives
+ * rather than layers — exactly one of them lands on the title.
+ */
+export type SectionHeadingStretch = 'display' | 'scrub';
+
+const STRETCH_CLASSES: Record<SectionHeadingStretch, string> = {
+  display: 'stretch-display',
+  scrub: 'stretch-scrub',
+};
 
 export interface SectionHeadingProps {
   /** Two-digit section index, e.g. `'03'`. */
@@ -22,6 +43,8 @@ export interface SectionHeadingProps {
   lead?: string;
   /** Heading level — the page has exactly one h1 (the hero). */
   as?: 'h1' | 'h2' | 'h3';
+  /** Width mechanism for the title. Default `'display'` — the fixed 125%. */
+  stretch?: SectionHeadingStretch;
   className?: string;
 }
 
@@ -32,6 +55,7 @@ export function SectionHeading({
   meta,
   lead,
   as: Tag = 'h2',
+  stretch = 'display',
   className,
 }: SectionHeadingProps) {
   return (
@@ -53,19 +77,42 @@ export function SectionHeading({
             back at ~438px. */}
         <Tag
           lang="en"
-          className="font-display tracking-title stretch-display m-0 text-[length:min(32px,calc((100cqi-58px)/10.64))] leading-none font-black uppercase md:text-[clamp(44px,4.6vw,72px)]"
+          className={cn(
+            'font-display tracking-title m-0 text-[length:min(32px,calc((100cqi-58px)/10.64))] leading-none font-black uppercase md:text-[clamp(44px,4.6vw,72px)]',
+            STRETCH_CLASSES[stretch],
+          )}
         >
           {title}
           {accent && (
             <>
               {' '}
-              <em className="font-serif font-normal tracking-normal normal-case italic">
+              {/* Instrument Serif is a static font and ignores the axes today.
+                  Pinning the accent to `normal` is belt and braces against a
+                  future variable serif inheriting a `wdth` meant for Archivo. */}
+              <em className="font-serif font-normal tracking-normal normal-case italic [font-variation-settings:normal]">
                 {accent}
               </em>
             </>
           )}
         </Tag>
-        <span aria-hidden="true" className="bg-hairline-strong h-px flex-1 self-center" />
+        {/* The filler shortens as a scrubbed title widens — that is the effect.
+            The floor stops a short heading crushing it to zero and snapping,
+            and is scoped to `scrub` so the six static headings keep today's
+            measurements exactly.
+
+            24px is more than the 8px of hairline the size formula above budgets
+            for, and that is safe rather than lucky: the 10.64em divisor is sized
+            for "ACHIEVEMENTS", so the two scrubbed titles — "SETUP" and
+            "PARTNERS" — leave the row hundreds of pixels of slack at every
+            width. A long title would have to opt into `scrub` before the two
+            numbers could argue. */}
+        <span
+          aria-hidden="true"
+          className={cn(
+            'bg-hairline-strong h-px flex-1 self-center',
+            stretch === 'scrub' && 'min-w-6',
+          )}
+        />
         {meta && (
           <MonoLabel size="md" tracking="lg" className="hidden text-right md:inline">
             {meta}
