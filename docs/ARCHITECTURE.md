@@ -9,7 +9,7 @@ src/
   sections/            One folder per page section. A section owns its layout
                        and its copy, and nothing else. Barrel: sections/index.ts.
     Nav/               Top bar, desktop side columns, full-screen mobile menu
-    Hero/              Portrait + helmet (scan reveal) + headline + marquee
+    Hero/              Portrait + helmet (cursor reveal) + headline + marquee
     About/ Career/ Achievements/ TrackRecords/ SimToReal/
     Content/ Setup/ Partners/ Contact/
   components/
@@ -173,14 +173,20 @@ Two performance rules run through all of it:
    in `hooks/` and was removed — every consumer wanted the `MotionValue`.
 2. **Per-frame DOM work bypasses React entirely.** `useRafLoop` runs the
    callback; the callback mutates `style` and attributes directly. This is what
-   drives the hero helmet fit, the helmet scan reveal and the whole lap
-   animation.
+   drives the hero helmet reveal and the whole lap animation.
 
-The hero's scan reveal is worth one note, because it is the only effect that
-shares a loop. `useHelmetScan` deliberately owns no `useRafLoop` of its own: it
-returns an `update(elapsed, damp)` that `HeroPortrait` calls from the loop it
-already runs for the helmet fit, so the fit and all three masked layers advance
-on the same frame. Tuning lives in `sections/Hero/helmetScan.ts`.
+The hero's helmet reveal is worth one note. `useHelmetReveal` deliberately owns
+no `useRafLoop` of its own: it returns an `update(delta, amount)` that
+`HeroPortrait` calls from the loop it already runs, so the layer's transform and
+its mask are written on the same frame. Tuning lives in
+`sections/Hero/helmetReveal.ts`.
+
+The reveal itself is two photographs of the same frame — Yavuz bare-headed, and
+the identical pose helmeted — stacked in the same box, with the top one masked
+down to a soft-edged circle. Because both photos are the same 1323x1189 crop,
+alignment is a layout fact rather than a per-frame calculation; the effect never
+does more than move a gradient. That is what replaced an earlier build that
+fitted a separate helmet cut-out onto the head with trigonometry every frame.
 
 Every wrapper checks `usePrefersReducedMotion()` and degrades to a static,
 visible state. On a site this animation-heavy the opt-out is a requirement, not

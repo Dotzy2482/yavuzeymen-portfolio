@@ -27,10 +27,11 @@
 **Sections — all nine plus the hero**
 
 - Nav (top bar, desktop side columns, full-screen mobile menu).
-- Hero: ambient background, portrait + helmet with per-frame fit, headline,
-  info cards, sponsor marquee, CTA. A diagonal scan band sweeps the helmet and
-  swaps the photo for its wireframe inside the band; scroll-scrub reveal on
-  mobile. (The desktop hover-fade this replaced is gone.)
+- Hero: ambient background, portrait, headline, info cards, sponsor marquee,
+  CTA. Two photos of the same frame are stacked — bare-headed and helmeted —
+  and a soft-edged circle reveals the helmeted one under the cursor; below `md`
+  the pinned scroll irises it shut instead. (The fitted helmet cut-out and its
+  wireframe scan band this replaced are gone.)
 - About, Career (scroll-filled timeline), Achievements, Sim to Real (pinned
   horizontal gallery), Content (counters + card fan), Setup, Partners,
   Contact + footer.

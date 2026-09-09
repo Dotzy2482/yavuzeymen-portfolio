@@ -2,11 +2,13 @@
  * Full-viewport opening section. Carries the page's only <h1>.
  *
  * Layer order (bottom→top): ambient background → portrait → headline →
- * helmet → info cards → sponsor marquee + CTA. The Nav chrome overlays this
- * section from outside.
+ * helmet → info cards → sponsor marquee + CTA. The helmet sits above the
+ * headline on purpose: where the reveal opens, the shell occludes the type the
+ * way it would in a photograph. The Nav chrome overlays this section from
+ * outside.
  *
- * Desktop: a plain 100vh stage, helmet always on with a scan reveal sweeping
- * across it. Mobile: a pinned 180vh wrapper; scrolling scrubs the helmet away.
+ * Desktop: a plain 100vh stage, with the helmet revealed under the cursor.
+ * Mobile: a pinned 180vh wrapper; scrolling irises the helmet shut instead.
  */
 
 import { Fragment, useRef } from 'react';
