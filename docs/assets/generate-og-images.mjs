@@ -9,10 +9,9 @@
  *   node docs/assets/generate-og-images.mjs --check   # assert they are present
  *                                                     # and correctly sized
  *
- * Both sources stay editable and versioned; only their rasters ship. That is
- * the same bargain generate-helmet-wireframe.mjs makes, and for the same
- * reason: a committed binary whose origin nobody can reconstruct is a dead end
- * the next person cannot edit.
+ * Both sources stay editable and versioned; only their rasters ship, for the
+ * reason that a committed binary whose origin nobody can reconstruct is a dead
+ * end the next person cannot edit.
  *
  * WHY HEADLESS CHROME, AND NOT A LIBRARY. Rendering the card needs a real
  * layout engine — variable-font axes, radial gradients, SVG dash offsets — so

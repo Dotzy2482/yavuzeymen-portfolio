@@ -86,17 +86,13 @@ it. Either keep the ref in the component that renders the node, or use the
   deliberately does not compare bytes: a screenshot is not reproducible across
   Chrome versions or font-cache states.
 
-- **Do not hand-edit `src/sections/Hero/HelmetWireframe.tsx`.** It is generated
-  from `docs/assets/helmet-wireframe.svg` by
-  `docs/assets/generate-helmet-wireframe.mjs` — 67 kB of coordinates, where a
-  hand edit silently breaks the drawing. Regenerate it instead:
-
-  ```bash
-  node docs/assets/generate-helmet-wireframe.mjs
-  ```
-
-  The script writes Prettier-clean output, so a regeneration leaves the tree
-  clean; `--check` asserts the component and the SVG are in sync.
+- **Do not resize either hero portrait, or resize one without the other.**
+  `public/images/hero/portrait-cutout.png` and `portrait-helmet.png` are the
+  same 1323 × 1189 crop of the same pose, bare-headed and helmeted. The hero
+  stacks them in one box and masks the top one to a circle under the cursor, so
+  their alignment is the whole effect — it is not corrected at runtime and
+  nothing will warn you. Re-encoding is fine; recropping, resizing or replacing
+  one alone is not. See [docs/CONTENT.md](docs/CONTENT.md).
 
 - **Do not hardcode contact details.** E-mail, phone and social URLs come from
   `import.meta.env` via `src/data/profile.ts`. This repo is **public** and its

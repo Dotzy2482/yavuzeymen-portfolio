@@ -45,15 +45,17 @@ generalises it rather than inventing anything.
 
 ### Two constraints on the encode that are easy to miss
 
-- **`portrait-cutout.png`'s dimensions are load-bearing.** `docs/CONTENT.md`
-  records that the hero helmet-fit maths depends on exactly 1323×1189. Re-encode
-  it, never resize it. Same discipline everywhere: every raster declares
-  intrinsic `width`/`height`, and the hero marquee and the Sim to Real gallery
-  both measure from those.
-- **`portrait-cutout.png` needs alpha; `fiat-front.png` does not.**
+- **The two hero portraits' dimensions are load-bearing, and shared.**
+  `portrait-cutout.png` and `portrait-helmet.png` are the same 1323×1189 crop of
+  the same pose, and the helmet reveal stacks them assuming exactly that.
+  Re-encode both, never resize either, and never resize one alone. Same
+  discipline everywhere: every raster declares intrinsic `width`/`height`, and
+  the hero marquee and the Sim to Real gallery both measure from those.
+- **Both hero portraits need alpha; `fiat-front.png` does not.**
   `fiat-front.png` is a 1.1 MB photograph stored as PNG for no reason and is the
-  single biggest easy win. The portrait is PNG legitimately — AVIF/WebP with
-  alpha is the win there, not JPEG.
+  single biggest easy win. The portraits are PNG legitimately — AVIF/WebP with
+  alpha is the win there, not JPEG, and at ~1.1 MB each they are now the two
+  heaviest files on the page.
 
 ### Fonts: three render-blocking families
 
@@ -135,8 +137,8 @@ performance work.
 - The track-records module is in its own chunk, loaded on demand, and the
   section reserves its height so nothing below it shifts while it loads. Before
   and after chunk sizes reported.
-- Total image weight reported before and after. `portrait-cutout.png` is still
-  exactly 1323×1189 and the hero helmet still fits correctly.
+- Total image weight reported before and after. Both hero portraits are still
+  exactly 1323×1189, and the helmet reveal still lines up over the face.
 - No request to `fonts.googleapis.com` or `fonts.gstatic.com` in the network
   panel of a built `dist/`.
 - Archivo still resolves across the full `wdth 62..125` range. If `01` has

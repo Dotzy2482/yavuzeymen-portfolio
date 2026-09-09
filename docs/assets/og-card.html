@@ -285,11 +285,13 @@
         />
       </svg>
 
-      <!-- The hero's helmet line art. Loaded rather than inlined: it is 67 kB
-           of coordinates that generate-helmet-wireframe.mjs owns, and a copy
-           pasted in here is a copy that goes stale. The drawing is
-           fill="currentColor", which inside an <img> resolves to black — so it
-           is inverted to white and dropped back to a whisper. -->
+      <!-- Helmet line art. Loaded rather than inlined: it is 67 kB of
+           coordinates, and a copy pasted in here is a copy that goes stale.
+           helmet-wireframe.svg is a committed source asset with no generator
+           behind it; this card is now its only consumer, the hero having moved
+           to a photographic reveal. The drawing is fill="currentColor", which
+           inside an <img> resolves to black — so it is inverted to white and
+           dropped back to a whisper. -->
       <img class="helmet" src="helmet-wireframe.svg" alt="" />
 
       <div class="content">

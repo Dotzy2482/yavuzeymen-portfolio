@@ -84,21 +84,21 @@ data task; see [TRACK_RECORDS.md](TRACK_RECORDS.md) and
 All under `public/images/`. Everything referenced by the design is present and
 loading.
 
-| File                            | Dimensions    | Size    | Used by                       | Note                                                                   |
-| ------------------------------- | ------------- | ------- | ----------------------------- | ---------------------------------------------------------------------- |
-| `hero/portrait-cutout.png`      | 1323 × 1189   | 1.16 MB | Hero                          | Background removed; helmet fit maths depends on these exact dimensions |
-| `hero/helmet.png`               | 492 × 508     | 306 KB  | Hero                          | Transparent, sponsor livery baked in                                   |
-| `portraits/studio-seated.jpg`   | 1023 × 1537   | 97 KB   | About, reel card              | Adequate                                                               |
-| `portraits/studio-standing.jpg` | 941 × 1672    | 74 KB   | —                             | Copied but currently unused                                            |
-| `simtoreal/paddock.jpg`         | **348 × 407** | 80 KB   | Sim to Real, reel card        | **Too low-res** — visibly soft at display size                         |
-| `simtoreal/pit-pass.jpg`        | 1200 × 1600   | 161 KB  | Sim to Real, reel card        | Adequate                                                               |
-| `simtoreal/fiat-egea.jpg`       | 1600 × 1066   | 219 KB  | Sim to Real                   | Adequate                                                               |
-| `simtoreal/fiat-front.png`      | **828 × 788** | 1.16 MB | Sim to Real, centre reel card | Low-res **and** oversized — PNG of a photo                             |
-| `simtoreal/rig.png`             | **433 × 545** | 415 KB  | Sim to Real, Setup, reel card | **Too low-res** — shown large in Setup                                 |
-| `partners/gelbura.png`          | 178 × 63      | 8 KB    | Marquee, Partners             | Derived white-on-transparent crop                                      |
-| `partners/spardox.png`          | 500 × 167     | 4 KB    | Marquee, Partners             | Black on transparent, inverted in CSS                                  |
-| `partners/drivehunter.svg`      | 360 × 80      | 9 KB    | Marquee, Partners             | Vector — ideal                                                         |
-| `partners/tch.avif` + `.png`    | 256 × 75      | 5/20 KB | Marquee, Partners             | AVIF with PNG fallback via `<picture>`                                 |
+| File                            | Dimensions    | Size    | Used by                       | Note                                                                 |
+| ------------------------------- | ------------- | ------- | ----------------------------- | -------------------------------------------------------------------- |
+| `hero/portrait-cutout.png`      | 1323 × 1189   | 1.16 MB | Hero                          | Background removed. Must stay the same crop as `portrait-helmet.png` |
+| `hero/portrait-helmet.png`      | 1323 × 1189   | 1.13 MB | Hero                          | The same frame with the helmet on — the layer the cursor reveals     |
+| `portraits/studio-seated.jpg`   | 1023 × 1537   | 97 KB   | About, reel card              | Adequate                                                             |
+| `portraits/studio-standing.jpg` | 941 × 1672    | 74 KB   | —                             | Copied but currently unused                                          |
+| `simtoreal/paddock.jpg`         | **348 × 407** | 80 KB   | Sim to Real, reel card        | **Too low-res** — visibly soft at display size                       |
+| `simtoreal/pit-pass.jpg`        | 1200 × 1600   | 161 KB  | Sim to Real, reel card        | Adequate                                                             |
+| `simtoreal/fiat-egea.jpg`       | 1600 × 1066   | 219 KB  | Sim to Real                   | Adequate                                                             |
+| `simtoreal/fiat-front.png`      | **828 × 788** | 1.16 MB | Sim to Real, centre reel card | Low-res **and** oversized — PNG of a photo                           |
+| `simtoreal/rig.png`             | **433 × 545** | 415 KB  | Sim to Real, Setup, reel card | **Too low-res** — shown large in Setup                               |
+| `partners/gelbura.png`          | 178 × 63      | 8 KB    | Marquee, Partners             | Derived white-on-transparent crop                                    |
+| `partners/spardox.png`          | 500 × 167     | 4 KB    | Marquee, Partners             | Black on transparent, inverted in CSS                                |
+| `partners/drivehunter.svg`      | 360 × 80      | 9 KB    | Marquee, Partners             | Vector — ideal                                                       |
+| `partners/tch.avif` + `.png`    | 256 × 75      | 5/20 KB | Marquee, Partners             | AVIF with PNG fallback via `<picture>`                               |
 
 ### Generated assets
 

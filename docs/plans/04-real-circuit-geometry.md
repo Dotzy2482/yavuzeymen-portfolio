@@ -41,8 +41,9 @@ generate-track-paths.mjs           -> src/features/track-records/data/trackPaths
 generate-track-paths.mjs --check   -> asserts the two are in sync      (pure, offline, CI-safe)
 ```
 
-This mirrors `docs/assets/generate-helmet-wireframe.mjs` exactly: a committed
-source asset, a deterministic transform, a `--check` mode, and output through
+This mirrors `docs/assets/generate-og-images.mjs`: a committed source asset, a
+deterministic transform and a `--check` mode. Take the Prettier step from the
+helmet-wireframe generator that used to sit beside it — output through
 Prettier's own API (`resolveConfig(outPath)` then
 `format(source, { ...config, filepath: outPath })`) so a regeneration leaves the
 tree clean.
@@ -58,8 +59,8 @@ patches a coordinate by hand.
 
 ### The generator owns geometry only, in a new file
 
-The helmet precedent is "the generator owns the whole file". **Do not copy that
-here.**
+The hero's deleted wireframe generator owned the whole file it wrote. **Do not
+copy that here.**
 
 `tracks.ts` also holds `lap`, `length`, `corners`, `country`, `name` and
 `region` — and ROADMAP lists real lap times as the next cheap, high-value edit.
@@ -235,8 +236,7 @@ at hairpins. Measure before reaching for it.
 
 Mirror `svgPath.test.ts`'s assertions in the generator itself: exactly one `M`,
 ends in `Z`, no lowercase `m`/`l`/`c`, twelve circuits. **The generator should
-fail, not the test suite** — same discipline as the helmet script's "exactly one
-path" guard.
+fail, not the test suite** — a bad path should never reach the tree.
 
 ### ODbL attribution is a licence obligation
 
@@ -267,7 +267,7 @@ Check both even if neither needs changing:
 1. Author `docs/assets/circuits.json` — pinned OSM ids, start line, start
    heading, exclusions, simplify knobs, for all twelve.
 2. Write `docs/assets/generate-track-paths.mjs` with `--fetch`, default and
-   `--check` modes, following the helmet script's contract.
+   `--check` modes, following `generate-og-images.mjs`'s contract.
 3. Run `--fetch`; commit `docs/assets/circuit-rings.json`.
 4. Generate `src/features/track-records/data/trackPaths.ts`.
 5. Rewrite `src/features/track-records/data/tracks.ts` to import geometry and
@@ -284,7 +284,7 @@ Check both even if neither needs changing:
 
 - **`CLAUDE.md`** — the "do not hand-edit the `path` strings in
   `data/tracks.ts`" bullet now points at a file that no longer contains paths.
-  Rewrite it to name `trackPaths.ts` and the new generator, beside the helmet
+  Rewrite it to name `trackPaths.ts` and the new generator, beside the OG-image
   entry. In "Known placeholders", the geometry row goes; the lap-times row
   stays.
 - **`docs/TRACK_RECORDS.md`** — delete the "Known limitation" section. Rewrite
