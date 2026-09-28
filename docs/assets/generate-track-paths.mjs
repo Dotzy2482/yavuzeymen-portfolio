@@ -107,25 +107,49 @@ const VIEW = { width: 1000, height: 620 };
 const EXPECTED_CIRCUITS = 12;
 
 /**
- * The S/F group TrackMap draws around the start point, in viewBox units: an
- * upright 8×36 tick centred on it and a 22px mono `S/F` label anchored at
- * (+16, −22), growing right and up. The label's box is estimated generously
- * (three glyphs of a wide mono face, plus ascent), because the only failure
- * worth catching is a clipped one.
+ * The S/F group TrackMap draws around the start point, in viewBox units —
+ * mirrors src/features/track-records/lib/startLine.ts. An 8×36 tick turned
+ * across the direction of travel, and a 22px mono `S/F` label anchored 16
+ * ahead and 22 to the side of the track facing away from the driver plate,
+ * growing away from the track. The label's box is estimated generously (three
+ * glyphs of a wide mono face, plus ascent), because the only failure worth
+ * catching is a clipped one.
  */
 const SF_TICK = { halfWidth: 4, halfLength: 18 };
-const SF_LABEL = { x: 16, y: -22, width: 3 * 0.7 * 22, height: 0.8 * 22 };
+const SF_LABEL = { ahead: 16, aside: 22, width: 3 * 0.7 * 22, height: 0.8 * 22 };
+/** The driver plate flips left of the dot past this fraction of the width. */
+const PLATE_FLIPS_AT = 0.66;
 
 /** Every corner of the S/F tick and label, relative to the start point. */
-function startMarkerCorners() {
-  const { halfWidth: w, halfLength: h } = SF_TICK;
-  const { x, y, width, height } = SF_LABEL;
-  return [
-    [-w, -h],
-    [w, h],
-    [x, y],
-    [x + width, y - height],
-  ];
+function startMarkerCorners([x0, y0], [x1, y1]) {
+  const angle = Math.atan2(y1 - y0, x1 - x0);
+  const ahead = [Math.cos(angle), Math.sin(angle)];
+  const across = [ahead[1], -ahead[0]];
+  const corners = [];
+  for (const a of [-SF_TICK.halfWidth, SF_TICK.halfWidth]) {
+    for (const l of [-SF_TICK.halfLength, SF_TICK.halfLength]) {
+      corners.push([a * ahead[0] + l * across[0], a * ahead[1] + l * across[1]]);
+    }
+  }
+  const [first, second] = [across, [-across[0], -across[1]]].map((normal) => ({
+    normal,
+    x: SF_LABEL.ahead * ahead[0] + SF_LABEL.aside * normal[0],
+    y: SF_LABEL.ahead * ahead[1] + SF_LABEL.aside * normal[1],
+  }));
+  const plateOnRight = x0 <= PLATE_FLIPS_AT * VIEW.width;
+  const side =
+    Math.abs(first.x - second.x) < 1
+      ? first.y <= second.y
+        ? first
+        : second
+      : first.x < second.x === plateOnRight
+        ? first
+        : second;
+  const dx = side.normal[0] >= -1e-9 ? SF_LABEL.width : -SF_LABEL.width;
+  const dy = side.normal[1] <= 1e-9 ? -SF_LABEL.height : SF_LABEL.height;
+  corners.push([side.x, side.y], [side.x + dx, side.y], [side.x, side.y + dy]);
+  corners.push([side.x + dx, side.y + dy]);
+  return corners;
 }
 
 /** The Web Mercator sphere (EPSG:3857 uses the WGS84 semi-major axis). */
@@ -593,7 +617,7 @@ function selfCheck(id, path, points) {
     }
   }
   const start = points[0].map(Number);
-  const clipped = startMarkerCorners().some(([dx, dy]) => {
+  const clipped = startMarkerCorners(start, points[1].map(Number)).some(([dx, dy]) => {
     const [x, y] = [start[0] + dx, start[1] + dy];
     return x < 0 || x > VIEW.width || y < 0 || y > VIEW.height;
   });

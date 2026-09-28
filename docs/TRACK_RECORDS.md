@@ -244,18 +244,18 @@ and the loop has no opinion about what the buttons do.
 
 ## Components
 
-| Component          | Notes                                                                             |
-| ------------------ | --------------------------------------------------------------------------------- |
-| `TrackRecords`     | Orchestrator. Region tabs, the container ref, and the responsive grid.            |
-| `TrackList`        | Desktop rows and the mobile chip scroller — same data, media-query choice.        |
-| `TrackListItem`    | One desktop row: index, flag chip, name, best lap.                                |
-| `TrackPanel`       | The right-hand panel; reorders the chronometer above the name on mobile.          |
-| `TrackMap`         | The SVG: base outline, progress, trail, start/finish tick, marker, plate overlay. |
-| `CarMarker`        | Bright core inside a cyan halo. No props — moved by attribute.                    |
-| `DriverLabel`      | HTML overlay plus leader line. Never rotates; flips side past 66% of panel width. |
-| `LapTimer`         | The chronometer. Renders `0:00.000`; the loop writes the rest.                    |
-| `SectorBar`        | S1/S2/S3 bars.                                                                    |
-| `PlaybackControls` | PAUSE/PLAY and 1X/2X.                                                             |
+| Component          | Notes                                                                                |
+| ------------------ | ------------------------------------------------------------------------------------ |
+| `TrackRecords`     | Orchestrator. Region tabs, the container ref, and the responsive grid.               |
+| `TrackList`        | Desktop rows and the mobile chip scroller — same data, media-query choice.           |
+| `TrackListItem`    | One desktop row: index, flag chip, name, best lap.                                   |
+| `TrackPanel`       | The right-hand panel; reorders the chronometer above the name on mobile.             |
+| `TrackMap`         | The SVG: base outline, progress, trail, S/F tick across the straight, marker, plate. |
+| `CarMarker`        | Bright core inside a cyan halo. No props — moved by attribute.                       |
+| `DriverLabel`      | HTML overlay plus leader line. Never rotates; flips side past 66% of panel width.    |
+| `LapTimer`         | The chronometer. Renders `0:00.000`; the loop writes the rest.                       |
+| `SectorBar`        | S1/S2/S3 bars.                                                                       |
+| `PlaybackControls` | PAUSE/PLAY and 1X/2X.                                                                |
 
 ## Real geometry: the OpenStreetMap pipeline
 
@@ -372,6 +372,25 @@ So the generator **rotates the ring** until its first vertex is the start line.
 The runtime offset is then always zero, and `useLapAnimation`, `usePathPoint`
 and `lib/svgPath.ts` did not change at all. (`getPointAt` still carries an
 `offset` parameter from the scaffold; it stays unused.)
+
+### The S/F tick crosses the straight it is on
+
+The design drew every start on a level straight heading right, so an upright
+tick and a label 16 units ahead and 22 above were always right. Real straights
+point anywhere — Zandvoort's and Watkins Glen's run up the map, and an upright
+tick lies _along_ them. `lib/startLine.ts` reads the direction of travel off
+the path's first segment (which runs down the straight, by construction) and
+`TrackMap` turns the tick across it. The label keeps the design's offset,
+turned with the straight, on the side of the track facing away from the
+driver plate — at rest the dot sits on the line and the plate beside it would
+otherwise cover the label — and grows away from the track so it never lands on
+the line it names. On a level straight heading right it reproduces the design
+exactly.
+
+It is pure string maths on `d`, so it renders on the first frame and in jsdom;
+the loop still only translates the S/F group, and did not change. The generator
+mirrors the same placement when it checks that no label is clipped, and a unit
+test checks all twelve from the component's side.
 
 ### Licence
 
