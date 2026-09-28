@@ -16,7 +16,7 @@ import { useRef } from 'react';
 import { useScroll, type MotionValue } from 'motion/react';
 
 import { cn } from '@/lib/cn';
-import { SectionHeading } from '@/components/ui';
+import { Picture, SectionHeading } from '@/components/ui';
 import { StretchScrub } from '@/components/motion';
 import { partners, emptySlots } from '@/data';
 import { usePrefersReducedMotion } from '@/hooks';
@@ -30,30 +30,18 @@ const GRID_CLASSES = 'mt-9 grid grid-cols-2 gap-3 md:mt-[72px] md:grid-cols-3 md
 function GridCells({ progress }: { progress: MotionValue<number> | null }) {
   return (
     <>
-      {partners.map((partner) => {
-        const img = (
-          <img
-            src={partner.logoFallbackSrc ?? partner.logoSrc}
+      {partners.map((partner) => (
+        <div key={partner.id} className={cn(CELL_CLASSES, 'border-hairline border')}>
+          <Picture
+            src={partner.logoSrc}
             alt={partner.logoAlt}
             width={partner.intrinsicWidth}
             height={partner.intrinsicHeight}
             style={{ height: partner.gridHeight }}
             className="w-auto opacity-[0.92] brightness-0 invert"
           />
-        );
-        return (
-          <div key={partner.id} className={cn(CELL_CLASSES, 'border-hairline border')}>
-            {partner.logoFallbackSrc ? (
-              <picture>
-                <source srcSet={partner.logoSrc} type="image/avif" />
-                {img}
-              </picture>
-            ) : (
-              img
-            )}
-          </div>
-        );
-      })}
+        </div>
+      ))}
       {Array.from({ length: emptySlots }, (_, i) => (
         <OpenSlot key={`slot-${i}`} progress={progress} className={CELL_CLASSES} />
       ))}

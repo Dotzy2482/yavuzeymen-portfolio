@@ -23,7 +23,7 @@ import { cn } from '@/lib/cn';
 import { BREAKPOINTS } from '@/lib/constants';
 import { useMediaQuery, usePrefersReducedMotion } from '@/hooks';
 import { Pinned } from '@/components/motion';
-import { MonoLabel, SectionHeading } from '@/components/ui';
+import { MonoLabel, Picture, SectionHeading } from '@/components/ui';
 import { simToRealItems, type SimToRealItem } from '@/data';
 import type { SectionProps } from '@/types';
 
@@ -46,7 +46,7 @@ function GalleryPhoto({ item, mobile }: GalleryPhotoProps) {
         {item.label}
       </MonoLabel>
       {item.src ? (
-        <img
+        <Picture
           src={item.src}
           alt={item.alt}
           loading="lazy"

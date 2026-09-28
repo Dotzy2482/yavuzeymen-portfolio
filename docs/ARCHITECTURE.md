@@ -16,7 +16,7 @@ src/
   components/
     ui/                Presentational primitives with no domain knowledge:
                        Button, Tag, MonoLabel, SectionHeading, StatValue,
-                       Divider, PhotoCard
+                       Divider, PhotoCard, Picture
     motion/            The animation vocabulary: Marquee, Pinned, CountUp
   features/
     track-records/     Self-contained module behind a single index.ts.
@@ -32,8 +32,10 @@ src/
 
 docs/
   assets/              Source assets for generated code, and the generators
-                       that consume them. Nothing here is imported by the app
-                       or shipped in the bundle.
+                       that consume them — including encode-images.mjs, which
+                       writes the AVIF/WebP beside every raster in public/.
+                       Nothing here is imported by the app or shipped in the
+                       bundle.
 ```
 
 Two rules keep this honest:
@@ -240,8 +242,12 @@ must not also carry Tailwind translate utilities.
 Vitest + jsdom, with Testing Library available. Current coverage is the
 track-records maths: lap-time formatting and parsing, dash geometry, sector
 fill, and a data-integrity suite asserting every circuit path is a single
-closed subpath with a unique id — plus the nav's scroll-spy and the scroll
-rail's geometry (notch placement, pointer mapping, snapping).
+closed subpath with a unique id. Beside it: the nav's scroll-spy, the scroll
+rail's geometry (notch placement, pointer mapping, snapping), `Picture`'s
+derived sources, and `docs/assets/encode-images.test.mjs`, which runs
+`pnpm images --check` so that an original with missing, stale or wrongly sized
+encodes fails the suite. That one is plain `.mjs` outside `src/` on purpose —
+it reads the file system, and the app's TypeScript program has no Node types.
 
 jsdom implements none of `SVGGeometryElement`, so `lib/svgPath.ts`
 feature-detects `getTotalLength` / `getPointAtLength` and degrades to zero
@@ -258,7 +264,7 @@ Prettier owns formatting and sorts Tailwind classes; do not fight its output.
 CI runs the same gates on every push to `main` and every pull request, in this
 order: lint, format check, typecheck, **test**, build. The test step was missing
 for a long time, so the suite only ever ran on contributors' machines — if it
-disappears again, the 34 tests stop being enforced by anything. A second job
+disappears again, the suite stops being enforced by anything. A second job
 runs gitleaks over the full history; it needs `pull-requests: read` to scan a
 PR's commit range, and without that permission it fails with a 403 that says
 nothing about whether a secret is present.

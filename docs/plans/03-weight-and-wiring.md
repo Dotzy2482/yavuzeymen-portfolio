@@ -121,6 +121,13 @@ render images directly, following the existing `tch` pattern.
 
 Re-encode at native dimensions only. Record the before/after total.
 
+**Recorded 2026-09-29.** What a browser that takes AVIF downloads for every
+image on the page: **4.50 MB before, 484 KB after** (−89%). The two hero
+portraits alone: 2.29 MB → 153 KB. A WebP-only browser gets 631 KB. On disk,
+`public/images/` grows from 4.52 MB to 5.61 MB, because the originals stay as
+the fallback. Both portraits and both of their encodes are 1323×1189, which
+the image test now asserts.
+
 ### 3. Self-host the fonts
 
 Move the three families into `public/fonts/`, replace the Google Fonts
@@ -167,8 +174,8 @@ performance work.
 ## Progress
 
 - [x] 1. Track-records chunk lazy-loaded, sizes recorded
-- [ ] 2. `sharp` devDependency + `pnpm images` + AVIF/WebP emitted
-- [ ] 3. Image weight before/after recorded
+- [x] 2. `sharp` devDependency + `pnpm images` + AVIF/WebP emitted
+- [x] 3. Image weight before/after recorded
 - [ ] 4. Fonts self-hosted, axis range verified
 - [ ] 5. Mount Panorama's region corrected
 - [ ] 6. `Divider.animated` deleted

@@ -84,21 +84,41 @@ data task; see [TRACK_RECORDS.md](TRACK_RECORDS.md) and
 All under `public/images/`. Everything referenced by the design is present and
 loading.
 
-| File                            | Dimensions    | Size    | Used by                       | Note                                                                 |
-| ------------------------------- | ------------- | ------- | ----------------------------- | -------------------------------------------------------------------- |
-| `hero/portrait-cutout.png`      | 1323 × 1189   | 1.16 MB | Hero                          | Background removed. Must stay the same crop as `portrait-helmet.png` |
-| `hero/portrait-helmet.png`      | 1323 × 1189   | 1.13 MB | Hero                          | The same frame with the helmet on — the layer the cursor reveals     |
-| `portraits/studio-seated.jpg`   | 1023 × 1537   | 97 KB   | About, reel card              | Adequate                                                             |
-| `portraits/studio-standing.jpg` | 941 × 1672    | 74 KB   | —                             | Copied but currently unused                                          |
-| `simtoreal/paddock.jpg`         | **348 × 407** | 80 KB   | Sim to Real, reel card        | **Too low-res** — visibly soft at display size                       |
-| `simtoreal/pit-pass.jpg`        | 1200 × 1600   | 161 KB  | Sim to Real, reel card        | Adequate                                                             |
-| `simtoreal/fiat-egea.jpg`       | 1600 × 1066   | 219 KB  | Sim to Real                   | Adequate                                                             |
-| `simtoreal/fiat-front.png`      | **828 × 788** | 1.16 MB | Sim to Real, centre reel card | Low-res **and** oversized — PNG of a photo                           |
-| `simtoreal/rig.png`             | **433 × 545** | 415 KB  | Sim to Real, Setup, reel card | **Too low-res** — shown large in Setup                               |
-| `partners/gelbura.png`          | 178 × 63      | 8 KB    | Marquee, Partners             | Derived white-on-transparent crop                                    |
-| `partners/spardox.png`          | 500 × 167     | 4 KB    | Marquee, Partners             | Black on transparent, inverted in CSS                                |
-| `partners/drivehunter.svg`      | 360 × 80      | 9 KB    | Marquee, Partners             | Vector — ideal                                                       |
-| `partners/tch.avif` + `.png`    | 256 × 75      | 5/20 KB | Marquee, Partners             | AVIF with PNG fallback via `<picture>`                               |
+Every raster ships three ways: the original, and an AVIF and a WebP that
+`pnpm images` (`docs/assets/encode-images.mjs`) writes beside it at exactly the
+original's pixel size. `<Picture>` (`components/ui`) derives both encodes from
+the original's path, so a browser takes the AVIF, falls back to the WebP, and
+only fetches the original if it takes neither. The table lists the original
+and the AVIF, which is what a current browser actually downloads.
+
+| File                          | Dimensions    | Original | AVIF  | Used by                       | Note                                                                 |
+| ----------------------------- | ------------- | -------- | ----- | ----------------------------- | -------------------------------------------------------------------- |
+| `hero/portrait-cutout.png`    | 1323 × 1189   | 1.16 MB  | 75 KB | Hero                          | Background removed. Must stay the same crop as `portrait-helmet.png` |
+| `hero/portrait-helmet.png`    | 1323 × 1189   | 1.13 MB  | 78 KB | Hero                          | The same frame with the helmet on — the layer the cursor reveals     |
+| `portraits/studio-seated.jpg` | 1023 × 1537   | 99 KB    | 57 KB | About, reel card              | Adequate                                                             |
+| `simtoreal/paddock.jpg`       | **348 × 407** | 82 KB    | 19 KB | Sim to Real, reel card        | **Too low-res** — visibly soft at display size                       |
+| `simtoreal/pit-pass.jpg`      | 1200 × 1600   | 165 KB   | 67 KB | Sim to Real, reel card        | Adequate                                                             |
+| `simtoreal/fiat-egea.jpg`     | 1600 × 1066   | 224 KB   | 94 KB | Sim to Real                   | Adequate                                                             |
+| `simtoreal/fiat-front.png`    | **828 × 788** | 1.18 MB  | 48 KB | Sim to Real, centre reel card | Low-res, and a photograph stored as PNG                              |
+| `simtoreal/rig.png`           | **433 × 545** | 425 KB   | 23 KB | Sim to Real, Setup, reel card | **Too low-res** — shown large in Setup                               |
+| `partners/gelbura.png`        | 178 × 63      | 8 KB     | 2 KB  | Marquee, Partners             | Derived white-on-transparent crop                                    |
+| `partners/spardox.png`        | 500 × 167     | 4 KB     | 6 KB  | Marquee, Partners             | Black on transparent, inverted in CSS. The one AVIF that is larger   |
+| `partners/drivehunter.svg`    | 360 × 80      | 9 KB     | —     | Marquee, Partners             | Vector — ideal, nothing to encode                                    |
+| `partners/tch.png`            | 256 × 75      | 20 KB    | 6 KB  | Marquee, Partners             |                                                                      |
+
+What a browser that takes AVIF downloads for the whole page went from 4.50 MB
+to 484 KB when the encodes landed in [03](plans/03-weight-and-wiring.md); the
+two hero portraits alone from 2.29 MB to 153 KB. A WebP-only browser gets
+631 KB. The originals stay in the repository as the `<picture>` fallback, so
+the repository itself grew by the encodes, about 1.1 MB.
+
+Each encode profile is chosen by eye in `encode-images.mjs`: photography with a
+lossless original (the hero cut-outs keep their alpha) at AVIF 65, JPEG
+originals at 55 because past their own artefacts there is no detail left to
+keep, and the logos lossless in WebP. `encoded-images.json` beside the script
+records each original's SHA-256, and `pnpm test` fails if an original has no
+encodes, if its encodes are stale or the wrong size, or if an encode is left
+with no original.
 
 ### Generated assets
 
@@ -122,9 +142,10 @@ card, so nothing on it can drift away from the page.
 
 `og-image.png` is 280 KB, which is large for something that is 90% flat Track
 Black, and it is a PNG because headless Chrome only writes PNGs. Neither costs
-a visitor anything: the file is fetched by crawlers and never by the page. Once
-[03](plans/03-weight-and-wiring.md) adds `sharp`, re-encoding it is a one-liner
-worth taking.
+a visitor anything: the file is fetched by crawlers and never by the page.
+`sharp` is a devDependency now, so squeezing the PNG is a one-liner worth
+taking one day — [03](plans/03-weight-and-wiring.md) left it alone because its
+job was what the page costs, and this file is not on the page.
 
 The touch icon inherits `favicon.svg`'s **placeholder** status — when the real
 visual identity lands, both change together.
@@ -138,21 +159,23 @@ centre card of the Content fan). They look soft on any reasonably dense display.
 The handoff flagged these as low-res placeholders with hi-res versions to
 follow.
 
-`fiat-front.png` and `portrait-cutout.png` are also the two largest files on
-the site at ~1.2 MB each. The portrait needs PNG for its alpha channel; the
-FIAT shot is a photograph stored as PNG for no reason and should become a JPEG
-or WebP when it is replaced.
+`fiat-front.png` and the two portraits are still the largest files in the
+repository at ~1.2 MB each, but no current browser fetches them: their AVIFs
+are 48–78 KB. The portraits are PNG legitimately, for their alpha. The FIAT
+shot is a photograph stored as PNG for no reason; its replacement can be a
+JPEG, which means updating the path in `data/simToReal.ts` and
+`data/contentStats.ts`.
 
-**When hi-res versions arrive:** keep the same filenames and the same crops.
-Nothing in the code needs to change. A general pass to WebP/AVIF with
-`<picture>` fallbacks is worth doing at the same time — the pattern is already
-established by the TCH logo.
+**When hi-res versions arrive:** keep the same filenames and the same crops,
+then run `pnpm images`. That step is not optional: the old encodes beside the
+file would otherwise keep winning the `<picture>`, and the new photo would
+never be seen. `pnpm test` fails until the encodes are rewritten.
 
 ### Logo provenance
 
 The gelbura source file supplied in the handoff
 (`316821634_…_n.jpg`) is a 200 × 200 JPEG on a **white background** and is
-unusable on a dark page. What ships is `gelbura_white.png`, a derived
+unusable on a dark page. What ships is `gelbura.png`, a derived white-on-
 transparent crop. In the Partners grid every logo is forced to pure white with
 `brightness-0 invert`, so colour is discarded there anyway; the marquee is where
 a proper vector would show. A real SVG would be an improvement if the sponsor

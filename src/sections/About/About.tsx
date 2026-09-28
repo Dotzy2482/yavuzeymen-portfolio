@@ -11,7 +11,7 @@
 import { Fragment } from 'react';
 
 import { cn } from '@/lib/cn';
-import { Divider, SectionHeading, StatValue } from '@/components/ui';
+import { Divider, Picture, SectionHeading, StatValue } from '@/components/ui';
 import { profile } from '@/data';
 import type { SectionProps } from '@/types';
 
@@ -55,7 +55,7 @@ export function About({ id = 'about', className }: SectionProps) {
           ))}
         </div>
         <div className="relative order-1 md:order-2">
-          <img
+          <Picture
             src="/images/portraits/studio-seated.jpg"
             alt="Yavuz Eymen — stüdyo portresi"
             loading="lazy"

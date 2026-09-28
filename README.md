@@ -39,19 +39,20 @@ names only, never values.
 
 ## Scripts
 
-| Script               | What it does                        |
-| -------------------- | ----------------------------------- |
-| `pnpm dev`           | Vite dev server                     |
-| `pnpm build`         | Typecheck, then production build    |
-| `pnpm preview`       | Serve the production build locally  |
-| `pnpm typecheck`     | `tsc -b`, no emit                   |
-| `pnpm lint`          | ESLint                              |
-| `pnpm lint:fix`      | ESLint with `--fix`                 |
-| `pnpm format`        | Prettier, write                     |
-| `pnpm format:check`  | Prettier, check only (what CI runs) |
-| `pnpm test`          | Vitest, single run                  |
-| `pnpm test:watch`    | Vitest, watch mode                  |
-| `pnpm test:coverage` | Vitest with coverage                |
+| Script               | What it does                                                                            |
+| -------------------- | --------------------------------------------------------------------------------------- |
+| `pnpm dev`           | Vite dev server                                                                         |
+| `pnpm build`         | Typecheck, then production build                                                        |
+| `pnpm preview`       | Serve the production build locally                                                      |
+| `pnpm typecheck`     | `tsc -b`, no emit                                                                       |
+| `pnpm lint`          | ESLint                                                                                  |
+| `pnpm lint:fix`      | ESLint with `--fix`                                                                     |
+| `pnpm format`        | Prettier, write                                                                         |
+| `pnpm format:check`  | Prettier, check only (what CI runs)                                                     |
+| `pnpm test`          | Vitest, single run                                                                      |
+| `pnpm test:watch`    | Vitest, watch mode                                                                      |
+| `pnpm test:coverage` | Vitest with coverage                                                                    |
+| `pnpm images`        | Encode new or changed rasters under `public/images/` to AVIF + WebP; `--check` verifies |
 
 ---
 

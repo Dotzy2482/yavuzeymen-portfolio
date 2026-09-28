@@ -8,6 +8,8 @@
 
 import { cn } from '@/lib/cn';
 
+import { Picture } from './Picture';
+
 export interface PhotoCardProps {
   src: string;
   alt?: string;
@@ -35,7 +37,7 @@ export function PhotoCard({
         className,
       )}
     >
-      <img
+      <Picture
         src={src}
         alt={alt}
         loading="lazy"
