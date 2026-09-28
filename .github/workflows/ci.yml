@@ -51,6 +51,12 @@ jobs:
       - name: Test
         run: pnpm test
 
+      # Offline and milliseconds: regenerates the circuit outlines from the
+      # committed OSM cache and fails if trackPaths.ts has drifted from it —
+      # the first hand-patched coordinate is caught here, not in review.
+      - name: Circuit outlines match their inputs
+        run: node docs/assets/generate-track-paths.mjs --check
+
       - name: Build
         run: pnpm build
 
