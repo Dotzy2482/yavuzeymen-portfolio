@@ -119,4 +119,6 @@ See [SECURITY.md](SECURITY.md) to report a vulnerability.
 
 ## Licence
 
-[MIT](LICENSE)
+[MIT](LICENSE), except the self-hosted typefaces in `public/fonts/` — Archivo,
+Instrument Serif and Martian Mono — which are under the SIL Open Font License
+1.1; see [public/fonts/OFL.txt](public/fonts/OFL.txt).
