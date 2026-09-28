@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { REDUCED_MOTION_QUERY } from '@/lib/constants';
 import { preferReducedMotion } from '@/test/reducedMotion';
 
 import { usePlayback } from './usePlayback';
@@ -35,6 +36,41 @@ describe('usePlayback', () => {
     act(() => result.current.toggle());
 
     expect(result.current.isPlaying).toBe(true);
+  });
+
+  it('stops a running lap when reduced motion is switched on mid-visit', () => {
+    let reduce = false;
+    const listeners = new Set<EventListenerOrEventListenerObject>();
+    vi.stubGlobal('matchMedia', (query: string): MediaQueryList => ({
+      matches: query === REDUCED_MOTION_QUERY && reduce,
+      media: query,
+      onchange: null,
+      addEventListener: (_type: string, listener: EventListenerOrEventListenerObject) =>
+        listeners.add(listener),
+      removeEventListener: (_type: string, listener: EventListenerOrEventListenerObject) =>
+        listeners.delete(listener),
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    }));
+    const flip = (next: boolean) =>
+      act(() => {
+        reduce = next;
+        const event = new Event('change');
+        for (const listener of listeners) {
+          if (typeof listener === 'function') listener(event);
+          else listener.handleEvent(event);
+        }
+      });
+    const { result } = renderHook(() => usePlayback());
+    expect(result.current.isPlaying).toBe(true);
+
+    flip(true);
+    expect(result.current.isPlaying).toBe(false);
+
+    // Switching it back off restarts nothing: that is the visitor's call.
+    flip(false);
+    expect(result.current.isPlaying).toBe(false);
   });
 
   it('pauses and resumes on toggle', () => {
