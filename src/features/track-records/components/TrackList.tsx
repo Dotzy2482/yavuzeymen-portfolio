@@ -53,7 +53,7 @@ export function TrackList({ tracks, selectedTrackId, onSelect, className }: Trac
               aria-current={isActive ? 'true' : undefined}
               onClick={() => onSelect(track.id)}
               className={cn(
-                'flex min-h-11 shrink-0 cursor-pointer items-center gap-2.5 border px-4 py-3 transition-colors duration-[250ms]',
+                'duration-base flex min-h-11 shrink-0 cursor-pointer items-center gap-2.5 border px-4 py-3 transition-colors',
                 isActive
                   ? 'border-accent-primary bg-accent-primary/10'
                   : 'border-hairline-strong bg-surface',

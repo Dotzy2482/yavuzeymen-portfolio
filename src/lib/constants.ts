@@ -53,13 +53,18 @@ export type BreakpointKey = keyof typeof BREAKPOINTS;
 export const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
 /**
- * Shared motion timing, in seconds (motion/framer-motion units).
- * TODO: reconcile with the CSS duration tokens in styles/tokens.css.
+ * The duration scale, in seconds — motion's unit — for JavaScript animation.
+ *
+ * `--duration-fast/base/slow` in styles/tokens.css are the source of truth, and
+ * CSS reads them directly through the `duration-fast/base/slow` utilities.
+ * motion needs plain numbers at render time and cannot read a custom property,
+ * so this is a copy — held to the tokens by constants.test.ts, which parses
+ * tokens.css and fails if the two ever disagree. Change the token, then this.
  */
 export const DURATION = {
   fast: 0.15,
-  base: 0.32,
-  slow: 0.7,
+  base: 0.25,
+  slow: 0.4,
 } as const;
 
 /** Default easing curve for reveal-style animations. */

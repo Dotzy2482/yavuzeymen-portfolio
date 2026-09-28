@@ -17,7 +17,7 @@ export interface PlaybackControlsProps {
 }
 
 const BUTTON_CLASSES =
-  'flex-1 cursor-pointer border border-border-btn bg-transparent px-0 py-[13px] font-mono text-[11px] tracking-chip text-text uppercase transition-colors duration-[250ms] hover:border-accent-primary hover:text-accent-primary md:flex-none md:px-[18px] md:py-2.5 md:text-[10px]';
+  'flex-1 cursor-pointer border border-border-btn bg-transparent px-0 py-[13px] font-mono text-[11px] tracking-chip text-text uppercase transition-colors duration-base hover:border-accent-primary hover:text-accent-primary md:flex-none md:px-[18px] md:py-2.5 md:text-[10px]';
 
 export function PlaybackControls({
   isPlaying,

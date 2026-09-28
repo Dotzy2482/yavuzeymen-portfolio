@@ -26,7 +26,7 @@ export function TrackListItem({ track, index, isActive, onSelect }: TrackListIte
       aria-current={isActive ? 'true' : undefined}
       onClick={() => onSelect(track.id)}
       className={cn(
-        'border-track-row-line flex w-full cursor-pointer items-center gap-3 border-0 border-b px-4 py-5 text-left transition-[background,box-shadow] duration-[250ms]',
+        'border-track-row-line duration-base flex w-full cursor-pointer items-center gap-3 border-0 border-b px-4 py-5 text-left transition-[background,box-shadow]',
         'hover:bg-track-row-hover hover:shadow-[inset_3px_0_0_var(--accent-primary)]',
         isActive
           ? 'bg-accent-primary-dim shadow-[inset_3px_0_0_var(--accent-primary)]'

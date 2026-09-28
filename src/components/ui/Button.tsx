@@ -68,7 +68,7 @@ export type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps;
 export function Button(props: ButtonProps) {
   const { children, variant = 'primary', size = 'md', className } = props;
   const classes = cn(
-    'inline-flex cursor-pointer items-center gap-3 uppercase transition-colors duration-[250ms] whitespace-nowrap',
+    'inline-flex cursor-pointer items-center gap-3 uppercase transition-colors duration-base whitespace-nowrap',
     VARIANT_CLASSES[variant],
     SIZE_CLASSES[variant][size],
     className,

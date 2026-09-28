@@ -195,4 +195,4 @@ two lines; `APAC` uses 296.
 - [x] 4. Fonts self-hosted, axis range verified
 - [x] 5. Mount Panorama's region corrected
 - [x] 6. `Divider.animated` deleted
-- [ ] 7. `DURATION` reconciled with the duration tokens
+- [x] 7. `DURATION` reconciled with the duration tokens

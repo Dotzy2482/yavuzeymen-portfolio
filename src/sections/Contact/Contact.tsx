@@ -122,7 +122,7 @@ function ContactBody({ progress }: { progress: MotionValue<number> | null }) {
         {hasEmail ? profile.email : 'Business Enquiries'} →
       </Button>
       <div className="mt-8 flex gap-6 md:mt-11 md:gap-9">
-        <SocialLinks linkClassName="tracking-mono-lg text-text-secondary hover:text-accent-primary py-2.5 font-mono text-[10px] uppercase transition-colors duration-[250ms] md:py-0 md:text-[11px]" />
+        <SocialLinks linkClassName="tracking-mono-lg text-text-secondary hover:text-accent-primary py-2.5 font-mono text-[10px] uppercase transition-colors duration-base md:py-0 md:text-[11px]" />
       </div>
 
       {/* Footer */}
