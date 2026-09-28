@@ -1,0 +1,57 @@
+{
+  "hero/portrait-cutout.png": {
+    "sha256": "3700a8fa541875e7bd72a1408fbf3f469fb20d4e43b4efb86e2fce293880dcad",
+    "profile": "photo",
+    "settings": "022d6b654e61"
+  },
+  "hero/portrait-helmet.png": {
+    "sha256": "f1e3737f0f1e30e30dcbad940a3a5717f95a5fa5c822be36522a244ce483c567",
+    "profile": "photo",
+    "settings": "022d6b654e61"
+  },
+  "partners/gelbura.png": {
+    "sha256": "e257cc0193958139ac0a081bfc8fe6253b6396ce0cd810e557efb290e8229d1c",
+    "profile": "graphic",
+    "settings": "efbd46b45136"
+  },
+  "partners/spardox.png": {
+    "sha256": "505e45c99fb6f1957f2584ef28d2f050a3391caa02f1945b5281b1e6528380e8",
+    "profile": "graphic",
+    "settings": "efbd46b45136"
+  },
+  "partners/tch.png": {
+    "sha256": "d2ae779d700577240024fd9dab903ef05e84364101730b5b8746bb69463e109b",
+    "profile": "graphic",
+    "settings": "efbd46b45136"
+  },
+  "portraits/studio-seated.jpg": {
+    "sha256": "941fd4d643e020321d41941df30830522d939efbe5fd0a89f7f1d73337c2c85f",
+    "profile": "jpeg",
+    "settings": "f1ec3a8fb620"
+  },
+  "simtoreal/fiat-egea.jpg": {
+    "sha256": "983241f8c2adf312eb1389a2bd72a196a0550e03b7f9524b831fc50e4817ffb9",
+    "profile": "jpeg",
+    "settings": "f1ec3a8fb620"
+  },
+  "simtoreal/fiat-front.png": {
+    "sha256": "d78bd351700ccce1572a0032f8eb4545e8536547bdd8053c0b74d6e3faae6dcb",
+    "profile": "photo",
+    "settings": "022d6b654e61"
+  },
+  "simtoreal/paddock.jpg": {
+    "sha256": "7464f7a56d3b0dc19f87a85cee04afd128ed9071993ceac0c7c603b91eb7c12e",
+    "profile": "jpeg",
+    "settings": "f1ec3a8fb620"
+  },
+  "simtoreal/pit-pass.jpg": {
+    "sha256": "c1794bf9f9adaf5647220422ea8b75ac381f2f164800a3f8cb75b22fb4fd68f3",
+    "profile": "jpeg",
+    "settings": "f1ec3a8fb620"
+  },
+  "simtoreal/rig.png": {
+    "sha256": "0f424591431781b85800532b96018c4e5487e7726646d76e4cb8bf7455a1c07e",
+    "profile": "photo",
+    "settings": "022d6b654e61"
+  }
+}

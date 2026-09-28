@@ -31,6 +31,7 @@ import { useRef } from 'react';
 import type { MotionValue } from 'motion/react';
 
 import { cn } from '@/lib/cn';
+import { Picture } from '@/components/ui';
 import { useRafLoop, usePrefersReducedMotion } from '@/hooks';
 
 import { FACE_PHOTO, HELMET_PHOTO, HELMET_REVEAL, PORTRAIT_H, PORTRAIT_W } from './helmetReveal';
@@ -104,7 +105,7 @@ export function HeroPortrait({ mode, progress, stageRef }: HeroPortraitProps) {
 
   return (
     <div className="absolute inset-0">
-      <img
+      <Picture
         ref={faceRef}
         src={FACE_PHOTO}
         alt="Yavuz Eymen"
@@ -123,7 +124,7 @@ export function HeroPortrait({ mode, progress, stageRef }: HeroPortraitProps) {
         Loaded at low priority so it never races the layer underneath it, which
         is the one that has to be on screen at first paint.
       */}
-      <img
+      <Picture
         ref={helmetRef}
         src={HELMET_PHOTO}
         alt=""

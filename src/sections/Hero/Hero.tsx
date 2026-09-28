@@ -18,7 +18,7 @@ import { cn } from '@/lib/cn';
 import { BREAKPOINTS } from '@/lib/constants';
 import { useMediaQuery } from '@/hooks';
 import { Marquee, Pinned } from '@/components/motion';
-import { MonoLabel } from '@/components/ui';
+import { MonoLabel, Picture } from '@/components/ui';
 import { partners, profile } from '@/data';
 import type { SectionProps } from '@/types';
 
@@ -32,31 +32,17 @@ interface PartnerLogoProps {
 function PartnerLogo({ heightKey }: PartnerLogoProps) {
   return (
     <>
-      {partners.map((partner) =>
-        partner.logoFallbackSrc ? (
-          <picture key={partner.id}>
-            <source srcSet={partner.logoSrc} type="image/avif" />
-            <img
-              src={partner.logoFallbackSrc}
-              alt={partner.logoAlt}
-              width={partner.intrinsicWidth}
-              height={partner.intrinsicHeight}
-              style={{ height: partner[heightKey] }}
-              className={cn('w-auto', partner.marqueeClass)}
-            />
-          </picture>
-        ) : (
-          <img
-            key={partner.id}
-            src={partner.logoSrc}
-            alt={partner.logoAlt}
-            width={partner.intrinsicWidth}
-            height={partner.intrinsicHeight}
-            style={{ height: partner[heightKey] }}
-            className={cn('w-auto', partner.marqueeClass)}
-          />
-        ),
-      )}
+      {partners.map((partner) => (
+        <Picture
+          key={partner.id}
+          src={partner.logoSrc}
+          alt={partner.logoAlt}
+          width={partner.intrinsicWidth}
+          height={partner.intrinsicHeight}
+          style={{ height: partner[heightKey] }}
+          className={cn('w-auto', partner.marqueeClass)}
+        />
+      ))}
     </>
   );
 }

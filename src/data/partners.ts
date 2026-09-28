@@ -17,10 +17,11 @@
 export interface Partner {
   id: string;
   name: string;
-  /** Path under /public. */
+  /**
+   * Path under /public. For a raster, the original: <Picture> serves the AVIF
+   * and WebP that `pnpm images` writes beside it, and falls back to this.
+   */
   logoSrc: string;
-  /** PNG fallback for non-AVIF browsers; rendered via <picture>. */
-  logoFallbackSrc?: string;
   /** Alt text — required, never decorative. */
   logoAlt: string;
   /**
@@ -32,8 +33,8 @@ export interface Partner {
    * copies it needs to cover the bar, and an image with no intrinsic size
    * measures zero. They also stop the strip shifting as the logos land.
    *
-   * For the `<picture>` entries these must match the AVIF and the PNG, which
-   * are the same size today (tch: 256×75 both).
+   * They describe the AVIF and WebP encodes too, which `pnpm images` writes at
+   * the original's exact size and a test holds there.
    */
   intrinsicWidth: number;
   intrinsicHeight: number;
@@ -82,8 +83,7 @@ export const partners: Partner[] = [
   {
     id: 'tch',
     name: 'Team Curve Hunters',
-    logoSrc: '/images/partners/tch.avif',
-    logoFallbackSrc: '/images/partners/tch.png',
+    logoSrc: '/images/partners/tch.png',
     logoAlt: 'Team Curve Hunters',
     intrinsicWidth: 256,
     intrinsicHeight: 75,

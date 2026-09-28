@@ -24,7 +24,7 @@ import { useRef } from 'react';
 import { useScroll, type MotionValue } from 'motion/react';
 
 import { cn } from '@/lib/cn';
-import { SectionHeading } from '@/components/ui';
+import { Picture, SectionHeading } from '@/components/ui';
 import { StretchScrub } from '@/components/motion';
 import { setupItems } from '@/data';
 import { usePrefersReducedMotion } from '@/hooks';
@@ -85,7 +85,7 @@ export function Setup({ id = 'setup', className }: SectionProps) {
       </StretchScrub>
       <div className="mt-7 grid items-start gap-7 md:mt-[72px] md:grid-cols-[1.2fr_1fr] md:gap-20">
         <SpecList />
-        <img
+        <Picture
           src="/images/simtoreal/rig.png"
           alt="Sim rig"
           loading="lazy"

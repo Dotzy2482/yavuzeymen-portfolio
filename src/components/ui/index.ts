@@ -18,6 +18,9 @@ export type { DividerProps } from './Divider';
 export { MonoLabel } from './MonoLabel';
 export type { MonoLabelProps, MonoLabelSize, MonoLabelTracking, MonoLabelTone } from './MonoLabel';
 
+export { Picture } from './Picture';
+export type { PictureProps } from './Picture';
+
 export { PhotoCard } from './PhotoCard';
 export type { PhotoCardProps } from './PhotoCard';
 

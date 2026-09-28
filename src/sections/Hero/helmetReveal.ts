@@ -16,13 +16,20 @@
  * `HeroPortrait.tsx`.
  */
 
+/**
+ * The originals. Both are PNG for their alpha; <Picture> serves the AVIF or
+ * WebP encodes `pnpm images` writes beside them, which keep the alpha and the
+ * pixel size.
+ */
 export const FACE_PHOTO = '/images/hero/portrait-cutout.png';
 export const HELMET_PHOTO = '/images/hero/portrait-helmet.png';
 
 /**
  * Intrinsic size of both photos, so each layer reserves its box before load.
  * They must stay identical: the reveal assumes the two frames are the same
- * crop, and any divergence shows up as the body jumping under the circle.
+ * crop, and any divergence shows up as the body jumping under the circle. The
+ * encodes share it — the image test fails if either is ever written at any
+ * other size.
  */
 export const PORTRAIT_W = 1323;
 export const PORTRAIT_H = 1189;
