@@ -51,6 +51,9 @@ export interface Track {
   path: string;
 }
 
+/** The part of a `Track` the geometry generator owns. */
+export type TrackGeometry = Pick<Track, 'path'>;
+
 /** A point on the circuit plus the heading at that point, for the car marker. */
 export interface PathPoint {
   x: number;
