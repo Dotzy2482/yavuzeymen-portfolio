@@ -1,0 +1,220 @@
+{
+  "about": "Hand-authored inputs for generate-track-paths.mjs: what the algorithm cannot infer. osm pins the OSM ids to fetch; members of a relation with role \"\" or \"outer\" are tag-filtered, ways pinned directly are taken as authored. excludeWays removes ways the walk must never use, each with its reason. startLine is the timing line (where OSM maps start and finish separately, the finish, which is the line a lap is measured across) and the compass heading of travel across it, in degrees clockwise from north, read off the start edge and cross-checked against oneway tagging wherever the way carries it. simplify overrides the defaults per circuit.",
+  "defaults": {
+    "toleranceM": 1,
+    "maxPoints": 350,
+    "minPoints": 80,
+    "margin": 48
+  },
+  "circuits": [
+    {
+      "id": "NUR",
+      "layout": "Grand Prix circuit (GP-Strecke) with the Mercedes-Arena",
+      "osm": {
+        "relations": [38567],
+        "ways": []
+      },
+      "excludeWays": [],
+      "startLine": {
+        "lat": 50.3339987,
+        "lon": 6.9452952,
+        "heading": 224,
+        "source": "OSM node 3099078401, raceway=start-finish"
+      },
+      "simplify": {}
+    },
+    {
+      "id": "ZAN",
+      "layout": "Grand Prix circuit",
+      "osm": {
+        "relations": [13545573],
+        "ways": []
+      },
+      "excludeWays": [],
+      "startLine": {
+        "lat": 52.3889948,
+        "lon": 4.5408762,
+        "heading": 22,
+        "source": "OSM node 12148116710, raceway=finish"
+      },
+      "simplify": {}
+    },
+    {
+      "id": "IMO",
+      "layout": "Grand Prix circuit",
+      "osm": {
+        "relations": [9291096],
+        "ways": []
+      },
+      "excludeWays": [],
+      "startLine": {
+        "lat": 44.3440478,
+        "lon": 11.7166872,
+        "heading": 271,
+        "source": "OSM node 1872449434, raceway=finish"
+      },
+      "simplify": {}
+    },
+    {
+      "id": "SIL",
+      "layout": "Grand Prix circuit (Arena)",
+      "osm": {
+        "relations": [51160],
+        "ways": []
+      },
+      "excludeWays": [],
+      "startLine": {
+        "lat": 52.0682609,
+        "lon": -1.0234867,
+        "heading": 37,
+        "source": "OSM node 13036050131, raceway=finish"
+      },
+      "simplify": {}
+    },
+    {
+      "id": "RBR",
+      "layout": "Grand Prix circuit",
+      "osm": {
+        "relations": [5309181],
+        "ways": []
+      },
+      "excludeWays": [
+        {
+          "id": 823820476,
+          "why": "MotoGP long-lap penalty loop outside Turn 1; the walk prefers it (7° against 32°) because it leaves the straight more gently than the real corner"
+        },
+        {
+          "id": 1077423714,
+          "why": "MotoGP chicane on the climb to Remus, not part of the Grand Prix circuit"
+        },
+        {
+          "id": 289111668,
+          "why": "Pit lane (Boxenstraße), untagged as one; the walk already declines it, but it should never be a candidate"
+        }
+      ],
+      "startLine": {
+        "lat": 47.2202964,
+        "lon": 14.7667292,
+        "heading": 255,
+        "source": "OSM node 13826152422, name=Finish Line"
+      },
+      "simplify": {}
+    },
+    {
+      "id": "COT",
+      "layout": "Full circuit",
+      "osm": {
+        "relations": [6537729],
+        "ways": []
+      },
+      "excludeWays": [],
+      "startLine": {
+        "lat": 30.1335372,
+        "lon": -97.64225,
+        "heading": 128,
+        "source": "OSM node 13826373967, name=Finish Line"
+      },
+      "simplify": {}
+    },
+    {
+      "id": "WGL",
+      "layout": "Grand Prix course, with the Boot",
+      "osm": {
+        "relations": [4872324],
+        "ways": []
+      },
+      "excludeWays": [],
+      "startLine": {
+        "lat": 42.341365,
+        "lon": -76.9288,
+        "heading": 4,
+        "source": "Authored: no start/finish node in OSM. On the front straight opposite the timing tower, ~250 m before Turn 1 (The 90)."
+      },
+      "simplify": {}
+    },
+    {
+      "id": "RAT",
+      "layout": "Full course",
+      "osm": {
+        "relations": [],
+        "ways": [9292566, 1360423184, 1360423185]
+      },
+      "excludeWays": [],
+      "startLine": {
+        "lat": 34.14967,
+        "lon": -83.812882,
+        "heading": 123,
+        "source": "Authored: no start/finish node in OSM. Midway down the front straight between Turn 12 and Turn 1, beside the pit lane."
+      },
+      "simplify": {}
+    },
+    {
+      "id": "LAG",
+      "layout": "Full course",
+      "osm": {
+        "relations": [21195763],
+        "ways": []
+      },
+      "excludeWays": [],
+      "startLine": {
+        "lat": 36.5864582,
+        "lon": -121.7566371,
+        "heading": 214,
+        "source": "OSM node 8866453726, description=Start/Finish"
+      },
+      "simplify": {}
+    },
+    {
+      "id": "INT",
+      "layout": "Grand Prix circuit",
+      "osm": {
+        "relations": [6781071],
+        "ways": []
+      },
+      "excludeWays": [],
+      "startLine": {
+        "lat": -23.7032239,
+        "lon": -46.7001274,
+        "heading": 166,
+        "source": "OSM node 13826424126, name=Finish Line"
+      },
+      "simplify": {}
+    },
+    {
+      "id": "BAT",
+      "layout": "Mount Panorama Circuit",
+      "osm": {
+        "relations": [],
+        "ways": [
+          306192512, 1115461019, 414156370, 30111085, 30111102, 306192500, 306192503, 414156376,
+          306192504, 414156366, 306192501, 306192502, 30111107, 306192513, 306192514, 306192511,
+          414156373
+        ]
+      },
+      "excludeWays": [],
+      "startLine": {
+        "lat": -33.4394894,
+        "lon": 149.5598428,
+        "heading": 279,
+        "source": "OSM node 4438410439, name=Finish Line"
+      },
+      "simplify": {}
+    },
+    {
+      "id": "SUZ",
+      "layout": "Full Grand Prix course (figure-eight)",
+      "osm": {
+        "relations": [284570],
+        "ways": []
+      },
+      "excludeWays": [],
+      "startLine": {
+        "lat": 34.843131,
+        "lon": 136.540504,
+        "heading": 141,
+        "source": "Authored: no start/finish node in OSM. On the main straight opposite the control tower, just past halfway from the final chicane to Turn 1."
+      },
+      "simplify": {}
+    }
+  ]
+}
