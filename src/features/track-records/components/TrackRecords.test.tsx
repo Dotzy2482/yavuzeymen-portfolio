@@ -93,10 +93,9 @@ function panelTrack(): Track {
   return track;
 }
 
-const pauseButton = () => screen.getByRole('button', { name: 'Animasyonu duraklat' });
-const playButton = () => screen.getByRole('button', { name: 'Animasyonu oynat' });
-const speedButton = (speed: 1 | 2) =>
-  screen.getByRole('button', { name: `Hız: ${speed}×. Değiştir.` });
+const pauseButton = () => screen.getByRole('button', { name: 'Pause' });
+const playButton = () => screen.getByRole('button', { name: 'Play' });
+const speedButton = (speed: 1 | 2) => screen.getByRole('button', { name: `Speed ${speed}X` });
 
 /** The chronometer, in milliseconds. */
 function reading(): number {
@@ -376,7 +375,7 @@ describe('TrackRecords', () => {
 
       expect(pauseButton()).toHaveTextContent('Pause');
       expect(speedButton(1)).toHaveTextContent('1X');
-      expect(screen.queryByRole('button', { name: 'Animasyonu oynat' })).toBeNull();
+      expect(screen.queryByRole('button', { name: 'Play' })).toBeNull();
     });
 
     it('offers Play under prefers-reduced-motion', () => {
