@@ -40,7 +40,8 @@
 
 - Full module: region tabs, track list and mobile chips, animated panel,
   chronometer, sector bars, transport controls, driver plate.
-- Circuit data generated from the handoff rather than transcribed.
+- Circuit data generated from the handoff rather than transcribed; the
+  outlines have since been replaced by real geometry (workstream 04, below).
 - 34 unit tests covering lap-time round-tripping, dash geometry, sector fill
   and path integrity.
 
@@ -99,34 +100,48 @@
   tokens.css, read by CSS through `duration-*` utilities and mirrored by
   `DURATION` under a test.
 
+**Real circuit geometry** — [workstream 04](plans/04-real-circuit-geometry.md)
+
+- The twelve outlines are the real circuits, drawn from OpenStreetMap —
+  Suzuka's figure-eight, Mount Panorama's mountain, Watkins Glen's Boot — each
+  running its real direction of travel and starting on its real start/finish
+  line. `docs/assets/generate-track-paths.mjs` walks the OSM ways pinned in
+  `circuits.json` into rings from a committed cache, `circuit-rings.json`, so no
+  build touches Overpass; `--check` asserts the generated `trackPaths.ts`
+  matches its inputs. Every measured ring agrees with the length the panel
+  shows to within 1.5%.
+- The start/finish question is answered by rotating each ring at generation
+  time, not by a `startFinishOffset` field, so the lap loop did not change.
+- The map credits OpenStreetMap on the page, as the ODbL requires.
+
+**Beyond the plans**
+
+- The native page scrollbar is gone. `sections/Nav/ScrollRail` draws a lap rail
+  down the right edge instead — a hairline track, a Signal Cyan fill, the Track
+  Records car dot as its head and a notch per section — that can be dragged and
+  clicked with a mouse, and is a two-pixel progress line on touch screens.
+- Component and hook tests for the interactive parts of Track Records:
+  selection, transport, the path-point cache and the lap loop itself on a
+  hand-cranked frame clock. They found that the chronometer never showed the
+  personal best — the lap wrapped with `% 1`, so no frame was drawn at the line
+  — which is fixed.
+- The transport buttons are named by the words they show (WCAG 2.5.3), and a
+  running lap stops if reduced motion is switched on mid-visit.
+- Vitest 4, with the coverage plugin moved alongside it.
+
 ## Planned work
 
-One workstream, with a full plan in [plans/](plans/). The plan carries the
-reasoning; this list is only the map. Read the plan before starting it.
-
-Numbered to match the plan filenames, so `01`–`03` are missing rather than
-renumbered.
-
-4. **[Real circuit geometry](plans/04-real-circuit-geometry.md)** — the
-   OpenStreetMap pipeline. The outlines shipping today are approximate shapes:
-   Suzuka has no figure-eight, Mount Panorama has no mountain climb, on the
-   section the whole site is built around. The largest outstanding piece of
-   work. Its prerequisite, 03, has landed: the chunk its path data will grow is
-   already lazy, and `TrackRegion` is settled.
-
-Deliberately left open inside 4, to be decided once real geometry exists: a
-per-track `displayDurationMs` (the circuits will differ a lot in length, and the
-global 12 s would make a long one read wrong), and real sector splits (the bars
-are even thirds of path length today).
+None. All four workstreams in [plans/](plans/) have landed; their files stay for
+the reasoning they record. What is left is either blocked on material from
+Yavuz (below) or deliberately unscheduled.
 
 ## Blocked on material we do not have
 
-No plan unblocks these — each is waiting on a person or a file, and the
-workstream above does not depend on any of them.
+No plan unblocks these — each is waiting on a person or a file.
 
 - **Real lap times, lengths and corner counts** from the iRacing profile,
   replacing the handoff's placeholder numbers. Cheap, high-value, and it makes
-  the section honest even before the geometry lands.
+  the section's numbers as true as its geometry.
 - **Setup hardware list** — five strings from Yavuz; flip each row's
   `placeholder` to `false` as it is filled.
 - **Contact environment values** — e-mail and the three social URLs in
@@ -141,9 +156,15 @@ workstream above does not depend on any of them.
 
 ## Unscheduled
 
-- **Component tests for the interactive parts.** Selection behaviour and
-  playback intent are testable without a frame loop; that is exactly why
-  `usePlayback` and `useLapAnimation` are separate hooks.
+- **A per-track `displayDurationMs`.** Left open by workstream 04 on purpose.
+  With real geometry the circuits run from 3.6 to 6.2 km, and every lap still
+  takes 12 s on screen, so a long lap reads no longer than a short one. It
+  changes the timing invariant [TRACK_RECORDS.md](TRACK_RECORDS.md) is built
+  around, so it is its own change with its own doc update.
+- **Real sector splits.** The bars are even thirds of path length. The
+  mechanism is the start line's — pin two more coordinates beside `startLine`
+  in `docs/assets/circuits.json` and emit their fractions — but it changes
+  `getSectorFill` and the three unit tests that hardcode thirds.
 - **Analytics**, if it is ever wanted — privacy-preserving and cookieless, or
   not at all.
 

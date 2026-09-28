@@ -333,8 +333,8 @@ string` row in the field table — the actual field is `country: CountryCode`.
 - [x] 2. `generate-track-paths.mjs` written
 - [x] 3. `--fetch` run, `circuit-rings.json` committed
 - [x] 4. `trackPaths.ts` generated
-- [ ] 5. `tracks.ts` + `types.ts` updated
+- [x] 5. `tracks.ts` + `types.ts` updated
 - [ ] 6. All twelve verified against satellite imagery, direction included
-- [ ] 7. OSM attribution visible on the page
+- [x] 7. OSM attribution visible on the page
 - [ ] 8. `--check` wired into CI
-- [ ] 9. `CLAUDE.md`, `TRACK_RECORDS.md`, `ROADMAP.md` updated
+- [x] 9. `CLAUDE.md`, `TRACK_RECORDS.md`, `ROADMAP.md` updated

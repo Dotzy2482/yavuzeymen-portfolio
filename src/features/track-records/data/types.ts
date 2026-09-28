@@ -44,9 +44,15 @@ export interface Track {
   country: CountryCode;
 
   /**
-   * The `d` attribute of the circuit outline: one continuous closed subpath,
-   * authored in the shared 1000×620 viewBox. The car marker is positioned
-   * with getPointAtLength(), which needs a single path to walk along.
+   * The `d` attribute of the circuit outline: one continuous closed subpath
+   * in the shared 1000×620 viewBox. The car marker is positioned with
+   * getPointAtLength(), which needs a single path to walk along.
+   *
+   * Real geometry, derived from OpenStreetMap (© OpenStreetMap contributors,
+   * ODbL) by docs/assets/generate-track-paths.mjs into `trackPaths.ts`: a
+   * north-up polyline that runs in the circuit's direction of travel and is
+   * rotated so distance 0 *is* the start/finish line. That rotation is why
+   * nothing downstream needs a start-line offset.
    */
   path: string;
 }

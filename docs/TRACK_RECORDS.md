@@ -58,16 +58,16 @@ Defined in `features/track-records/data/types.ts`. Data lives in
 `features/track-records/data/tracks.ts` — 12 circuits: 5 Europe, 5 America,
 2 Asia-Pacific (`APAC`: Suzuka and Mount Panorama).
 
-| Field     | Type          | Unit / format                           | Example                                                            |
-| --------- | ------------- | --------------------------------------- | ------------------------------------------------------------------ |
-| `id`      | `string`      | 3-letter code, unique                   | `'NUR'`                                                            |
-| `region`  | `TrackRegion` | `'EUROPE' \| 'AMERICA' \| 'APAC'`       | `'EUROPE'`                                                         |
-| `name`    | `string`      | Display name                            | `'Nürburgring GP'`                                                 |
-| `lap`     | `string`      | **`M:SS.mmm`** — a string, not a number | `'1:54.318'`                                                       |
-| `length`  | `string`      | Unit baked into the string              | `'5.148 KM'`                                                       |
-| `corners` | `number`      | Count                                   | `15`                                                               |
-| `flag`    | `string`      | A CSS `background` value, not an image  | `'linear-gradient(180deg,#000 0 33%,#DD0000 33% 66%,#FFCE00 66%)'` |
-| `path`    | `string`      | SVG `d`, authored in a 1000×620 viewBox | `'M150 500 L640 500 C700 500 … 150 500 Z'`                         |
+| Field     | Type          | Unit / format                                                     | Example                          |
+| --------- | ------------- | ----------------------------------------------------------------- | -------------------------------- |
+| `id`      | `string`      | 3-letter code, unique                                             | `'NUR'`                          |
+| `region`  | `TrackRegion` | `'EUROPE' \| 'AMERICA' \| 'APAC'`                                 | `'EUROPE'`                       |
+| `name`    | `string`      | Display name                                                      | `'Nürburgring GP'`               |
+| `lap`     | `string`      | **`M:SS.mmm`** — a string, not a number                           | `'1:54.318'`                     |
+| `length`  | `string`      | Unit baked into the string                                        | `'5.148 KM'`                     |
+| `corners` | `number`      | Count                                                             | `15`                             |
+| `country` | `CountryCode` | Key into `COUNTRIES` in `flags.ts`                                | `'DE'`                           |
+| `path`    | `string`      | SVG `d` in the 1000×620 viewBox, from `trackPaths.ts` (generated) | `'M578.6 189.4L533.7 235.3 … Z'` |
 
 Two of these are worth explaining:
 
@@ -78,10 +78,18 @@ on every read and would let the list and the panel drift apart. A test asserts
 all 12 values round-trip through `parseLapTime` → `formatLapTime` unchanged,
 which is exactly the guarantee that keeps the panel and the list agreeing.
 
-**`flag` is a CSS gradient, not an image.** Twelve flag PNGs for 20×13 chips
-would be twelve requests for a few hundred pixels. The gradients render sharp
-at any size and cost nothing. They are applied as
-`style={{ background: track.flag }}` — data, not a hardcoded design value.
+**The flag is a CSS gradient, not an image.** `country` resolves through
+`COUNTRIES` in `flags.ts` to a gradient and a country name. Twelve flag PNGs
+for 20×13 chips would be twelve requests for a few hundred pixels; the
+gradients render sharp at any size and cost nothing. They are applied as a
+`style` background — data, not a hardcoded design value — and the name is what
+makes the chip accessible to anyone who cannot see or does not recognise it.
+
+**`path` is the one field nobody types.** `tracks.ts` reads it from
+`trackPaths.ts`, which is generated from OpenStreetMap — see
+[Real geometry](#real-geometry-the-openstreetmap-pipeline) below. Everything
+else in `tracks.ts` is hand-maintained, so changing a lap time never means
+running a script.
 
 Module-level constants, also in `types.ts`:
 
@@ -157,8 +165,9 @@ simply hardcoded one global value, so that is what shipped.
 **Why `getPointAtLength` and not keyframes.** The marker has to follow an
 arbitrary circuit shape. Hand-authoring keyframes per circuit would be twelve
 sets of hand-tuned data that drift the moment a path changes. The browser's own
-path geometry gives an exact point for any distance along the curve, for free,
-and it keeps working when the paths are replaced with real circuit geometry.
+path geometry gives an exact point for any distance along the curve, for free
+— and it kept working, untouched, when the handoff's sketches were replaced
+with real circuit geometry.
 
 **Why direct DOM writes.** One frame touches the progress dash, the trail, the
 marker transform, the chronometer text, three sector widths and the plate
@@ -186,27 +195,39 @@ three screens away.
 
 ## Path requirements
 
-Every `path` string **must** be:
+Every `path` is a **polyline**: `M x y`, then `L x y` for each vertex, then
+`Z`, with coordinates rounded to 0.1 units. It **must** be:
 
-1. **A single continuous subpath.** Exactly one `M` command, no `m`. The marker
-   is positioned by `getPointAtLength()`, which walks one subpath; a path split
-   into pieces makes the marker teleport between them, and the progress dash
-   fills in the wrong order.
-2. **Closed.** Ends with `Z`, and the geometric start and end coincide, so the
-   lap loops seamlessly.
-3. **Authored in the 1000×620 viewBox.** Coordinates outside it are clipped;
-   the driver plate's pixel mapping assumes this space.
+1. **A single continuous subpath.** Exactly one `M`. The marker is positioned
+   by `getPointAtLength()`, which walks one subpath; a path split into pieces
+   makes the marker teleport between them, and the progress dash fills in the
+   wrong order.
+2. **Closed, without repeating its first point.** It ends in `Z`, which draws
+   the closing segment itself; repeating the first vertex before `Z` would add
+   a zero-length segment at the start line.
+3. **Started on the start/finish line, running in the direction of travel.**
+   The first vertex _is_ the line, so `getPointAtLength(0)` is where the S/F
+   tick goes and where the chronometer reads `0:00.000`, and the path runs the
+   way the cars do. Nothing downstream applies an offset, so nothing
+   downstream can get one wrong.
+4. **In the 1000×620 viewBox, north up, aspect preserved,** inside a 48-unit
+   margin so the S/F tick and its label are never clipped at an edge. A long
+   thin circuit letterboxes; it is never stretched.
 
-Only `M`, `L`, `C` and `Z` are used today. Other absolute commands are fine.
-**Relative commands (`m`, `l`, `c`) are not** — the single-`M` test greps for
-move commands, and relative authoring invites accidental subpath splits.
+**Relative commands (`m`, `l`, `c`) are never emitted** — the single-`M` test
+greps for move commands, and relative authoring invites accidental subpath
+splits. Polylines rather than curves: at 87–152 vertices a lap with
+`stroke-linejoin="round"` they read smooth, and they keep `getPointAtLength()`
+exact and cheap.
 
-The data-integrity test in `lib/svgPath.test.ts` enforces (1) and (2) for all
-twelve circuits. Run `pnpm test` after any change to the path data.
+The generator refuses to write a path that breaks any of this, and the
+data-integrity test in `lib/svgPath.test.ts` re-checks (1) and (2) for all
+twelve circuits.
 
-> **Do not hand-edit these strings.** They were generated from the design
-> handoff's `tracks.js` by a script, precisely so nobody transcribes a
-> 400-character path by hand. Regenerate rather than patch.
+> **Do not hand-edit these strings, and do not inline them in `tracks.ts`.**
+> They are generated into `trackPaths.ts` from committed inputs, so a patch is
+> overwritten by the next regeneration — and fails `--check` until it is.
+> Change `docs/assets/circuits.json` and regenerate instead.
 
 ## Hooks
 
@@ -236,44 +257,150 @@ and the loop has no opinion about what the buttons do.
 | `SectorBar`        | S1/S2/S3 bars.                                                                    |
 | `PlaybackControls` | PAUSE/PLAY and 1X/2X.                                                             |
 
-## Known limitation: the circuit shapes are not real
+## Real geometry: the OpenStreetMap pipeline
 
-**The `path` geometry in `tracks.ts` does not represent the actual circuits.**
-These are approximate, stylised loops generated by Claude Design to carry the
-layout — they read as "a racing circuit" at a glance and nothing more.
+The outlines are the real circuits, in the full configuration each lap is set
+on — Suzuka's figure-eight with its crossover, Mount Panorama's run up the
+mountain and down Conrod Straight, Watkins Glen's Boot, the Nürburgring's
+Mercedes-Arena. They come from OpenStreetMap, through
+`docs/assets/generate-track-paths.mjs`, and every one runs in its real
+direction of travel. The module around them did not change: the type, the loop
+and the components only ever depended on "one continuous closed path in this
+viewBox".
 
-Concretely:
+### Two stages, and no network at build time
 
-- **Suzuka has no figure-eight.** Its defining feature — the crossover where the
-  track passes over itself — is absent. The shape is a plain loop.
-- **Mount Panorama has no mountain climb.** The long ascent through the Esses
-  and the drop down Conrod Straight, the thing that makes the circuit famous,
-  is not in the geometry.
-- Corner counts, lengths and lap times are placeholder values that do not
-  correspond to the drawn shapes.
+```
+generate-track-paths.mjs --fetch  → docs/assets/circuit-rings.json   network; by hand, rarely
+generate-track-paths.mjs          → data/trackPaths.ts               offline; deterministic
+generate-track-paths.mjs --check  → asserts the two are in sync      offline; milliseconds
+```
 
-Anyone who knows these circuits will notice immediately, which makes this the
-most visible piece of unfinished work on the site.
+Overpass answers 429 and 504 under ordinary load, and returns different data on
+different days, so `pnpm build` never touches it. `--fetch` freezes the pinned
+OSM ways into `circuit-rings.json` — tags, node ids and coordinates, exactly as
+returned — and everything after that is a pure function of two committed files.
+That cache is also what gives `--check` something stable to check against.
 
-**The fix** is to replace the paths with real geometry derived from
-OpenStreetMap via the Overpass API: query the circuit way, project the
-coordinates, simplify to a reasonable point count, normalise into the 1000×620
-viewBox, and emit a single closed subpath per circuit. The module needs no
-other change — the type, the loop and the components all keep working, because
-they only ever depended on "one continuous closed path in this viewBox".
+The generator writes **geometry and nothing else**, into its own file.
+`tracks.ts` stays hand-maintained and imports `trackPaths`; the export is typed
+`as const satisfies Record<string, TrackGeometry>`, so naming a circuit the
+generator did not emit is a compile error rather than `d="undefined"`.
 
-This is tracked as the next major piece of work in
-[ROADMAP.md](ROADMAP.md).
+### What is authored, and what is derived
+
+`docs/assets/circuits.json` holds what the algorithm cannot infer, per circuit:
+
+- **`osm`** — the pinned ids. Ten circuits pin the OSM relation that gathers
+  their racing line. Road Atlanta has none, and Mount Panorama is a public
+  road, so both pin their ways one by one.
+- **`startLine`** — the timing line's coordinate, the compass heading of travel
+  across it, and a `source` saying where it came from. Nine are OSM nodes
+  tagged as the start/finish or finish line (the finish, where both are mapped:
+  it is the line a lap is timed across). Watkins Glen, Road Atlanta and Suzuka
+  have none mapped and are authored on the pit straight.
+- **`excludeWays`** — ways the walk must never take, each with its reason. Only
+  the Red Bull Ring needs any.
+- **`simplify`** — per-circuit overrides of the tolerance, point limits and
+  margin. None are overridden today.
+
+Everything else — which ways form the lap, their order and direction, the
+rotation, the point count — is derived, and logged when the generator runs.
+
+### How a ring is built
+
+1. **Collect ways.** Relation members with role `""` or `outer`, filtered by
+   tag (`service=*`, `area=yes`, `raceway=pitlane`, `access=no`,
+   `highway=service` are dropped), plus any ways pinned by id, which are taken
+   as authored. Then `excludeWays` is subtracted.
+2. **Walk a node graph** from the edge nearest the start line, setting off in
+   the direction of the pinned heading. A `oneway` way only offers its
+   direction of travel, so a heading that disagrees with the tagging fails
+   loudly rather than drawing the circuit backwards. At a junction the smallest
+   bearing change wins — a race track goes straight on, a pit lane peels off —
+   and the decision is logged with its way ids.
+3. **Close, or fail.** The walk must come back to the node it left. A dead end
+   or an early revisit stops the generator with the dangling way ids and
+   coordinates; a closure is never fudged. Suzuka's crossover is a bridge — the
+   two carriageways share no node — so the walk never faces a choice there, and
+   the figure-eight comes out as one self-intersecting ring.
+4. **Rotate** so the first vertex is the start line itself, projected onto the
+   track.
+5. **Simplify** with Ramer–Douglas–Peucker in true metres (1 m tolerance, so a
+   3.6 km and a 6.2 km circuit get the same fidelity), after rotating, so the
+   algorithm's fixed anchor sits on a straight rather than flattening a corner.
+6. **Fit** into the viewBox — Web Mercator, north up, aspect preserved, a
+   48-unit margin — and emit the polyline.
+7. **Check.** The generator refuses to write a path with more than one `M`, no
+   closing `Z`, a relative command, a vertex outside the viewBox or a clipped
+   S/F label, and refuses a lap whose `raceway:corner_number` tags run
+   backwards (Suzuka's run 1 → 18, Interlagos's 1 → 15). It also measures every
+   ring against the `length` in `tracks.ts` and warns past 3%; all twelve agree
+   within 1.5%, so a warning means the walk took a wrong branch.
+
+### Fixing or adding a circuit
+
+1. Pin ids in `circuits.json`: the circuit's OSM relation if it has a good one,
+   its ways otherwise. Ids, never names — `Suzuka Circuit` against
+   `Suzuka International Racing Course`, with karting tracks of near-identical
+   names inside the same complex.
+2. Author `startLine`: a tagged node on the pit straight if OSM has one, the pit
+   straight between the last corner and Turn 1 otherwise, and say which in
+   `source`.
+3. `node docs/assets/generate-track-paths.mjs --fetch` if the cache does not
+   hold the ids yet; plain `node docs/assets/generate-track-paths.mjs`
+   otherwise.
+4. Read the output: the branch decisions, the corner order, measured against
+   authored length. Then **look at it** against satellite imagery, direction
+   included — the self-checks catch broken paths, not wrong ones. Add
+   `excludeWays` until the walk takes the right line.
+
+Re-run `--fetch` only to pick up OSM edits on purpose, and review the diff of
+`circuit-rings.json` when you do: the data changes from day to day.
+
+### Why the start line is not a field
+
+The obvious design is a `startFinishOffset` (0–1 along the path) applied in the
+loop. It does not survive contact with the progress fill: `stroke-dasharray`
+fills from the path's own origin, and no offset makes a dash start elsewhere. It
+would take two dashes for the wrapping case, a `getProgressDash` that returns a
+pair, rewritten unit tests, and the same offset threaded through the trail, the
+dot, the S/F tick and all three sector fills — a refactor of the module's most
+delicate code.
+
+So the generator **rotates the ring** until its first vertex is the start line.
+The runtime offset is then always zero, and `useLapAnimation`, `usePathPoint`
+and `lib/svgPath.ts` did not change at all. (`getPointAt` still carries an
+`offset` parameter from the scaffold; it stays unused.)
+
+### Licence
+
+OpenStreetMap data is © OpenStreetMap contributors, under the
+[Open Database License](https://www.openstreetmap.org/copyright). A map drawn
+from it is a Produced Work and must credit it, so the credit is in three
+places: the header of `trackPaths.ts`, this document, and — the one that
+matters — **visibly on the page**, as a line under the map in `TrackPanel`
+linking to the OSM copyright page. Removing that line is a licence breach, not
+a design tweak.
 
 ## Also worth knowing
 
 - **Sectors are even thirds of path length**, not real timing-loop splits. The
   handoff has no sector data and the design draws them as thirds. Real splits
-  would need a `sectors` field and matching distances along the path.
-- **Start/finish is simply the path's first point** (`getPointAtLength(0)`).
-  There is no start-line offset, so on real geometry the S/F marker will land
-  wherever the OSM way happens to begin — a `startFinishOffset` field will
-  likely be needed then.
+  are the start line's mechanism again — pin two more coordinates beside
+  `startLine` in `circuits.json` and emit their fractions — but they change
+  `getSectorFill` and the three unit tests that hardcode thirds.
+- **The trail is 70 path units on every circuit.** Real outlines run from about
+  1,300 units (Road Atlanta, tall and letterboxed) to 2,850 (the Red Bull Ring),
+  so the trail covers 2.5–5.3% of a lap — but it is the same length on screen
+  everywhere and reads as a short comet on all twelve, so it was left alone.
+- **Tall circuits draw small on a phone.** North up with the aspect preserved
+  means Watkins Glen, Road Atlanta, Laguna Seca and Mount Panorama letterbox in
+  the 1000×620 box. That is correct, and deliberately not "fixed" by stretching
+  or by turning maps away from north.
+- **Suzuka's crossover has no bridge treatment.** The figure-eight is one
+  self-intersecting ring, and at a 3–4 unit stroke the crossing reads without a
+  casing layer.
 - **The third region is `APAC`, not `ASIA`.** The design filed Mount Panorama
   under Asia, and Australia is not in Asia. Giving it an Oceania tab of its own
   would have left Asia with Suzuka alone, so the tab was renamed to something
