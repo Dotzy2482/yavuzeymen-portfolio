@@ -114,7 +114,7 @@ export const tracks: Track[] = [
   },
   {
     id: 'BAT',
-    region: 'ASIA',
+    region: 'APAC',
     country: 'AU',
     name: 'Mount Panorama',
     lap: '2:01.947',
@@ -124,7 +124,7 @@ export const tracks: Track[] = [
   },
   {
     id: 'SUZ',
-    region: 'ASIA',
+    region: 'APAC',
     country: 'JP',
     name: 'Suzuka',
     lap: '1:57.203',
@@ -135,7 +135,7 @@ export const tracks: Track[] = [
 ];
 
 /** Tab order of the region filter. */
-export const TRACK_REGIONS: readonly TrackRegion[] = ['EUROPE', 'AMERICA', 'ASIA'];
+export const TRACK_REGIONS: readonly TrackRegion[] = ['EUROPE', 'AMERICA', 'APAC'];
 
 /** First track shown before the visitor picks one. */
 export const defaultTrackId = tracks[0]?.id ?? '';

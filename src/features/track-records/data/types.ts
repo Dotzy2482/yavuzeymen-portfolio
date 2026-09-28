@@ -12,8 +12,12 @@
 
 import type { CountryCode } from './flags';
 
-/** Geographic grouping used by the region tabs. */
-export type TrackRegion = 'EUROPE' | 'AMERICA' | 'ASIA';
+/**
+ * Geographic grouping used by the region tabs. `APAC` is Asia-Pacific — Suzuka
+ * and Mount Panorama — and is abbreviated because `ASIA-PACIFIC` wraps onto two
+ * lines in the tab row at 390px wide.
+ */
+export type TrackRegion = 'EUROPE' | 'AMERICA' | 'APAC';
 
 export type TrackId = string;
 
