@@ -129,9 +129,17 @@ export function useLapAnimation({
     if (totalLength <= 0) return;
 
     if (isPlaying) {
-      fraction.current = (fraction.current + (delta * speed) / LAP_DURATION_MS) % 1;
+      // The lap wraps one frame late, on purpose. The frame that reaches the
+      // line is drawn at exactly 1 — marker on the line, lap fully traced,
+      // chronometer on the personal best — and the frame after it starts the
+      // next lap from whatever that frame overshot by. A plain `% 1` skips the
+      // line instead: the reading jumps from just under the best lap to just
+      // over zero, and the one number this section exists to show is never on
+      // screen.
+      const lapSoFar = fraction.current >= 1 ? fraction.current - 1 : fraction.current;
+      fraction.current = lapSoFar + (delta * speed) / LAP_DURATION_MS;
     }
-    const progress = fraction.current;
+    const progress = Math.min(1, fraction.current);
     const distance = progress * totalLength;
 
     // Lap traced so far.

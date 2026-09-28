@@ -508,5 +508,27 @@ describe('TrackRecords', () => {
 
       expectReading(next, elapsed);
     });
+
+    it.each(tracks)('reads exactly $lap as the marker crosses the line at $name', async (track) => {
+      // The module's critical rule (docs/TRACK_RECORDS.md): the chronometer
+      // lands on the personal best at the moment the marker is back on the
+      // line. The frames are an uneven 97 ms, inside useRafLoop's 100 ms clamp,
+      // so no frame lands on the line by arithmetic luck — the finish has to
+      // be shown on purpose.
+      vi.stubGlobal('IntersectionObserver', OnScreenObserver);
+      render(<TrackRecords />);
+      await selectCircuit(track);
+      const timer = screen.getByRole('timer');
+
+      const readings: string[] = [];
+      const oneLapAndABit = Math.ceil(LAP_DURATION_MS / 97) + 2;
+      for (let i = 0; i < oneLapAndABit; i++) {
+        clock.frames(1, 97);
+        readings.push(timer.textContent ?? '');
+      }
+
+      expect(readings).toContain(track.lap);
+      for (const text of readings) expect(parseLapTime(text)).toBeLessThanOrEqual(lapMs(track));
+    });
   });
 });
