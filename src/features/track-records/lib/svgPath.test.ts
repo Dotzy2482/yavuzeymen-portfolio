@@ -9,7 +9,7 @@ import {
   wrapDistance,
   wrapProgress,
 } from './svgPath';
-import { tracks } from '../data/tracks';
+import { TRACK_REGIONS, tracks } from '../data/tracks';
 import { TRAIL_LENGTH } from '../data/types';
 
 describe('geometry guards', () => {
@@ -90,7 +90,16 @@ describe('dash maths', () => {
 describe('track data integrity', () => {
   it('has twelve circuits across three regions', () => {
     expect(tracks).toHaveLength(12);
-    expect(new Set(tracks.map((t) => t.region))).toEqual(new Set(['EUROPE', 'AMERICA', 'ASIA']));
+    expect(new Set(tracks.map((t) => t.region))).toEqual(new Set(['EUROPE', 'AMERICA', 'APAC']));
+  });
+
+  it('gives every region tab at least one circuit, and no circuit a region without a tab', () => {
+    for (const region of TRACK_REGIONS) {
+      expect(tracks.some((t) => t.region === region)).toBe(true);
+    }
+    for (const track of tracks) {
+      expect(TRACK_REGIONS).toContain(track.region);
+    }
   });
 
   it('gives every circuit a single closed subpath', () => {

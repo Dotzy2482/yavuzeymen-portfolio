@@ -155,6 +155,12 @@ three widths globals.css recorded against the Google-hosted file — 191.484,
 Separate commits — these have nothing to do with each other or with the
 performance work.
 
+**Mount Panorama, settled:** the third tab was renamed rather than split. It is
+`APAC` — Suzuka and Mount Panorama both honestly fit Asia-Pacific, and an
+`OCEANIA` tab would have left Asia with one circuit. Not `ASIA-PACIFIC`,
+because measured at 390 wide it needs ~368 px of a 350 px row and wraps onto
+two lines; `APAC` uses 296.
+
 ## Done when
 
 - `pnpm build && pnpm lint && pnpm test && pnpm format:check` all pass, with the
@@ -187,6 +193,6 @@ performance work.
 - [x] 2. `sharp` devDependency + `pnpm images` + AVIF/WebP emitted
 - [x] 3. Image weight before/after recorded
 - [x] 4. Fonts self-hosted, axis range verified
-- [ ] 5. Mount Panorama's region corrected
+- [x] 5. Mount Panorama's region corrected
 - [ ] 6. `Divider.animated` deleted
 - [ ] 7. `DURATION` reconciled with the duration tokens

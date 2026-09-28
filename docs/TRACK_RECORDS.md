@@ -5,7 +5,7 @@ exists.
 
 ## What it does
 
-Pick a region (Europe / America / Asia), pick a circuit from the list, and a
+Pick a region (Europe / America / Asia-Pacific), pick a circuit from the list, and a
 car marker drives the lap around the circuit outline. As it goes:
 
 - the outline fills in cyan behind it, with a short bright trail pinned to the
@@ -56,12 +56,12 @@ re-measuring.
 
 Defined in `features/track-records/data/types.ts`. Data lives in
 `features/track-records/data/tracks.ts` — 12 circuits: 5 Europe, 5 America,
-2 Asia.
+2 Asia-Pacific (`APAC`: Suzuka and Mount Panorama).
 
 | Field     | Type          | Unit / format                           | Example                                                            |
 | --------- | ------------- | --------------------------------------- | ------------------------------------------------------------------ |
 | `id`      | `string`      | 3-letter code, unique                   | `'NUR'`                                                            |
-| `region`  | `TrackRegion` | `'EUROPE' \| 'AMERICA' \| 'ASIA'`       | `'EUROPE'`                                                         |
+| `region`  | `TrackRegion` | `'EUROPE' \| 'AMERICA' \| 'APAC'`       | `'EUROPE'`                                                         |
 | `name`    | `string`      | Display name                            | `'Nürburgring GP'`                                                 |
 | `lap`     | `string`      | **`M:SS.mmm`** — a string, not a number | `'1:54.318'`                                                       |
 | `length`  | `string`      | Unit baked into the string              | `'5.148 KM'`                                                       |
@@ -274,6 +274,8 @@ This is tracked as the next major piece of work in
   There is no start-line offset, so on real geometry the S/F marker will land
   wherever the OSM way happens to begin — a `startFinishOffset` field will
   likely be needed then.
-- **Mount Panorama is filed under `ASIA`.** Australia is Oceania; this comes
-  straight from the design and leaves the Asia tab with two circuits. Worth
-  revisiting alongside the real data.
+- **The third region is `APAC`, not `ASIA`.** The design filed Mount Panorama
+  under Asia, and Australia is not in Asia. Giving it an Oceania tab of its own
+  would have left Asia with Suzuka alone, so the tab was renamed to something
+  both circuits honestly fit. It reads `APAC` because `ASIA-PACIFIC` wraps onto
+  two lines in the tab row at 390px wide.
