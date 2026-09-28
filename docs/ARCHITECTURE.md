@@ -26,7 +26,9 @@ src/
   lib/                 cn (class joiner), format (tr-TR number formatting),
                        constants (section order, breakpoints, timing)
   data/                Hand-maintained static content, one file per section
-  styles/              tokens.css (source of truth), globals.css (Tailwind bridge)
+  styles/              tokens.css (source of truth), globals.css (Tailwind bridge),
+                       fonts.css (@font-face for the self-hosted faces in
+                       public/fonts/)
   types/               Types shared by more than one area
   test/                Vitest setup
 
@@ -136,6 +138,13 @@ accents, track-map colours, font stacks, Archivo width-axis steps, spacing,
 radius, shadows, motion timing and layout measures. A `max-width: 47.9375rem`
 media query rewrites the layout measures for mobile, so `--gutter` and
 `--section-pt` change in one place and every section follows.
+
+The font stacks name faces that are **self-hosted**: `src/styles/fonts.css`
+declares them over the files in `public/fonts/` — `latin` and `latin-ext` of
+each, the Turkish ş ğ İ being in the second — and `index.html` preloads the
+three `latin` files the hero needs at first paint. The page makes no
+third-party request. Archivo's file carries its full `wdth 62–125` axis, which
+the `.stretch-*` utilities and `StretchScrub` both depend on.
 
 **`src/styles/globals.css`** bridges them into Tailwind v4:
 

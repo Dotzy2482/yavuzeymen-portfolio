@@ -73,8 +73,8 @@
 
   /* --- Typography --------------------------------------------------------- */
   /* Archivo is a variable font (wdth 62–125, wght 100–900); headings run at
-     900/125%, UI labels at 800/115–120%. Loaded via Google Fonts in
-     index.html. */
+     900/125%, UI labels at 800/115–120%. Self-hosted: the @font-face rules
+     are in styles/fonts.css, the files in public/fonts/. */
   --font-display: 'Archivo', system-ui, sans-serif;
   --font-body: 'Archivo', system-ui, sans-serif;
   --font-serif: 'Instrument Serif', Georgia, serif;

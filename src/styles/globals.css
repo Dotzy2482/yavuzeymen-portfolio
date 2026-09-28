@@ -1,10 +1,12 @@
 /**
  * Global stylesheet — the only CSS file imported by the app entry point.
  *
- * Order matters: tokens first, then Tailwind, then the `@theme inline` bridge
- * that exposes the tokens to Tailwind's utility generator.
+ * Order matters: the self-hosted @font-face rules and the tokens first, then
+ * Tailwind, then the `@theme inline` bridge that exposes the tokens to
+ * Tailwind's utility generator.
  */
 
+@import './fonts.css';
 @import './tokens.css';
 @import 'tailwindcss';
 

@@ -135,6 +135,16 @@ stylesheet with local `@font-face` declarations, and `preload` the faces that
 render above the fold. Keep `font-display: swap`. Keep the full `wdth 62..125`
 axis range.
 
+**Verified 2026-09-29** against a built `dist/` in headless Chrome: no request
+to either Google host; each of the five font files the page uses is requested
+exactly once, the three `latin` preloads included. Archivo sets "SETUP" at
+140.97 px at `wdth 62` and 263.38 px at `wdth 125` (clamping there at 150%),
+and with the heading's −0.01em tracking it reproduces to the thousandth the
+three widths globals.css recorded against the Google-hosted file — 191.484,
+260.438 and 248.422 px at `wdth 88`, `125` and `125, wght 400`. Setup's
+`StretchScrub` still sweeps `--axis-wdth` 88 → 125, the heading widening from
+215 to 293 px.
+
 ### 4. Small corrections
 
 - Mount Panorama's region, in `src/features/track-records/data/tracks.ts` and
@@ -176,7 +186,7 @@ performance work.
 - [x] 1. Track-records chunk lazy-loaded, sizes recorded
 - [x] 2. `sharp` devDependency + `pnpm images` + AVIF/WebP emitted
 - [x] 3. Image weight before/after recorded
-- [ ] 4. Fonts self-hosted, axis range verified
+- [x] 4. Fonts self-hosted, axis range verified
 - [ ] 5. Mount Panorama's region corrected
 - [ ] 6. `Divider.animated` deleted
 - [ ] 7. `DURATION` reconciled with the duration tokens
