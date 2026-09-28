@@ -196,3 +196,52 @@ two lines; `APAC` uses 296.
 - [x] 5. Mount Panorama's region corrected
 - [x] 6. `Divider.animated` deleted
 - [x] 7. `DURATION` reconciled with the duration tokens
+
+### What the steps turned into
+
+**The split sits in the section, not in `App.tsx`.** Step 1 pointed at
+`App.tsx`, where the TODO was. Wrapping the whole section there would have made
+the anchor and heading wait too — and the nav's scroll-spy looks sections up
+by id once, on mount, so a lazy `<section id>` would never be observed. So
+`sections/TrackRecords` keeps its chrome eager and `lazy()`-imports the feature
+index. That makes it the index's only importer, and it must stay so: a static
+value import from anywhere else folds the chunk back into the main bundle
+silently. It also gained an error boundary, because a chunk is a request that
+can fail, and without one a failed load took the whole page down.
+
+**The placeholder mirrors geometry rather than guessing a height** — the same
+grid, the same panel padding, the map's aspect ratio — so it tracks the width.
+Exact at 390 and 1440; up to 29 px out between them, where the panel header
+wraps differently. Re-measure it if the module's layout changes.
+
+**Sources are derived, so staleness had to be caught.** `<Picture>` derives the
+AVIF and WebP paths from the original's, which removes every per-image data
+field but makes a missing encode a broken image. And the documented way hi-res
+photos arrive — same filename — would leave the old encodes winning the
+`<picture>` forever. So `encoded-images.json` records each original's hash and
+settings, and `pnpm test` runs the check (a plain `.mjs` test beside the script,
+because the app's TypeScript program has no Node types). No CI change needed.
+
+**Three encode profiles, not one**, chosen by eye: lossless-original photos at
+AVIF 65 (55 visibly smeared the hero at 2×), JPEG originals at 55 (at 65 their
+AVIF came out larger than the WebP), logos lossless in WebP. spardox's AVIF is
+2 kB larger than its PNG at every setting and ships anyway, to keep one rule.
+
+**Fonts dropped two things Google served**: the vietnamese and cyrillic subsets,
+and Instrument Serif's upright face — nothing uses them. `latin-ext` of Archivo
+and Martian Mono still arrive, for the Turkish copy below the fold; only the
+three `latin` files are preloaded. `docs/assets/og-card.html` still links
+Google Fonts: it is an author-time source, not the page.
+
+**The duration tokens now drive CSS.** Reconciling `DURATION` alone would have
+left `--duration-*` read by nothing, with fourteen class lists hardcoding the
+same numbers. They go through `@theme inline` as `duration-fast/base/slow` now,
+and `DURATION` is a test-held copy in seconds. The one visible change is the
+mobile menu's fade, 320 → 250 ms. `CountUp` keeps its 0.7 s as its own
+constant — a counter's timing, not a UI step.
+
+**Final sizes**, after every commit: main chunk 383.20 kB (123.65 kB gzip),
+track-records chunk 18.40 kB (7.19 kB gzip), CSS 41.00 kB (8.86 kB gzip) — the
+CSS grew by the placeholder's utilities and the `@font-face` rules that used to
+arrive in Google's stylesheet. (Tailwind scans `docs/` too, so prose can mint a
+class: the word "grow" in ROADMAP.md is 20 bytes of `.grow` in that figure.)
