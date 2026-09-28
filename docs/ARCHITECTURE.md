@@ -8,7 +8,8 @@ src/
                        Providers.tsx holds cross-cutting context (MotionConfig).
   sections/            One folder per page section. A section owns its layout
                        and its copy, and nothing else. Barrel: sections/index.ts.
-    Nav/               Top bar, desktop side columns, full-screen mobile menu
+    Nav/               Top bar, desktop side columns, full-screen mobile menu,
+                       and the scroll rail that replaces the page scrollbar
     Hero/              Portrait + helmet (cursor reveal) + headline + marquee
     About/ Career/ Achievements/ TrackRecords/ SimToReal/
     Content/ Setup/ Partners/ Contact/
@@ -192,6 +193,30 @@ Every wrapper checks `usePrefersReducedMotion()` and degrades to a static,
 visible state. On a site this animation-heavy the opt-out is a requirement, not
 a nicety.
 
+### The scroll rail
+
+The native page scrollbar is hidden in `globals.css` (`scrollbar-width: none`
+on `html`, plus `html::-webkit-scrollbar` for older Safari); the document is
+still the scroller, so wheel, keys, touch and anchor links are untouched.
+`sections/Nav/ScrollRail.tsx`, rendered by `Nav` outside its landmark, draws
+the replacement. With a mouse at `md` and up it is a lap rail on the right
+edge: a hairline track, a cyan fill down to a car-dot head, a notch at each
+section start that lights once passed, and a `04 / 09` readout at the top.
+Dragging it scrubs the page (`scrollTo` with `behavior: 'instant'`, under
+pointer capture); a click jumps, snapping to a notch within 8px, and a plate
+previews the section it will land in. Notch positions are measured from the
+DOM — each section's document top over the scroll range — and re-measured by a
+`ResizeObserver` on `<body>` plus window resize, so the pinned sections are
+drawn at their real length. `useScroll().scrollY` drives the head through a
+critically damped spring set with `animate()`, bypassed while dragging; the
+fill, head and lit notches are motion values, and React re-renders only when
+the current section, the plate's target or the geometry changes. Under
+`prefers-reduced-motion` the head maps to scroll directly and clicks jump
+without gliding. Below `md`, or on a touch screen of any width, it is a
+two-pixel `pointer-events-none` progress line instead. It is `aria-hidden` and
+unfocusable throughout: a pointer affordance duplicating native scrolling, not
+a widget. The geometry is pure and tested in `railGeometry.ts`.
+
 ### One caveat worth knowing
 
 Tailwind v4 compiles `-translate-x-1/2` to the standalone `translate` CSS
@@ -206,7 +231,8 @@ must not also carry Tailwind translate utilities.
 Vitest + jsdom, with Testing Library available. Current coverage is the
 track-records maths: lap-time formatting and parsing, dash geometry, sector
 fill, and a data-integrity suite asserting every circuit path is a single
-closed subpath with a unique id.
+closed subpath with a unique id — plus the nav's scroll-spy and the scroll
+rail's geometry (notch placement, pointer mapping, snapping).
 
 jsdom implements none of `SVGGeometryElement`, so `lib/svgPath.ts`
 feature-detects `getTotalLength` / `getPointAtLength` and degrades to zero

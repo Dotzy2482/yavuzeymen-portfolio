@@ -175,7 +175,8 @@
  * the accessibility tree and is reachable on the very first Tab. No transition:
  * a control that appears instantly needs no reduced-motion caveat.
  *
- * z-index clears the nav chrome (30) and the mobile menu overlay (50).
+ * z-index clears the nav chrome (30), the scroll rail (40) and the mobile
+ * menu overlay (50).
  */
 .skip-link {
   position: fixed;
@@ -201,6 +202,56 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    /* No native page scrollbar: the lap rail in sections/Nav/ScrollRail
+       replaces it. The document is still the scroller — wheel, keys, touch
+       and anchor links are untouched; only the bar is gone. A side effect
+       worth having: `100vw` and the content box are now the same width on
+       every platform, where a classic desktop scrollbar used to make them
+       differ by 15px. */
+    scrollbar-width: none;
+  }
+
+  /* Safari before 18.2 ignores scrollbar-width. Chrome ignores this rule
+     whenever scrollbar-width is set, so it only ever reaches WebKit. It is
+     also more specific than the inner-scroller rule below, so it wins there. */
+  html::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Inner scrollers — the narrow-window track chips and reel cards, and the
+     reduced-motion Sim to Real row — keep a bar, since nothing else says they
+     scroll. With a mouse the OS would draw its grey classic slab, arrows and
+     all; this draws a Sector-bar instead: a hairline track with a white-alpha
+     thumb that turns cyan under the pointer, square like everything else.
+     Touch screens keep their native overlay bars, which are already thin and
+     fade away on their own.
+
+     Chrome and Safari take the -webkit- pseudo-elements; Firefox has only the
+     standard pair, which cannot drop the arrows but gets the colours right.
+     Chrome ignores the pseudo-elements on any element that sets the standard
+     properties, so the two must not both reach it. */
+  @media (hover: hover) and (pointer: fine) {
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-corner {
+      background: var(--hairline);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-btn);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-primary);
+    }
+
+    @supports not selector(::-webkit-scrollbar) {
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-btn) var(--hairline);
+      }
+    }
   }
 
   body {
