@@ -16,6 +16,7 @@ import { CarMarker } from './CarMarker';
 import { DriverLabel } from './DriverLabel';
 import { TRACK_VIEWBOX } from '../data/types';
 import { LAP_NODE } from '../hooks/useLapAnimation';
+import { getStartLineMarker } from '../lib/startLine';
 
 export interface TrackMapProps {
   /** The active circuit's `d` attribute. */
@@ -26,6 +27,8 @@ export interface TrackMapProps {
 }
 
 export function TrackMap({ path, trackName, driverName }: TrackMapProps) {
+  const marker = getStartLineMarker(path);
+
   return (
     <div data-lap={LAP_NODE.map} className="relative mt-4 md:mt-6">
       <svg
@@ -65,9 +68,27 @@ export function TrackMap({ path, trackName, driverName }: TrackMapProps) {
           opacity="0.85"
           className="md:[stroke-width:5]"
         />
+        {/* The loop translates the group onto the line; the tick is turned
+            across the direction of travel, and the label kept off the track. */}
         <g data-lap={LAP_NODE.startFinish}>
-          <rect x="-4" y="-18" width="8" height="36" fill="var(--text)" opacity="0.85" />
-          <text x="16" y="-22" fill="var(--track-sf)" fontFamily="var(--font-mono)" fontSize="22">
+          <rect
+            x="-4"
+            y="-18"
+            width="8"
+            height="36"
+            fill="var(--text)"
+            opacity="0.85"
+            transform={`rotate(${marker.tickAngle})`}
+          />
+          <text
+            x={marker.labelX}
+            y={marker.labelY}
+            textAnchor={marker.textAnchor}
+            dominantBaseline={marker.dominantBaseline}
+            fill="var(--track-sf)"
+            fontFamily="var(--font-mono)"
+            fontSize="22"
+          >
             S/F
           </text>
         </g>
