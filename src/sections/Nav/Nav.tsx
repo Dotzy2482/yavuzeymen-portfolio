@@ -26,7 +26,7 @@ import { MobileMenu, MOBILE_MENU_ID } from './MobileMenu';
 import { ScrollRail } from './ScrollRail';
 
 const NAV_LINK_CLASSES =
-  'text-[13px] font-extrabold tracking-nav uppercase stretch-ui transition-colors duration-[250ms] hover:text-accent-primary';
+  'text-[13px] font-extrabold tracking-nav uppercase stretch-ui transition-colors duration-base hover:text-accent-primary';
 
 export interface NavProps {
   className?: string;

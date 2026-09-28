@@ -130,7 +130,7 @@ function HeroStage({ progress }: HeroStageProps) {
         <a
           href="#contact"
           lang="en"
-          className="bg-accent-secondary tracking-btn text-text stretch-ui hover:bg-accent-secondary-hover absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 px-[26px] py-[15px] text-[13px] font-extrabold whitespace-nowrap uppercase shadow-[0_0_0_14px_var(--bg)] transition-colors duration-[250ms] md:inline-block"
+          className="bg-accent-secondary tracking-btn text-text stretch-ui hover:bg-accent-secondary-hover duration-base absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 px-[26px] py-[15px] text-[13px] font-extrabold whitespace-nowrap uppercase shadow-[0_0_0_14px_var(--bg)] transition-colors md:inline-block"
         >
           Business Enquiries →
         </a>

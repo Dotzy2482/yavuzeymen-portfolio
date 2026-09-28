@@ -13,6 +13,7 @@
 import { motion } from 'motion/react';
 
 import { cn } from '@/lib/cn';
+import { DURATION } from '@/lib/constants';
 import { SectionHeading, Tag } from '@/components/ui';
 import { usePrefersReducedMotion } from '@/hooks';
 import { achievements, type Achievement } from '@/data';
@@ -30,9 +31,9 @@ function AchievementCard({ achievement, index }: AchievementCardProps) {
   return (
     <motion.article
       whileHover={prefersReducedMotion ? undefined : { y: -6 }}
-      transition={{ duration: 0.25 }}
+      transition={{ duration: DURATION.base }}
       className={cn(
-        'bg-surface flex items-center justify-between gap-4 border px-[22px] py-6 transition-colors duration-[250ms] md:min-h-[190px] md:flex-col md:items-stretch md:justify-between md:gap-6 md:px-[30px] md:py-[34px]',
+        'bg-surface duration-base flex items-center justify-between gap-4 border px-[22px] py-6 transition-colors md:min-h-[190px] md:flex-col md:items-stretch md:justify-between md:gap-6 md:px-[30px] md:py-[34px]',
         achievement.champion
           ? 'border-accent-secondary-border'
           : 'border-hairline hover:border-accent-primary',

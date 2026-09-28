@@ -129,6 +129,9 @@
   --glow-dot: 0 0 10px rgba(0, 224, 198, 0.6); /* active timeline node */
 
   /* --- Motion ------------------------------------------------------------- */
+  /* The one duration scale. CSS reads it through the `duration-*` utilities;
+     JavaScript animation reads DURATION in lib/constants.ts, a copy in seconds
+     that a test holds to these values. */
   --duration-fast: 150ms;
   --duration-base: 250ms; /* hovers */
   --duration-slow: 400ms; /* timeline dot state change */

@@ -63,7 +63,7 @@ export function TrackRecords({ className }: TrackRecordsProps) {
               aria-current={isActive ? 'true' : undefined}
               onClick={() => selectRegion(name)}
               className={cn(
-                'tracking-label stretch-wide cursor-pointer border-0 border-b-2 bg-transparent px-3.5 py-3 text-[12px] font-extrabold uppercase transition-colors duration-[250ms] md:px-[26px] md:py-3.5 md:text-[14px]',
+                'tracking-label stretch-wide duration-base cursor-pointer border-0 border-b-2 bg-transparent px-3.5 py-3 text-[12px] font-extrabold uppercase transition-colors md:px-[26px] md:py-3.5 md:text-[14px]',
                 isActive
                   ? 'border-accent-primary text-text'
                   : 'hover:text-text text-text-muted border-transparent',

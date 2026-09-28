@@ -14,18 +14,24 @@ import { animate } from 'motion/react';
 
 import { cn } from '@/lib/cn';
 import { formatNumber } from '@/lib/format';
-import { DURATION } from '@/lib/constants';
 import { useInView, usePrefersReducedMotion } from '@/hooks';
 
 /** easeOutCubic — the curve the design's counters use. */
 const COUNT_EASE = [0.33, 1, 0.68, 1] as const;
+
+/**
+ * Default count length, in seconds. A counter's own timing, like its curve —
+ * not a step on the UI duration scale, which tops out at 0.4 s and would make
+ * a figure snap rather than count.
+ */
+const COUNT_DURATION = 0.7;
 
 export interface CountUpProps {
   /** Target value. */
   to: number;
   /** Starting value. Default 0. */
   from?: number;
-  /** Duration in seconds. Defaults to DURATION.slow. */
+  /** Duration in seconds. Default 0.7. */
   duration?: number;
   /** Decimal places to display. Default 0. */
   decimals?: number;
@@ -38,7 +44,7 @@ export interface CountUpProps {
 export function CountUp({
   to,
   from = 0,
-  duration = DURATION.slow,
+  duration = COUNT_DURATION,
   decimals = 0,
   prefix,
   suffix,

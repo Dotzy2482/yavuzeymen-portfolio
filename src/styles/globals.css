@@ -84,6 +84,11 @@
 
   --ease-out: var(--ease-out);
   --ease-in-out: var(--ease-in-out);
+
+  /* `duration-fast` / `duration-base` / `duration-slow`. */
+  --transition-duration-fast: var(--duration-fast);
+  --transition-duration-base: var(--duration-base);
+  --transition-duration-slow: var(--duration-slow);
 }
 
 /**

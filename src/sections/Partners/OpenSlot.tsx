@@ -78,7 +78,7 @@ export function OpenSlot({ progress, className }: OpenSlotProps) {
           strokeWidth={1}
           strokeDasharray={DASH_PATTERN}
           vectorEffect="non-scaling-stroke"
-          className="group-hover:stroke-accent-primary transition-[stroke] duration-[250ms]"
+          className="group-hover:stroke-accent-primary duration-base transition-[stroke]"
           style={{ strokeDashoffset: dashOffset }}
         />
       </svg>
@@ -87,7 +87,7 @@ export function OpenSlot({ progress, className }: OpenSlotProps) {
         tracking="mono"
         tone="faint"
         lang="en"
-        className="group-hover:text-accent-primary md:tracking-mono-xl transition-colors duration-[250ms] md:text-[11px]"
+        className="group-hover:text-accent-primary md:tracking-mono-xl duration-base transition-colors md:text-[11px]"
       >
         Your brand here
       </MonoLabel>

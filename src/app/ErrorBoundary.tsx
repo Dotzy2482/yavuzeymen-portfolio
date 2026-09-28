@@ -58,7 +58,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="border-border-btn text-text tracking-btn hover:border-accent-primary hover:text-accent-primary cursor-pointer border px-7 py-[17px] text-[14px] font-bold uppercase transition-colors duration-[250ms]"
+          className="border-border-btn text-text tracking-btn hover:border-accent-primary hover:text-accent-primary duration-base cursor-pointer border px-7 py-[17px] text-[14px] font-bold uppercase transition-colors"
         >
           Yenile
         </button>

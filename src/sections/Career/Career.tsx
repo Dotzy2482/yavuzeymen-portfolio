@@ -34,14 +34,14 @@ function TimelineNode({ entry }: TimelineNodeProps) {
     <div
       ref={ref}
       className={cn(
-        'relative flex flex-col gap-1.5 py-[22px] pl-8 transition-opacity duration-[400ms] md:flex-row md:items-baseline md:gap-12 md:py-[30px] md:pl-[52px]',
+        'duration-slow relative flex flex-col gap-1.5 py-[22px] pl-8 transition-opacity md:flex-row md:items-baseline md:gap-12 md:py-[30px] md:pl-[52px]',
         inView ? 'opacity-100' : 'opacity-55',
       )}
     >
       <span
         aria-hidden="true"
         className={cn(
-          'absolute top-[26px] -left-1.5 box-border size-3.5 rounded-full border-2 transition-colors duration-[400ms] md:top-9',
+          'duration-slow absolute top-[26px] -left-1.5 box-border size-3.5 rounded-full border-2 transition-colors md:top-9',
           inView
             ? 'border-accent-primary bg-accent-primary shadow-glow-dot'
             : 'border-border-btn bg-bg',
