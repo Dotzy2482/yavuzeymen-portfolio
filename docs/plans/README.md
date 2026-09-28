@@ -21,14 +21,14 @@ the last one stopped.
 | [01](01-awaken-the-last-third.md)      | Awaken the last third      | —          | **Landed.** Kept for the reasoning it records. |
 | [02](02-social-card-and-scroll-spy.md) | Social card and scroll-spy | —          | **Landed.** Kept for the reasoning it records. |
 | [03](03-weight-and-wiring.md)          | Weight and wiring          | —          | **Landed.** Kept for the reasoning it records. |
-| [04](04-real-circuit-geometry.md)      | Real circuit geometry      | `03`       | `docs/assets/`, `features/track-records/data`  |
+| [04](04-real-circuit-geometry.md)      | Real circuit geometry      | `03`       | **Landed.** Kept for the reasoning it records. |
 
-`01`, `02` and `03` have landed; their files stay because the **Reasoning**
-sections are the only record of why the scrub was built the way it was, why the
-scroll-spy highlights on an exact match only, and why the image encodes, the
-lazy chunk and the `APAC` tab went the way they did. `04` was waiting on `03`:
-its ~36 kB of path data lands in a chunk `03` made lazy, and `03` settled
-`TrackRegion` so `04` never has to touch it.
+All four have landed. Their files stay because the **Reasoning** sections are
+the only record of why the scrub was built the way it was, why the scroll-spy
+highlights on an exact match only, why the image encodes, the lazy chunk and the
+`APAC` tab went the way they did, and why the start line is solved by rotating
+geometry rather than by adding a field. A new workstream gets the next number,
+`05`, and the same shape.
 
 ## Why the reasoning sections are long
 
