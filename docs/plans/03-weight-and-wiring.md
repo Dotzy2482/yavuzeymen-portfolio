@@ -104,6 +104,14 @@ nothing below it jumps. Remove the TODO once done.
 `dist/assets/index-*.js` at 464.61 kB (156.21 kB gzip), plus 37.51 kB of CSS
 (8.19 kB gzip). 514 modules. Record the after numbers against these.
 
+**Re-measured 2026-09-29, before this step:** the helmet rework had already
+taken 67 kB out, so the real baseline was one chunk of 399.82 kB (129.48 kB
+gzip), 38.55 kB of CSS (8.43 kB gzip), 517 modules. **After:** the main chunk
+is 383.69 kB (123.74 kB gzip) and the track-records chunk 18.41 kB (7.19 kB
+gzip), requested as the page first renders. The placeholder matches the
+module's height to the pixel at 390 and 1440 wide; between the design widths
+the panel header wraps differently and the residual is at most 29 px.
+
 ### 2. Image pipeline
 
 Add `sharp` as a devDependency and a `pnpm images` script. Emit AVIF + WebP
@@ -158,7 +166,7 @@ performance work.
 
 ## Progress
 
-- [ ] 1. Track-records chunk lazy-loaded, sizes recorded
+- [x] 1. Track-records chunk lazy-loaded, sizes recorded
 - [ ] 2. `sharp` devDependency + `pnpm images` + AVIF/WebP emitted
 - [ ] 3. Image weight before/after recorded
 - [ ] 4. Fonts self-hosted, axis range verified

@@ -43,6 +43,15 @@ export type { Track, TrackId, TrackRegion } from './data/types';
 `SectionHeading`, spacing) and drops `<TrackRecords />` inside. It knows
 nothing else about the module.
 
+It imports it **lazily** — `lazy(() => import('@/features/track-records'))` —
+so the whole module ships as its own chunk, off the critical path. That makes
+the section file the only importer, and it has to stay that way: a static
+import of any _value_ from the index anywhere else folds the module back into
+the main bundle without an error or a warning. Type-only imports are erased
+and cost nothing. While the chunk loads, `TrackRecordsPlaceholder` holds the
+module's footprint; if the layout here changes, that file's heights want
+re-measuring.
+
 ## The `Track` type
 
 Defined in `features/track-records/data/types.ts`. Data lives in

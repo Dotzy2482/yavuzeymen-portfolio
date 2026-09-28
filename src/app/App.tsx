@@ -6,8 +6,9 @@
  * sections by id. It lights only the four NAV_ITEMS lists, and goes dark in
  * the six it does not; see useActiveSection.
  *
- * TODO: consider lazy-loading the track-records feature; it will be the
- *       heaviest chunk by some distance.
+ * Every section renders eagerly. The one code split on the page is inside
+ * TrackRecords, around the feature module rather than the section — see the
+ * note there for why the boundary sits one level down.
  */
 
 import { ErrorBoundary } from './ErrorBoundary';
