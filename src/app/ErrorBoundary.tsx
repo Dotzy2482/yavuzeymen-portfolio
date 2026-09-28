@@ -8,8 +8,9 @@
  *
  * Deliberately reusable rather than a one-off wrapper: wrapping an individual
  * section contains a failure to that section instead of taking the page with
- * it. Today only the whole tree is wrapped; if a section ever grows risky
- * enough to warrant its own boundary, it can have one.
+ * it. The whole tree is wrapped, and so is the track-records module, which is
+ * the one section that loads over the network after the page does — a failed
+ * chunk request there costs that section, not the page.
  *
  * The fallback copy is Turkish, like the rest of the interface.
  */

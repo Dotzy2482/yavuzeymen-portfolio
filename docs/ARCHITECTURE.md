@@ -83,6 +83,15 @@ geometry lands — without touching a single consumer. `sections/TrackRecords/`
 holds only the section chrome (anchor, heading, spacing) and renders the
 module.
 
+The boundary is also the page's one code split. The section imports the index
+with `lazy()`, so the module is its own chunk and the main bundle paints the
+hero without it; the anchor and heading stay eager, because the nav's
+scroll-spy looks sections up by id once, on mount. A placeholder mirroring the
+module's frame holds its height while the chunk is in flight, and an error
+boundary keeps a failed chunk request to this one section. The split only
+holds while nothing else imports a value from the index — see
+[TRACK_RECORDS.md](TRACK_RECORDS.md#public-api).
+
 The test for adding a second feature folder: _does it own state and behaviour
 that the rest of the page must not reach into?_ If not, it is a section.
 
