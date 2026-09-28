@@ -2,6 +2,12 @@
  * PAUSE/PLAY and 1X/2X — mono outline buttons that hover to cyan.
  *
  * Full-width and stacked on mobile so both stay comfortably tappable.
+ *
+ * Each button is named by the words it shows, in English like every UI label
+ * here. A Turkish aria-label used to replace them ("Animasyonu duraklat" on a
+ * button reading PAUSE), which fails WCAG 2.5.3 Label in Name: a voice-control
+ * user saying what they see — "click Pause" — hit nothing. The speed button
+ * adds an sr-only "Speed" so "1X" is not announced bare.
  */
 
 import { cn } from '@/lib/cn';
@@ -28,21 +34,11 @@ export function PlaybackControls({
 }: PlaybackControlsProps) {
   return (
     <div className={cn('flex gap-2.5', className)}>
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-label={isPlaying ? 'Animasyonu duraklat' : 'Animasyonu oynat'}
-        className={BUTTON_CLASSES}
-      >
+      <button type="button" onClick={onToggle} lang="en" className={BUTTON_CLASSES}>
         {isPlaying ? 'Pause' : 'Play'}
       </button>
-      <button
-        type="button"
-        onClick={onToggleSpeed}
-        aria-label={`Hız: ${speed}×. Değiştir.`}
-        className={BUTTON_CLASSES}
-      >
-        {speed}X
+      <button type="button" onClick={onToggleSpeed} lang="en" className={BUTTON_CLASSES}>
+        <span className="sr-only">Speed</span> {speed}X
       </button>
     </div>
   );
