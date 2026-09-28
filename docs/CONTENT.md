@@ -28,7 +28,7 @@ layout or a crash.
 | `data/simToReal.ts`         | `karting` — `src: null`                              | **Placeholder**     | Karting photo, renders as a dashed empty slot          |
 | `features/…/data/tracks.ts` | 12 circuit names + regions                           | **Real**            | Yavuz's circuit list                                   |
 | `features/…/data/tracks.ts` | Lap times, lengths, corner counts                    | **Placeholder**     | iRacing personal-best export                           |
-| `features/…/data/tracks.ts` | Circuit `path` geometry                              | **Placeholder**     | OpenStreetMap / Overpass — see below                   |
+| `features/…/trackPaths.ts`  | Circuit `path` geometry                              | **Real**            | Generated from OpenStreetMap; see TRACK_RECORDS.md     |
 | `sections/Contact`          | Invitation paragraph                                 | **Real**            | Design handoff, final copy                             |
 | `sections/Contact`          | `Gizlilik` / `Şartlar` footer links                  | **Placeholder**     | Legal pages not written                                |
 | `index.html`                | `description`, `og:*`, `twitter:*`                   | **Real, English**   | Design handoff — see the note below                    |
@@ -73,11 +73,6 @@ dashed reserved slot — the same empty-slot language as the Partners cells and
 the karting photo — sized to roughly the width a model name occupies. Setting
 `placeholder: false` on a row swaps the slot for the real value with no layout
 shift, so the section can be filled in one row at a time.
-
-**OpenStreetMap via Overpass** — real circuit geometry to replace the
-approximate shapes currently in `tracks.ts`. This is the largest outstanding
-data task; see [TRACK_RECORDS.md](TRACK_RECORDS.md) and
-[ROADMAP.md](ROADMAP.md).
 
 ## Image assets
 

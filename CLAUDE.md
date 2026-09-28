@@ -69,10 +69,24 @@ it. Either keep the ref in the component that renders the node, or use the
   prototypes, not source. Everything is rewritten as React + Tailwind. The
   runtime helpers `image-slot.js` and `support.js` are Claude Design internals
   and must never be ported.
-- **Do not hand-edit the `path` strings in
-  `src/features/track-records/data/tracks.ts`.** They are generated, and each
-  one must remain a single continuous closed subpath. See
-  [docs/TRACK_RECORDS.md](docs/TRACK_RECORDS.md).
+- **Do not hand-edit `src/features/track-records/data/trackPaths.ts`.** The
+  circuit outlines are generated from OpenStreetMap by
+  `docs/assets/generate-track-paths.mjs`, out of two committed inputs:
+  `docs/assets/circuits.json` (hand-authored — pinned OSM ids, start lines,
+  exclusions) and `docs/assets/circuit-rings.json` (the pinned ways as fetched;
+  never edit it). To fix a circuit, edit `circuits.json` and regenerate:
+
+  ```bash
+  node docs/assets/generate-track-paths.mjs          # offline: rewrite trackPaths.ts
+  node docs/assets/generate-track-paths.mjs --fetch  # network: refresh the cache first
+  ```
+
+  `--check` is offline and asserts the file matches its inputs. `tracks.ts`
+  stays hand-maintained — lap times, lengths and names are edited there
+  directly, never through the generator. The map data is ODbL: the
+  OpenStreetMap credit under the map is a licence obligation, not decoration.
+  See [docs/TRACK_RECORDS.md](docs/TRACK_RECORDS.md).
+
 - **Do not hand-edit `public/og-image.png` or `public/apple-touch-icon.png`.**
   Both are rasterised by headless Chrome from sources in the repo — the card
   from `docs/assets/og-card.html`, the icon from `public/favicon.svg`.
@@ -113,17 +127,16 @@ it. Either keep the ref in the component that renders the node, or use the
 Everything below renders correctly but is waiting on real data. Do not "fix"
 these by inventing values.
 
-| Where                                   | Placeholder                                                     | Waiting on                      |
-| --------------------------------------- | --------------------------------------------------------------- | ------------------------------- |
-| `data/setup.ts`                         | All five rows read `MODEL — YER TUTUCU`                         | Yavuz's real hardware           |
-| `features/track-records/data/tracks.ts` | Lap times, lengths, corner counts                               | iRacing profile export          |
-| `features/track-records/data/tracks.ts` | Circuit `path` geometry — approximate shapes, not real circuits | OpenStreetMap/Overpass pipeline |
-| `data/profile.ts`                       | Empty e-mail/phone/socials when env is unset                    | `.env.local` values             |
-| `data/simToReal.ts`                     | `karting` item has `src: null` (dashed slot)                    | Karting photo                   |
-| `data/contentStats.ts`                  | Hand-entered counters and reel captions                         | Instagram insights              |
-| Footer links                            | `Gizlilik` / `Şartlar` point at `#`                             | Legal pages                     |
-| `public/favicon.svg`                    | Placeholder mark, and the source of `apple-touch-icon.png`      | Final visual identity           |
-| `index.html`                            | No `og:url`, no canonical link                                  | A final domain                  |
+| Where                                   | Placeholder                                                | Waiting on             |
+| --------------------------------------- | ---------------------------------------------------------- | ---------------------- |
+| `data/setup.ts`                         | All five rows read `MODEL — YER TUTUCU`                    | Yavuz's real hardware  |
+| `features/track-records/data/tracks.ts` | Lap times, lengths, corner counts                          | iRacing profile export |
+| `data/profile.ts`                       | Empty e-mail/phone/socials when env is unset               | `.env.local` values    |
+| `data/simToReal.ts`                     | `karting` item has `src: null` (dashed slot)               | Karting photo          |
+| `data/contentStats.ts`                  | Hand-entered counters and reel captions                    | Instagram insights     |
+| Footer links                            | `Gizlilik` / `Şartlar` point at `#`                        | Legal pages            |
+| `public/favicon.svg`                    | Placeholder mark, and the source of `apple-touch-icon.png` | Final visual identity  |
+| `index.html`                            | No `og:url`, no canonical link                             | A final domain         |
 
 The site must render with an empty `.env` — every variable is optional and
 resolves to an empty string.

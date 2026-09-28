@@ -92,9 +92,8 @@ Two things are worth knowing before reading any code:
 ## Status
 
 The design is fully implemented and the site runs. Outstanding work is content,
-not construction — real lap times, real hardware, hi-res photography — plus one
-significant technical item: the circuit outlines are approximate shapes, not
-real circuit geometry, and are due to be regenerated from OpenStreetMap. See
+not construction — real lap times, real hardware, hi-res photography. The
+circuit outlines are real geometry, generated from OpenStreetMap. See
 [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ---

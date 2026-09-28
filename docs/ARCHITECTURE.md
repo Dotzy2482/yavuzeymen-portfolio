@@ -82,8 +82,9 @@ deliberately bypass React. That is a subsystem, and subsystems earn a boundary:
 features/track-records/index.ts   ← the only file the app may import
 ```
 
-Everything behind it can be rewritten — and it will be, when real circuit
-geometry lands — without touching a single consumer. `sections/TrackRecords/`
+Everything behind it can be rewritten without touching a single consumer — as
+it was when real circuit geometry replaced the handoff's sketches, a change no
+file outside the module noticed. `sections/TrackRecords/`
 holds only the section chrome (anchor, heading, spacing) and renders the
 module.
 
@@ -121,7 +122,9 @@ src/components/{ui,motion}     presentational, no imports from data/
 - **`features/track-records/` owns its own data** (`features/track-records/data/`)
   because that data is meaningless outside the module. It may read `@/data` for
   shared facts — it reads `profile.name` for the driver plate — but the reverse
-  never happens.
+  never happens. Its circuit outlines, `data/trackPaths.ts`, are the one
+  generated file in it: `docs/assets/generate-track-paths.mjs` writes them from
+  OpenStreetMap, and [TRACK_RECORDS.md](TRACK_RECORDS.md) says how.
 
 `lib/constants.ts` holds `SECTION_IDS`, the document order that `app/App.tsx`
 renders in and the nav highlights against. Changing the page order means

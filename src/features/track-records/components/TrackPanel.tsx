@@ -61,6 +61,28 @@ export function TrackPanel({
           onToggleSpeed={onToggleSpeed}
         />
       </div>
+
+      {/* The outlines are drawn from OpenStreetMap data, which is ODbL: a map
+          derived from it must credit it wherever the map is shown. */}
+      <MonoLabel
+        as="div"
+        size="xs"
+        tone="faint"
+        tracking="chip"
+        lang="en"
+        className="mt-5 md:mt-6 md:text-[10px]"
+      >
+        Circuit maps ©{' '}
+        <a
+          href="https://www.openstreetmap.org/copyright"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-text underline underline-offset-2 transition-colors"
+        >
+          OpenStreetMap
+        </a>{' '}
+        contributors
+      </MonoLabel>
     </div>
   );
 }
