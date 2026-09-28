@@ -367,14 +367,14 @@ function LapRail({ className }: ScrollRailProps) {
       )}
     >
       {/* Everything visible, dimmed as one while the visitor is reading. */}
-      <div className="absolute inset-0 opacity-70 transition-opacity duration-[250ms] group-hover:opacity-100 group-data-[dragging]:opacity-100">
+      <div className="duration-base absolute inset-0 opacity-70 transition-opacity group-hover:opacity-100 group-data-[dragging]:opacity-100">
         {/* The readout: current section over the last, like a lap counter —
             at the head of the rail, level with the top bar, and clear of the
             hero's sponsor strip along the bottom edge. */}
         <div className="num absolute top-6 right-0 flex w-6 flex-col items-center gap-1.5 text-[9px] leading-none">
           <span className="text-accent-primary">{sectionNumber(current)}</span>
           <span className="bg-border-chip block h-px w-2.5" />
-          <span className="text-text-faint group-hover:text-text-secondary transition-colors duration-[250ms]">
+          <span className="text-text-faint group-hover:text-text-secondary duration-base transition-colors">
             {LAST_SECTION_NUMBER}
           </span>
         </div>
@@ -384,7 +384,7 @@ function LapRail({ className }: ScrollRailProps) {
           data-rail-track=""
           className="absolute top-[72px] right-[11px] bottom-24 w-px"
         >
-          <div className="bg-hairline-strong group-hover:bg-border-btn group-data-[dragging]:bg-border-btn absolute inset-0 transition-colors duration-[250ms]" />
+          <div className="bg-hairline-strong group-hover:bg-border-btn group-data-[dragging]:bg-border-btn duration-base absolute inset-0 transition-colors" />
           <motion.div
             className="bg-accent-primary absolute inset-0 origin-top"
             style={{ scaleY: progress }}
@@ -408,7 +408,7 @@ function LapRail({ className }: ScrollRailProps) {
             className="absolute inset-x-0 top-0 h-full"
             style={{ y: headY }}
           >
-            <span className="bg-accent-primary/25 absolute top-0 left-1/2 size-[11px] -translate-x-1/2 -translate-y-1/2 rounded-full transition-transform duration-[250ms] group-hover:scale-125 group-data-[dragging]:scale-150" />
+            <span className="bg-accent-primary/25 duration-base absolute top-0 left-1/2 size-[11px] -translate-x-1/2 -translate-y-1/2 rounded-full transition-transform group-hover:scale-125 group-data-[dragging]:scale-150" />
             <span className="bg-track-dot shadow-glow-dot absolute top-0 left-1/2 size-[5px] -translate-x-1/2 -translate-y-1/2 rounded-full" />
           </motion.div>
 
@@ -417,7 +417,7 @@ function LapRail({ className }: ScrollRailProps) {
           <div ref={plateRef} className="pointer-events-none absolute top-0 right-0">
             <div
               lang="en"
-              className="absolute top-0 right-2 flex -translate-y-1/2 items-center opacity-0 transition-opacity duration-[250ms] group-hover:opacity-100 group-data-[dragging]:opacity-100"
+              className="duration-base absolute top-0 right-2 flex -translate-y-1/2 items-center opacity-0 transition-opacity group-hover:opacity-100 group-data-[dragging]:opacity-100"
             >
               <span className="border-accent-primary/50 bg-surface-2 tracking-label text-text border px-2.5 py-1.5 font-mono text-[10px] whitespace-nowrap uppercase">
                 <span className="text-accent-primary">{sectionNumber(target.section)}</span>
@@ -455,7 +455,7 @@ function Notch({ position, progress, tolerance, hot }: NotchProps) {
     <div
       data-rail-notch=""
       className={cn(
-        'absolute left-1/2 h-px -translate-x-1/2 transition-[width,background-color] duration-[250ms]',
+        'duration-base absolute left-1/2 h-px -translate-x-1/2 transition-[width,background-color]',
         hot
           ? 'bg-text w-[15px]'
           : 'bg-border-chip group-hover:bg-text-faint w-[7px] group-hover:w-[11px]',
