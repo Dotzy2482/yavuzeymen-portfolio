@@ -16,18 +16,19 @@ the last one stopped.
 
 ## Order
 
-| #                                      | Workstream                 | Depends on | Touches                                          |
-| -------------------------------------- | -------------------------- | ---------- | ------------------------------------------------ |
-| [01](01-awaken-the-last-third.md)      | Awaken the last third      | —          | **Landed.** Kept for the reasoning it records.   |
-| [02](02-social-card-and-scroll-spy.md) | Social card and scroll-spy | —          | **Landed.** Kept for the reasoning it records.   |
-| [03](03-weight-and-wiring.md)          | Weight and wiring          | —          | assets, `index.html`, `app/App.tsx`, small fixes |
-| [04](04-real-circuit-geometry.md)      | Real circuit geometry      | `03`       | `docs/assets/`, `features/track-records/data`    |
+| #                                      | Workstream                 | Depends on | Touches                                        |
+| -------------------------------------- | -------------------------- | ---------- | ---------------------------------------------- |
+| [01](01-awaken-the-last-third.md)      | Awaken the last third      | —          | **Landed.** Kept for the reasoning it records. |
+| [02](02-social-card-and-scroll-spy.md) | Social card and scroll-spy | —          | **Landed.** Kept for the reasoning it records. |
+| [03](03-weight-and-wiring.md)          | Weight and wiring          | —          | **Landed.** Kept for the reasoning it records. |
+| [04](04-real-circuit-geometry.md)      | Real circuit geometry      | `03`       | `docs/assets/`, `features/track-records/data`  |
 
-`01` and `02` have landed; their files stay because the **Reasoning** sections
-are the only record of why the scrub was built the way it was, and why the
-scroll-spy highlights on an exact match only. `03` is independent but must
-precede `04`, which adds ~36 kB of path data to a chunk `03` makes lazy, and
-which `03` spares from having to touch `TrackRegion`.
+`01`, `02` and `03` have landed; their files stay because the **Reasoning**
+sections are the only record of why the scrub was built the way it was, why the
+scroll-spy highlights on an exact match only, and why the image encodes, the
+lazy chunk and the `APAC` tab went the way they did. `04` was waiting on `03`:
+its ~36 kB of path data lands in a chunk `03` made lazy, and `03` settled
+`TrackRegion` so `04` never has to touch it.
 
 ## Why the reasoning sections are long
 
