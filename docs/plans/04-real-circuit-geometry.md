@@ -338,3 +338,97 @@ string` row in the field table — the actual field is `country: CountryCode`.
 - [x] 7. OSM attribution visible on the page
 - [x] 8. `--check` wired into CI
 - [x] 9. `CLAUDE.md`, `TRACK_RECORDS.md`, `ROADMAP.md` updated
+
+### What the steps turned into
+
+**Relations where OSM has them, ways where it does not.** Ten circuits pin the
+relation that gathers their racing line — `type=circuit` for nine, a route
+relation for Laguna Seca. Road Atlanta has no relation and tags its racing line
+`service=raceway`; Mount Panorama is a public road, `highway=residential`. Both
+pin their ways one by one, and **a way pinned by id bypasses the tag filter**:
+the filter exists because relation membership is a contributor's judgement, and
+a pinned id is the author's. The filter still earned its keep elsewhere, where
+five relations carry their pit lane as a `pit_lane` member.
+
+**The ring is assembled offline.** The plan's pipeline leaves open which stage
+walks the ring. It is the offline one: `circuit-rings.json` holds the pinned
+ways raw, so editing `excludeWays` or a start line never refetches, and never
+pulls a month of upstream edits in with it.
+
+**A node graph, not way endpoints.** A pit lane can join mid-way, which an
+endpoint walk never sees. A `oneway` way only contributes edges in its direction
+of travel, and the pinned heading picks which way to leave the start edge — the
+"reverse if the bearing disagrees by more than 90°" rule, applied before walking
+rather than after. A heading that disagrees with the tagging fails loudly; five
+of the first draft's did, and were right to. Suzuka and Interlagos carry
+`raceway:corner_number` tags, checked to run 1 → 18 and 1 → 15 along the lap.
+The only consequential junction was at the Red Bull Ring, where the smallest
+bearing change preferred MotoGP's long-lap loop to Turn 1 (7° against 32°);
+it, the MotoGP chicane and the untagged pit lane are excluded by id.
+
+**Start lines.** Nine are tagged OSM nodes. Where start and finish are mapped
+separately — Zandvoort, Imola, Silverstone, the Red Bull Ring, COTA,
+Interlagos, Mount Panorama — the finish is used, as the line a lap is timed
+across. Watkins Glen, Road Atlanta and Suzuka have neither, and are authored on
+the pit straight. All twelve sit on the track to within 0.1 m.
+
+**1 m, not 5 m.** The plan expected raw rings of 3–5k points. These circuits are
+mapped with 173–597 nodes a lap, and 5 m left 35–64 points and a polygon at
+every hairpin. At 1 m they carry 87–152 points, 17.5 kB for all twelve against
+the 36 kB budgeted; `maxPoints` never binds, and a `minPoints` floor of 80
+stops a future tolerance change from quietly faceting a circuit.
+
+**The length warning stayed quiet.** The plan predicted it would fire on all
+twelve. It did not: the handoff's lengths are the real published figures for
+these layouts, and every measured ring agrees to within 1.5%. So the threshold
+went down to 3%, where a warning means the walk took a wrong branch.
+
+| Id  | Points | Measured | Shown    | Start line                   |
+| --- | ------ | -------- | -------- | ---------------------------- |
+| NUR | 118    | 5.116 km | 5.148 km | node, `raceway=start-finish` |
+| ZAN | 124    | 4.253 km | 4.259 km | node, `raceway=finish`       |
+| IMO | 91     | 4.904 km | 4.909 km | node, `raceway=finish`       |
+| SIL | 143    | 5.881 km | 5.891 km | node, `raceway=finish`       |
+| RBR | 87     | 4.300 km | 4.318 km | node, `Finish Line`          |
+| COT | 126    | 5.502 km | 5.513 km | node, `Finish Line`          |
+| WGL | 119    | 5.473 km | 5.552 km | authored                     |
+| RAT | 93     | 4.090 km | 4.088 km | authored                     |
+| LAG | 94     | 3.601 km | 3.602 km | node, `Start/Finish`         |
+| INT | 112    | 4.308 km | 4.309 km | node, `Finish Line`          |
+| BAT | 106    | 6.197 km | 6.213 km | node, `Finish Line`          |
+| SUZ | 152    | 5.807 km | 5.807 km | authored                     |
+
+**The S/F tick had to turn.** Not in the plan. The design's upright tick and
+fixed label assumed a level start straight; at Zandvoort, Watkins Glen, Laguna
+Seca and Interlagos the tick lay along the track, and on several the label sat
+on it — or, at rest, under the driver plate. `lib/startLine.ts` reads the
+direction of travel off the first segment, `TrackMap` turns the tick across it,
+and the label goes on the side facing away from the plate. `useLapAnimation`,
+`usePathPoint` and `lib/svgPath.ts` are unchanged.
+
+**How it was verified.** Every outline was rendered and compared with the real
+layout — Suzuka's crossover and its Spoon–130R–chicane end, Mount Panorama's
+Mountain Straight, the Cutting and the Chase, Laguna's Corkscrew, COTA's Turn 1
+hairpin and esses, the Senna S, Maggotts–Becketts, the Red Bull Ring's three
+straights, the Boot, Road Atlanta's esses and Turn 10 chicane, Imola's
+Tamburello, Villeneuve and Rivazza, Zandvoort's Hugenholtz and Arie Luyendyk,
+the Mercedes-Arena — and every direction of travel against the circuit's known
+sense and OSM's own `oneway` tagging. The comparison was against the known
+layouts, not satellite tiles fetched for it; OSM's raceways are themselves
+traced from aerial imagery. The running site was then driven through headless
+Chrome over CDP at 1440×900 and 390×844, all twelve at rest and mid-lap, and the
+chronometer sampled every frame across a lap wrap: it reads 1:57.197 one frame
+before Suzuka's 1:57.203, 2:01.940 before Mount Panorama's 2:01.947 and 1:22.937
+before Laguna's 1:22.940, with the dot at most 1.3 units from the tick.
+
+**The two things real geometry was to surface.** `TRAIL_LENGTH` stays 70 path
+units. Totals run from 1,314 (Road Atlanta) to 2,848 (the Red Bull Ring), so it
+covers 2.5–5.3% of a lap, but it is the same length on screen on every circuit
+and reads as a short comet on all twelve; the fraction fix was not needed.
+`getPointAtDistance`'s tangent sample at `d + 1` is sane on these segments, and
+nothing rotates by it.
+
+**Tall circuits draw small on a phone.** Watkins Glen, Road Atlanta, Laguna Seca
+and Mount Panorama letterbox north-up in the 1000×620 box. That is the plan's
+"correct" letterbox; turning maps away from north to fill it would be a
+separate decision, and one to make with Yavuz.
