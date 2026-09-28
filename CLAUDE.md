@@ -81,9 +81,9 @@ it. Either keep the ref in the component that renders the node, or use the
   node docs/assets/generate-track-paths.mjs --fetch  # network: refresh the cache first
   ```
 
-  `--check` is offline and asserts the file matches its inputs. `tracks.ts`
-  stays hand-maintained — lap times, lengths and names are edited there
-  directly, never through the generator. The map data is ODbL: the
+  `--check` is offline, runs in CI, and asserts the file matches its inputs.
+  `tracks.ts` stays hand-maintained — lap times, lengths and names are edited
+  there directly, never through the generator. The map data is ODbL: the
   OpenStreetMap credit under the map is a licence obligation, not decoration.
   See [docs/TRACK_RECORDS.md](docs/TRACK_RECORDS.md).
 

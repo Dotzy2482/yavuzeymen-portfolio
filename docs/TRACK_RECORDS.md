@@ -226,8 +226,8 @@ twelve circuits.
 
 > **Do not hand-edit these strings, and do not inline them in `tracks.ts`.**
 > They are generated into `trackPaths.ts` from committed inputs, so a patch is
-> overwritten by the next regeneration — and fails `--check` until it is.
-> Change `docs/assets/circuits.json` and regenerate instead.
+> overwritten by the next regeneration — and fails `--check`, in CI, until it
+> is. Change `docs/assets/circuits.json` and regenerate instead.
 
 ## Hooks
 
@@ -273,14 +273,15 @@ viewBox".
 ```
 generate-track-paths.mjs --fetch  → docs/assets/circuit-rings.json   network; by hand, rarely
 generate-track-paths.mjs          → data/trackPaths.ts               offline; deterministic
-generate-track-paths.mjs --check  → asserts the two are in sync      offline; milliseconds
+generate-track-paths.mjs --check  → asserts the two are in sync      offline; milliseconds; in CI
 ```
 
 Overpass answers 429 and 504 under ordinary load, and returns different data on
 different days, so `pnpm build` never touches it. `--fetch` freezes the pinned
 OSM ways into `circuit-rings.json` — tags, node ids and coordinates, exactly as
 returned — and everything after that is a pure function of two committed files.
-That cache is also what gives `--check` something stable to check against.
+That cache is also what gives `--check` something stable to check against, and
+CI runs it after the tests, so a hand-patched `trackPaths.ts` fails the build.
 
 The generator writes **geometry and nothing else**, into its own file.
 `tracks.ts` stays hand-maintained and imports `trackPaths`; the export is typed

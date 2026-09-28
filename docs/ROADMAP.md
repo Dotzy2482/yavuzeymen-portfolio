@@ -107,9 +107,9 @@
   running its real direction of travel and starting on its real start/finish
   line. `docs/assets/generate-track-paths.mjs` walks the OSM ways pinned in
   `circuits.json` into rings from a committed cache, `circuit-rings.json`, so no
-  build touches Overpass; `--check` asserts the generated `trackPaths.ts`
-  matches its inputs. Every measured ring agrees with the length the panel
-  shows to within 1.5%.
+  build touches Overpass; `--check`, in CI, asserts the generated
+  `trackPaths.ts` matches its inputs. Every measured ring agrees with the
+  length the panel shows to within 1.5%.
 - The start/finish question is answered by rotating each ring at generation
   time, not by a `startFinishOffset` field, so the lap loop did not change.
 - The map credits OpenStreetMap on the page, as the ODbL requires.
