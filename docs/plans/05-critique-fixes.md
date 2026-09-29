@@ -131,6 +131,6 @@ sections)
 
 - [x] A — Navigation
 - [ ] B — Track Records hierarchy
-- [ ] C — Type and layout
+- [x] C — Type and layout
 - [ ] D — Helmet mask
 - [ ] Docs swept for stale to-dos; ROADMAP and plans README updated
