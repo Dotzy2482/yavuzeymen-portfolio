@@ -35,18 +35,31 @@ export type ImagePoint = readonly [x: number, y: number];
  *
  * The stroke runs from x ≈ 463 to 846 and hugs the chin bar: ~33px under its
  * rim at the centre, ~14px (measured square to the line) under its lower right
- * corner, which is the tightest spot. The first and last points extend it along
- * its own slope past the helmet's sides, where both photos are empty.
+ * corner. The first and last points extend it along its own slope past the
+ * helmet's sides, where both photos are empty.
+ *
+ * The owner then moved the stretch under the lower left corner up, with a
+ * second stroke on a second screenshot (867 × 610, matched to the photo at a
+ * scale of 0.815 by template-matching the shell): there the helmet photo's
+ * shadowed neck still showed below the shell. That stroke runs from (539, 392)
+ * to (598, 422) and sits on the shell's edge, so between those x the line is
+ * the stroke lowered by FEATHER + CLEARANCE — the half-alpha outline lies on
+ * the stroke, the helmet photo is gone 5px below it, and the corner's lowest
+ * few pixels are part of the fade.
  */
 export const NECK_LINE: readonly ImagePoint[] = [
   [420, 344], // extension
   [463, 371],
   [485, 385],
   [509, 398],
-  [534, 409],
-  [559, 419],
-  [584, 427],
-  [609, 433],
+  // x 539–598: the owner's second stroke, under the chin bar's lower left
+  // corner, lowered by FEATHER + CLEARANCE so the outline lies on it.
+  [539, 401],
+  [558, 409],
+  [575, 413],
+  [588, 420],
+  [600, 428],
+  [615, 435],
   [634, 441],
   [659, 444],
   [684, 443],

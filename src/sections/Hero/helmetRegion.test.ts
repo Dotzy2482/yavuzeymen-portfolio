@@ -68,8 +68,6 @@ const HELMET_EDGE: readonly ImagePoint[] = [
   [495, 320],
   [515, 360],
   [536, 386],
-  [550, 394],
-  [558, 398], // lower left corner, where the shell meets the neck
   [600, 407],
   [660, 411], // chin bar rim, centre
   [733, 403],
@@ -79,6 +77,16 @@ const HELMET_EDGE: readonly ImagePoint[] = [
   [800, 366],
   [820, 320],
   [832, 270],
+];
+
+/**
+ * The last few pixels of the shell at its lower left corner. The owner drew
+ * the edge here, on the shell itself, so these sit in the fade rather than
+ * clear of it — but inside the outline, so never less than half the helmet.
+ */
+const LOWER_LEFT_CORNER: readonly ImagePoint[] = [
+  [550, 394],
+  [558, 398], // where the shell meets the neck
 ];
 
 /** Where the two exposures disagree — all of it must stay bare-headed. */
@@ -101,6 +109,10 @@ describe('HELMET_REGION', () => {
 
   it('keeps the whole helmet fully opaque', () => {
     for (const point of HELMET_EDGE) expect(signedDistance(point)).toBeLessThanOrEqual(-FEATHER);
+  });
+
+  it('keeps the lower left corner at least half visible, as the owner drew it', () => {
+    for (const point of LOWER_LEFT_CORNER) expect(signedDistance(point)).toBeLessThan(0);
   });
 
   it('shows none of the body', () => {
