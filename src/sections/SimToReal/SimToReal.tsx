@@ -38,11 +38,7 @@ interface GalleryPhotoProps {
 function GalleryPhoto({ item, mobile }: GalleryPhotoProps) {
   return (
     <figure className={cn('flex flex-col', mobile ? 'gap-2.5' : 'gap-3.5')}>
-      <MonoLabel
-        size={mobile ? 'xs' : 'sm'}
-        tracking="xl"
-        tone={item.accent ? 'accent' : 'secondary'}
-      >
+      <MonoLabel size="md" tracking="xl" tone={item.accent ? 'accent' : 'secondary'}>
         {item.label}
       </MonoLabel>
       {item.src ? (
@@ -58,7 +54,8 @@ function GalleryPhoto({ item, mobile }: GalleryPhotoProps) {
           className={cn('block saturate-[0.92]', mobile ? 'h-auto w-full' : 'w-auto')}
         />
       ) : (
-        // The empty karting slot — photo to come.
+        // The empty karting slot — photo to come. Its line is placeholder copy
+        // and keeps the small size (see MonoLabel).
         <div
           style={mobile ? { height: 280 } : { height: item.height, width: item.width }}
           className={cn(

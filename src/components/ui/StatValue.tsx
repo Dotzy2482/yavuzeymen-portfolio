@@ -48,7 +48,8 @@ export function StatValue({
 }: StatValueProps) {
   return (
     <div className={className}>
-      <MonoLabel size="xs" tracking="lg" as="div">
+      {/* 11px: the label is what says which figure this is. */}
+      <MonoLabel size="md" tracking="lg" as="div">
         {label}
       </MonoLabel>
       <div

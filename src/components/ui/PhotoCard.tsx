@@ -49,9 +49,13 @@ export function PhotoCard({
           emphasis ? 'p-[18px]' : 'p-3.5',
         )}
       >
+        {/* 11px so the caption can be read; tracking closed to `caps` to pay
+            for it, which keeps "REEL — BEHIND THE SCENES" on one line in the
+            fan's 230px card. Wrapped, its first line started under the centre
+            card that overlaps it and read "— BEHIND THE". */}
         <span
           className={cn(
-            'tracking-label font-mono text-[9px]',
+            'tracking-caps font-mono text-[11px]',
             emphasis ? 'text-text' : 'text-text-body',
           )}
         >
