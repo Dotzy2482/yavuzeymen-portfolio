@@ -4,8 +4,8 @@ Personal portfolio site for **Yavuz Eymen** — sim racing driver, Team Curve
 Hunters main driver, founder of NoGripSimRacing.
 
 Single page, dark, scroll-driven. Its centrepiece is the **Track Records**
-section: pick a circuit, watch a lap play back around the outline while the
-chronometer counts out the real lap time.
+section: pick a circuit and read its personal best while a lap plays back
+around the real outline, drawn from OpenStreetMap.
 
 Headings and UI are English; body copy is Turkish. That split is deliberate.
 
@@ -13,7 +13,7 @@ Headings and UI are English; body copy is Turkish. That split is deliberate.
 
 ## Getting started
 
-Requires Node 24 (see `.nvmrc`) and pnpm.
+Requires Node 24 (see `.nvmrc`; `package.json` accepts 22 and up) and pnpm.
 
 ```bash
 pnpm install
@@ -77,7 +77,9 @@ names only, never values.
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)   | Folder layout, why Vite, data flow, the design token system                      |
 | [docs/TRACK_RECORDS.md](docs/TRACK_RECORDS.md) | The animated circuit module in depth — data shape, animation, path rules         |
 | [docs/CONTENT.md](docs/CONTENT.md)             | What content is real, what is placeholder, and where the real version comes from |
-| [docs/ROADMAP.md](docs/ROADMAP.md)             | Done, next, and later                                                            |
+| [docs/ROADMAP.md](docs/ROADMAP.md)             | What is done, what is blocked on material, what is unscheduled                   |
+| [docs/plans/](docs/plans/)                     | The workstreams the site was built in, and the reasoning behind each             |
+| [SECURITY.md](SECURITY.md)                     | How to report a vulnerability                                                    |
 
 Two things are worth knowing before reading any code:
 
@@ -100,8 +102,8 @@ circuit outlines are real geometry, generated from OpenStreetMap. See
 
 ## Security
 
-This repository will be made public and its history will not be rewritten, so
-nothing sensitive may enter it at any point.
+This repository is public and its history will not be rewritten, so nothing
+sensitive may enter it at any point.
 
 - **No contact details as literals.** `src/data/profile.ts` reads e-mail, phone
   and social URLs from `import.meta.env`.
@@ -109,8 +111,9 @@ nothing sensitive may enter it at any point.
   them out of git is not the same as keeping them secret; anything genuinely
   secret must not carry the prefix and belongs on a server.
 - **Unreleased media** goes in `public/images/private/`, which is git-ignored.
-- **CI scans history for secrets** with `gitleaks` at full depth, so a secret
-  that was committed and later removed still fails the build.
+- **CI scans every new commit for secrets** with `gitleaks`, not just the
+  tip, so a secret that was committed and removed again later in the same pull
+  request still fails the build.
 
 See [SECURITY.md](SECURITY.md) to report a vulnerability.
 

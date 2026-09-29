@@ -36,8 +36,11 @@
     <title>Yavuz Eymen — social card source</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- The same request index.html makes, so the card and the page render in
-         the same faces at the same axis positions. -->
+    <!-- The same three families and axis ranges the site self-hosts from
+         public/fonts/ (see src/styles/fonts.css), so the card and the page
+         render in the same faces at the same axis positions. The card alone
+         still loads them from Google: it is rasterised once, by hand, and
+         never shipped. -->
     <link
       href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=Martian+Mono:wght@100..800&display=block"
       rel="stylesheet"
