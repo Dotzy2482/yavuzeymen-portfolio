@@ -49,22 +49,6 @@ export function getPointAtDistance(path: SVGPathElement | null, distance: number
 }
 
 /**
- * Point and heading at a normalised position along the path.
- *
- * @param progress 0–1 along the path.
- * @param offset   Rotates the origin so 0 lands on the start/finish line.
- */
-export function getPointAt(
-  path: SVGPathElement | null,
-  progress: number,
-  offset: number = 0,
-): PathPoint {
-  const total = getPathLength(path);
-  if (total <= 0) return ORIGIN;
-  return getPointAtDistance(path, (wrapProgress(progress) + offset) * total);
-}
-
-/**
  * Dash pair that reveals the lap up to `distance`.
  *
  * Drawing progress by dashing one path is far cheaper than re-rendering a

@@ -6,8 +6,8 @@
  * behaviour lives behind the feature module's single public export.
  *
  * That module is the one part of the page loaded as its own chunk. It carries
- * a frame loop, playback state and every circuit's path data — which real
- * geometry will multiply — and it sits four sections below the fold. `lazy()`
+ * a frame loop, playback state and every circuit's path data — some 31 kB
+ * since real geometry landed — and it sits four sections below the fold. `lazy()`
  * takes it off the critical path: the main bundle parses and paints the hero
  * without it, and the chunk is requested as the page first renders, long
  * before anyone can scroll this far.

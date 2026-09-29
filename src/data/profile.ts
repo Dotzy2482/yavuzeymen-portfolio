@@ -2,7 +2,7 @@
  * The driver's core identity and contact details.
  *
  * SECURITY: e-mail, phone and any address MUST NOT appear as literals in this
- * file. This repository will be made public and its history is not going to be
+ * file. This repository is public and its history is not going to be
  * rewritten, so anything committed here is committed forever. Contact details
  * are read from the environment at build time instead — this matches the
  * design handoff, which ships a literal `{EMAIL}` placeholder.

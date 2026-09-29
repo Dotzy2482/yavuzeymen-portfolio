@@ -203,7 +203,7 @@ README mentioned but neither prototype actually references —
 
 ## Privacy constraints on content
 
-This repository will be made public and its history will not be rewritten.
+This repository is public and its history will not be rewritten.
 
 - Contact details never appear as literals. `data/profile.ts` reads them from
   `import.meta.env`. `VITE_`-prefixed variables are inlined into the bundle and
