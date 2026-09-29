@@ -23,6 +23,20 @@ describe('Picture', () => {
     expect(img).toHaveAttribute('width', '433');
   });
 
+  it('keeps its <source> elements out of the layout around it', () => {
+    // The <picture> is `display: contents`, so its children are laid out by
+    // whatever contains it. A visible <source> then becomes an item of that
+    // flex row or grid: it pushed Setup's rig photo into a second grid row and
+    // put two extra gaps beside every raster logo in the hero marquee. Every
+    // source has to be `display: none` for the wrapper to stay invisible.
+    const { container } = render(<Picture src="/images/simtoreal/rig.png" alt="" />);
+
+    expect(container.querySelector('picture')).toHaveClass('contents');
+    const sources = [...container.querySelectorAll('source')];
+    expect(sources).toHaveLength(2);
+    for (const source of sources) expect(source).toHaveClass('hidden');
+  });
+
   it('derives the encodes from a .jpg too', () => {
     const { container } = render(<Picture src="/images/portraits/studio-seated.jpg" alt="" />);
     expect(container.querySelector('source')).toHaveAttribute(
