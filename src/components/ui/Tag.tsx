@@ -27,7 +27,7 @@ export function Tag({ children, variant = 'default', className }: TagProps) {
   return (
     <span
       className={cn(
-        'tracking-mono inline-block px-[10px] py-[6px] font-mono text-[10px] uppercase',
+        'tracking-mono inline-block px-[10px] py-[6px] font-mono text-[11px] uppercase',
         VARIANT_CLASSES[variant],
         className,
       )}

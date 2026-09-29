@@ -12,6 +12,13 @@ export type MonoLabelSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type MonoLabelTracking = 'label' | 'chip' | 'mono' | 'lg' | 'xl' | '2xl' | 'sub' | 'kicker';
 export type MonoLabelTone = 'secondary' | 'faint' | 'accent' | 'text';
 
+/**
+ * `xs` and `sm` (9 and 10px) are for decoration and for placeholder copy that
+ * is waiting on real material: section kickers, the dashed "Your brand here"
+ * and karting slots. Anything a reader needs in order to understand the page
+ * (a stat's name, a photo caption, a spec row, a card's result) starts at `md`,
+ * 11px, on every viewport.
+ */
 const SIZE_CLASSES: Record<MonoLabelSize, string> = {
   xs: 'text-[9px]',
   sm: 'text-[10px]',

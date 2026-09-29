@@ -87,7 +87,7 @@ export function Content({ id = 'content', className }: SectionProps) {
                 duration={1.6}
               />
             </div>
-            <MonoLabel size="xs" tracking="lg" as="div" className="mt-2 md:mt-3.5 md:text-[10px]">
+            <MonoLabel size="md" tracking="lg" as="div" className="mt-2 md:mt-3.5">
               {counter.label}
             </MonoLabel>
           </div>

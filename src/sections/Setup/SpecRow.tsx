@@ -65,7 +65,7 @@ export function SpecRow({ item, progress, index, count }: SpecRowProps) {
 
   return (
     <div className="border-hairline-mid relative flex items-baseline justify-between gap-5 border-b py-[18px] md:gap-8 md:py-6">
-      <MonoLabel size="sm" tracking="chip" className="md:tracking-mono-lg md:text-[11px]">
+      <MonoLabel size="md" tracking="chip" className="md:tracking-mono-lg">
         {item.label}
       </MonoLabel>
       <span className="tracking-caps stretch-ui text-right text-[13px] font-extrabold uppercase md:text-[16px]">
