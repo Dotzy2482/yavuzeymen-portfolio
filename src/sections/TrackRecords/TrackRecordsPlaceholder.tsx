@@ -36,7 +36,7 @@ export function TrackRecordsPlaceholder({ status }: TrackRecordsPlaceholderProps
       {/* Region tabs. */}
       <div className="mt-8 h-11 md:mt-14 md:h-[51px]" />
 
-      <div className="mt-3 grid items-start gap-7 md:mt-7 md:grid-cols-[minmax(300px,35fr)_65fr]">
+      <div className="mt-3 grid items-start gap-7 md:mt-7 lg:grid-cols-[minmax(300px,35fr)_65fr]">
         {/* Mobile: the chip strip. Desktop: the five-row list, framed. */}
         <div className="md:border-hairline md:bg-surface-2 h-[72px] md:h-[312px] md:border" />
 
