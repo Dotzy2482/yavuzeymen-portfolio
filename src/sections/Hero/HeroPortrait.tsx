@@ -1,12 +1,16 @@
 /**
  * The hero's portrait layer: two photographs of the same frame stacked exactly,
- * with the helmeted one masked down to a soft circle.
+ * with the helmeted one masked down to a soft circle — and never below the neck.
  *
  * There is no fitting maths here any more. Both photos are the same 1323×1189
  * crop of the same pose — bare-headed and helmeted — so giving them identical
- * boxes is the whole alignment story, and the top layer only needs a mask. The
+ * boxes is the whole alignment story, and the top layer only needs masks. The
  * old build composited a separate helmet cut-out onto the head every frame and
  * paid for it in trigonometry that broke whenever the portrait moved.
+ *
+ * The heads line up; the bodies under them nearly do, which is not enough —
+ * a circle edge crossing the collar showed it as a seam. So the helmet layer
+ * is also held to a fixed region that stops at the neck line (helmetRegion.ts).
  *
  * Two modes:
  * - `static` (desktop): the cursor drives the reveal. The helmet is invisible
@@ -27,7 +31,7 @@
  * All writes are per-frame DOM mutations via useRafLoop — never React state.
  */
 
-import { useRef } from 'react';
+import { useRef, type CSSProperties } from 'react';
 import type { MotionValue } from 'motion/react';
 
 import { cn } from '@/lib/cn';
@@ -35,10 +39,24 @@ import { Picture } from '@/components/ui';
 import { useRafLoop, usePrefersReducedMotion } from '@/hooks';
 
 import { FACE_PHOTO, HELMET_PHOTO, HELMET_REVEAL, PORTRAIT_H, PORTRAIT_W } from './helmetReveal';
+import { HELMET_REGION_MASK } from './helmetRegion';
 import { useHelmetReveal } from './useHelmetReveal';
 
 /** Base transform for both layers — see the centring note above. */
 const CENTRED = 'translateX(-50%)';
+
+/**
+ * The static half of the helmet's mask: everything above the neck line. It is
+ * drawn in the photo's own pixel space, so it is stretched to the image's box.
+ */
+const REGION_MASK: CSSProperties = {
+  maskImage: HELMET_REGION_MASK,
+  WebkitMaskImage: HELMET_REGION_MASK,
+  maskSize: '100% 100%',
+  WebkitMaskSize: '100% 100%',
+  maskRepeat: 'no-repeat',
+  WebkitMaskRepeat: 'no-repeat',
+};
 
 function clamp01(value: number): number {
   return value < 0 ? 0 : value > 1 ? 1 : value;
@@ -54,7 +72,7 @@ export interface HeroPortraitProps {
 
 export function HeroPortrait({ mode, progress, stageRef }: HeroPortraitProps) {
   const faceRef = useRef<HTMLImageElement>(null);
-  const helmetRef = useRef<HTMLImageElement>(null);
+  const helmetRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   const reveal = useHelmetReveal({
@@ -121,19 +139,24 @@ export function HeroPortrait({ mode, progress, stageRef }: HeroPortraitProps) {
         what makes reduced motion free: with no loop running nothing is ever
         written, and what stays on screen is the bare-headed portrait.
 
+        Two masks, one per element, and a pixel shows only where both let it
+        through. The wrapper is the layer the loop drives — transform, opacity
+        and the cursor circle, rewritten every frame. The photo inside carries
+        the helmet region, which stops the reveal at the neck line and never
+        changes. Nesting them rather than listing both on one element means the
+        per-frame write only ever carries the circle; the region is set once,
+        at render. The wrapper takes the photos' aspect ratio, so it is the
+        same box as the face layer.
+
         Loaded at low priority so it never races the layer underneath it, which
         is the one that has to be on screen at first paint.
       */}
-      <Picture
+      <div
         ref={helmetRef}
-        src={HELMET_PHOTO}
-        alt=""
         aria-hidden="true"
-        width={PORTRAIT_W}
-        height={PORTRAIT_H}
-        fetchPriority="low"
         style={{
           transform: CENTRED,
+          aspectRatio: `${PORTRAIT_W} / ${PORTRAIT_H}`,
           // Gradients default to `repeat`, and a mask that tiles would put a
           // second circle on the frame.
           maskRepeat: 'no-repeat',
@@ -142,7 +165,17 @@ export function HeroPortrait({ mode, progress, stageRef }: HeroPortraitProps) {
           WebkitMaskSize: '100% 100%',
         }}
         className={cn(layer, 'pointer-events-none z-[4] opacity-0 will-change-[opacity]')}
-      />
+      >
+        <Picture
+          src={HELMET_PHOTO}
+          alt=""
+          width={PORTRAIT_W}
+          height={PORTRAIT_H}
+          fetchPriority="low"
+          style={REGION_MASK}
+          className="absolute inset-0 size-full max-w-none"
+        />
+      </div>
     </div>
   );
 }

@@ -3,10 +3,16 @@
  * the effect.
  *
  * The hero stacks two photographs of the same frame: Yavuz bare-headed, and the
- * identical pose with the helmet on. They were shot to the same 1323×1189 box
- * and the bodies line up pixel for pixel, so the top layer needs no fitting at
- * all — only a mask. Bringing the cursor near the head opens a soft-edged circle
- * in that mask and the helmet shows through inside it.
+ * identical pose with the helmet on. They were shot to the same 1323×1189 box,
+ * so the top layer needs no fitting at all — only masks. Bringing the cursor
+ * near the head opens a soft-edged circle in one of them and the helmet shows
+ * through inside it.
+ *
+ * The bodies line up closely but not exactly: the collar and neck differ by a
+ * few pixels, enough to show as a seam wherever the circle's edge crossed them.
+ * So the second mask holds the helmet layer to a fixed region that ends at the
+ * neck line. That region is geometry rather than tuning, measured off the
+ * photos, and lives in `helmetRegion.ts`.
  *
  * This file lives apart from both the hook and the component on purpose: the
  * component file may only export components (Fast Refresh), and putting the
@@ -77,10 +83,10 @@ export const HELMET_REVEAL = {
    * as you scroll. `scrubRadius` is that starting radius, again in rendered
    * heights.
    *
-   * It only has to cover the *head*, not the frame: below the neck the two
-   * photos are the same exposure of the same pose, so a mask edge crossing the
-   * shoulders has nothing to reveal and cannot be seen. Sizing it to the frame
-   * instead spends most of the scroll on a circle whose edge is off-screen.
+   * Only the helmet can ever show — the region in `helmetRegion.ts` stops the
+   * layer at the neck line whatever the circle's size — so the circle's edge
+   * is only seen where it crosses the helmet, and this radius sets when in the
+   * scroll the iris starts to close rather than what it uncovers.
    */
   scrubRadius: 1,
   /** Pin progress at which the helmet has fully dissolved. */
