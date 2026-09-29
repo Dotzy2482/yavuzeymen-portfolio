@@ -6,8 +6,10 @@
  * — red and cyan never on the same element at the same time, per the style
  * guide, which is why hover clears to cyan on neutral cards only.
  *
- * Desktop: 3-column grid of tall cards. Mobile: stacked rows with the chip on
- * the right.
+ * Desktop: 3-column grid of tall cards. Mobile: the same cards stacked in one
+ * column. The chip and index sit above the title on both: beside it, on a phone,
+ * the chip took a third of the row and broke titles like "iRacing 24h Le Mans"
+ * over two lines.
  */
 
 import { motion } from 'motion/react';
@@ -33,17 +35,17 @@ function AchievementCard({ achievement, index }: AchievementCardProps) {
       whileHover={prefersReducedMotion ? undefined : { y: -6 }}
       transition={{ duration: DURATION.base }}
       className={cn(
-        'bg-surface duration-base flex items-center justify-between gap-4 border px-[22px] py-6 transition-colors md:min-h-[190px] md:flex-col md:items-stretch md:justify-between md:gap-6 md:px-[30px] md:py-[34px]',
+        'bg-surface duration-base flex flex-col justify-between gap-4 border px-[22px] py-6 transition-colors md:min-h-[190px] md:gap-6 md:px-[30px] md:py-[34px]',
         achievement.champion
           ? 'border-accent-secondary-border'
           : 'border-hairline hover:border-accent-primary',
       )}
     >
-      <div className="order-2 hidden items-center justify-between md:order-1 md:flex">
+      <div className="flex items-center justify-between">
         <Tag variant={achievement.champion ? 'champion' : 'default'}>{achievement.chip}</Tag>
         <span className="num text-text-faint text-[11px]">{padNumber(index + 1, 2)}</span>
       </div>
-      <div className="order-1">
+      <div>
         <h3
           lang={achievement.lang}
           className="stretch-wide text-[17px] leading-[1.25] font-black uppercase md:text-[21px]"
@@ -54,12 +56,6 @@ function AchievementCard({ achievement, index }: AchievementCardProps) {
           {achievement.note}
         </p>
       </div>
-      <Tag
-        variant={achievement.champion ? 'champion' : 'default'}
-        className="order-3 shrink-0 md:hidden"
-      >
-        {achievement.chip}
-      </Tag>
     </motion.article>
   );
 }
