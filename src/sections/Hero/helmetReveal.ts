@@ -49,11 +49,19 @@ export const HELMET_REVEAL = {
   head: { x: 0.504, y: 0.18 },
 
   /**
-   * Spotlight radius, as a fraction of the *rendered* portrait's height. `max`
-   * is a little wider than the helmet itself, so a cursor parked on the visor
-   * shows the whole shell; it shrinks towards `min` as the cursor drifts off.
+   * Spotlight radius, as a fraction of the *rendered* portrait's height; it
+   * shrinks towards `min` as the cursor drifts off the head.
+   *
+   * Only the circle's inner `core` is fully opaque, so `max` is sized for the
+   * core: 0.45 × 0.67 ≈ 0.30 of the height, which reaches every point of the
+   * shell — crown, sides and both chin-bar corners, about 360 photo pixels
+   * apart at most — from anywhere the cursor can sit on the helmet. At the old
+   * 0.23 the core was 0.10, and 18% of the shell stayed faded even with the
+   * cursor on the visor (32–41% from its edges), which read as the lower
+   * corners being cut off. The larger circle is safe because the region in
+   * `helmetRegion.ts` confines the layer to the helmet whatever its size.
    */
-  radius: { min: 0.1, max: 0.23 },
+  radius: { min: 0.1, max: 0.67 },
 
   /**
    * How much of the circle is fully opaque before the falloff starts, as a
