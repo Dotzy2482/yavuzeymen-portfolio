@@ -39,7 +39,10 @@ its path data back into the main chunk.
 **Rasters go through `<Picture>`.** It derives the AVIF and WebP sources from
 the original's path, so after adding or replacing an image under
 `public/images/`, run `pnpm images`. A test fails on a missing, stale or
-wrongly sized encode rather than letting a browser fetch a 404.
+wrongly sized encode rather than letting a browser fetch a 404. The
+`<picture>` is `display: contents`, so its `<source>` elements must stay
+`hidden` — otherwise they become items of the parent flex or grid, which is
+how Setup's photo once fell into a second row. A test holds that too.
 
 **Colour, spacing, type and radius come from `src/styles/tokens.css`.** Never
 hardcode a hex value, a font stack or a shadow in a component. Add or edit the
@@ -112,9 +115,10 @@ it. Either keep the ref in the component that renders the node, or use the
 - **Do not resize either hero portrait, or resize one without the other.**
   `public/images/hero/portrait-cutout.png` and `portrait-helmet.png` are the
   same 1323 × 1189 crop of the same pose, bare-headed and helmeted. The hero
-  stacks them in one box and masks the top one to a circle under the cursor, so
-  their alignment is the whole effect — it is not corrected at runtime and
-  nothing will warn you. Re-encoding is fine; recropping, resizing or replacing
+  stacks them in one box and masks the top one to a circle under the cursor,
+  held above the neck by a second, static mask drawn in the images' own
+  coordinates, so their alignment is the whole effect — it is not corrected at
+  runtime and nothing will warn you. Re-encoding is fine; recropping, resizing or replacing
   one alone is not. See [docs/CONTENT.md](docs/CONTENT.md).
 
 - **Do not hardcode contact details.** E-mail, phone and social URLs come from
@@ -156,10 +160,15 @@ Headings and UI labels are **English**; body copy is **Turkish**. Keep that
 split exactly as it is — it is a deliberate design decision, not an oversight.
 Code, comments and documentation are English.
 
+The document is `lang="tr"`, where CSS `uppercase` maps `i` to `İ`. English
+text that gets uppercased carries `lang="en"`; an English or brand name inside
+a Turkish title is a `MixedText` run (`src/types`), so "NoGripSimRacing'in"
+renders "NOGRIPSIMRACING'İN" and not "NOGRİPSİMRACİNG'İN".
+
 ## Multi-session work
 
 Workstreams are planned out in [docs/plans/](docs/plans/), numbered in the
-order they must land. All four (`01`–`04`) have landed; their files stay for
+order they must land. All five (`01`–`05`) have landed; their files stay for
 the **Reasoning** they record, which the code does not — read the relevant one
 before changing the part of the site it built. **Starting a new one:** give it
 the next number and the same shape (Reasoning, Steps, Done when, Progress).
@@ -171,6 +180,6 @@ one plan per session.
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — layout, data flow, tokens
 - [docs/TRACK_RECORDS.md](docs/TRACK_RECORDS.md) — the animated circuit module
 - [docs/CONTENT.md](docs/CONTENT.md) — what is real, what is placeholder
-- [docs/ROADMAP.md](docs/ROADMAP.md) — what is next, and what is blocked
-- [docs/plans/](docs/plans/) — the four landed workstreams and why they went the
-  way they did
+- [docs/ROADMAP.md](docs/ROADMAP.md) — what is done, and what is blocked
+- [docs/plans/](docs/plans/) — the five landed workstreams and why they went
+  the way they did
