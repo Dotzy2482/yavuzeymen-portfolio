@@ -9,29 +9,30 @@ layout or a crash.
 
 ## Copy and data
 
-| Where                       | Field                                                | Status              | Source of truth                                        |
-| --------------------------- | ---------------------------------------------------- | ------------------- | ------------------------------------------------------ |
-| `data/profile.ts`           | Name, tagline, headline                              | **Real**            | Design handoff, signed off                             |
-| `data/profile.ts`           | Current team + "main driver since"                   | **Real**            | Team Curve Hunters                                     |
-| `data/profile.ts`           | iRating 4.020, License A 1.39, Türkiye Top 50, 7 yrs | **Real** (snapshot) | iRacing profile — re-check before launch               |
-| `data/profile.ts`           | E-mail, phone                                        | **Env-driven**      | `.env.local`; empty string when unset                  |
-| `data/profile.ts`           | Instagram / YouTube / TikTok URLs                    | **Env-driven**      | `.env.local`; fall back to `#`                         |
-| `sections/About/About.tsx`  | Four Turkish bio paragraphs                          | **Real**            | Design handoff, final copy                             |
-| `data/career.ts`            | Six timeline entries, 2019–2025                      | **Real**            | Design handoff, final copy                             |
-| `data/achievements.ts`      | Six result cards                                     | **Real**            | Design handoff, final copy                             |
-| `data/partners.ts`          | Four sponsors                                        | **Real**            | Logos supplied; see assets below                       |
-| `data/partners.ts`          | Two "YOUR BRAND HERE" slots                          | **Intentional**     | Not a placeholder — the section doubles as a pitch     |
-| `data/contentStats.ts`      | 146.848 views / 797.000 top reel / %82,3 reels       | **Placeholder**     | Instagram insights export                              |
-| `data/contentStats.ts`      | Five reel cards (captions + covers)                  | **Placeholder**     | Real reel thumbnails + real captions                   |
-| `data/setup.ts`             | All five rows: `MODEL — YER TUTUCU`                  | **Placeholder**     | Yavuz's actual hardware list; renders as a dashed slot |
-| `data/simToReal.ts`         | Five photos + labels                                 | **Real** (low-res)  | Photos supplied; see assets below                      |
-| `data/simToReal.ts`         | `karting` — `src: null`                              | **Placeholder**     | Karting photo, renders as a dashed empty slot          |
-| `features/…/data/tracks.ts` | 12 circuit names + regions                           | **Real**            | Yavuz's circuit list                                   |
-| `features/…/data/tracks.ts` | Lap times, lengths, corner counts                    | **Placeholder**     | iRacing personal-best export                           |
-| `features/…/trackPaths.ts`  | Circuit `path` geometry                              | **Real**            | Generated from OpenStreetMap; see TRACK_RECORDS.md     |
-| `sections/Contact`          | Invitation paragraph                                 | **Real**            | Design handoff, final copy                             |
-| `sections/Contact`          | `Gizlilik` / `Şartlar` footer links                  | **Placeholder**     | Legal pages not written                                |
-| `index.html`                | `description`, `og:*`, `twitter:*`                   | **Real, English**   | Design handoff — see the note below                    |
+| Where                       | Field                                                | Status              | Source of truth                                                      |
+| --------------------------- | ---------------------------------------------------- | ------------------- | -------------------------------------------------------------------- |
+| `data/profile.ts`           | Name, tagline, headline                              | **Real**            | Design handoff, signed off                                           |
+| `data/profile.ts`           | Current team + "main driver since"                   | **Real**            | Team Curve Hunters                                                   |
+| `data/profile.ts`           | iRating 4.020, License A 1.39, Türkiye Top 50, 7 yrs | **Real** (snapshot) | iRacing profile — re-check before launch                             |
+| `data/profile.ts`           | E-mail, phone                                        | **Env-driven**      | `.env.local`; empty string when unset                                |
+| `data/profile.ts`           | Instagram / YouTube / TikTok URLs                    | **Env-driven**      | `.env.local`; fall back to `#`                                       |
+| `sections/About/About.tsx`  | Four Turkish bio paragraphs                          | **Real**            | Design handoff, final copy                                           |
+| `data/career.ts`            | Six timeline entries, 2019–2025                      | **Real**            | Design handoff, final copy                                           |
+| `data/achievements.ts`      | Six result cards                                     | **Real**            | Design handoff, final copy                                           |
+| `data/partners.ts`          | Four sponsors                                        | **Real**            | Logos supplied; see assets below                                     |
+| `data/partners.ts`          | Two "YOUR BRAND HERE" slots                          | **Intentional**     | Not a placeholder — the section doubles as a pitch                   |
+| `data/contentStats.ts`      | 146.848 views / 797.000 top reel / %82,3 reels       | **Placeholder**     | Instagram insights export                                            |
+| `data/contentStats.ts`      | Five reel cards (captions + covers)                  | **Placeholder**     | Real reel thumbnails + real captions                                 |
+| `data/setup.ts`             | All five rows: `MODEL — YER TUTUCU`                  | **Placeholder**     | Yavuz's actual hardware list; renders as a dashed slot               |
+| `data/simToReal.ts`         | Five photos + labels                                 | **Real** (low-res)  | Photos supplied; see assets below                                    |
+| `data/simToReal.ts`         | `karting` — `src: null`                              | **Placeholder**     | Karting photo, renders as a dashed empty slot                        |
+| `features/…/data/tracks.ts` | 12 circuit names + regions                           | **Real**            | Yavuz's circuit list                                                 |
+| `features/…/data/tracks.ts` | Lengths, corner counts                               | **Real**            | Published figures; every length agrees with the OSM geometry to 1.5% |
+| `features/…/data/tracks.ts` | Lap times                                            | **Placeholder**     | iRacing personal-best export                                         |
+| `features/…/trackPaths.ts`  | Circuit `path` geometry                              | **Real**            | Generated from OpenStreetMap; see TRACK_RECORDS.md                   |
+| `sections/Contact`          | Invitation paragraph                                 | **Real**            | Design handoff, final copy                                           |
+| `sections/Contact`          | `Gizlilik` / `Şartlar` footer links                  | **Placeholder**     | Legal pages not written                                              |
+| `index.html`                | `description`, `og:*`, `twitter:*`                   | **Real, English**   | Design handoff — see the note below                                  |
 
 ### The document head is English, in a `lang="tr"` document
 

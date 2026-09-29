@@ -113,16 +113,26 @@ Module-level constants, also in `types.ts`:
 The two are related by exactly one line, in `useLapAnimation`:
 
 ```ts
-// The marker advances on screen time…
-fraction.current = (fraction.current + (delta * speed) / LAP_DURATION_MS) % 1;
+// The marker advances on screen time… (wrapping one frame late — see below)
+const lapSoFar = fraction.current >= 1 ? fraction.current - 1 : fraction.current;
+fraction.current = lapSoFar + (delta * speed) / LAP_DURATION_MS;
+const progress = Math.min(1, fraction.current);
 
 // …while the chronometer scales the real lap time by the marker's position.
-chrono.textContent = formatLapTime(fraction * parseLapTime(track.lap));
+chrono.textContent = formatLapTime(progress * parseLapTime(track.lap));
 ```
 
-So the displayed time is `fraction × lapMs`. At `fraction = 1` the marker is
+So the displayed time is `progress × lapMs`. At `progress = 1` the marker is
 back on the line and the chronometer reads the personal best, to the
 millisecond — no matter how long the real lap actually is.
+
+**The wrap is one frame late on purpose.** It used to be a plain `% 1`, which
+never drew a frame at 1: the reading jumped from just under the personal best
+to just over zero, and the one number the section exists to show was never on
+screen. Now the frame that reaches the line is drawn at exactly 1 — marker on
+the line, lap fully traced, sectors full, chronometer on `track.lap` — and the
+next frame starts the new lap from whatever that frame overshot by, so the
+average lap still takes `LAP_DURATION_MS / speed`.
 
 **Why it has to work this way:** lap times across the twelve circuits range
 from about 1:22 to over 2:00, and the real target is endurance circuits where a
@@ -133,8 +143,11 @@ Decoupling them keeps the animation watchable **and** the number true.
 
 **If you change this**, keep the invariant: _the chronometer must read exactly
 `track.lap` at the moment the marker crosses the line._ The round-trip test in
-`lib/formatLapTime.test.ts` protects half of it; the other half is this
-formula.
+`lib/formatLapTime.test.ts` protects the formatting half. The other half is
+`components/TrackRecords.test.tsx`, which drives the real component through a
+full lap of every circuit on a hand-cranked frame clock, in uneven frames, and
+asserts the chronometer shows exactly `track.lap` at the line and never passes
+it.
 
 A future improvement is a per-track `displayDurationMs`, so a short technical
 circuit and a long endurance circuit can differ on screen. The scaffold's

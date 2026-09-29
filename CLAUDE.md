@@ -19,6 +19,7 @@ handoff, with an animated circuit-map section as its centrepiece.
 | `pnpm lint`      | ESLint (React Compiler rules are **errors**)     |
 | `pnpm test`      | Vitest, single run                               |
 | `pnpm format`    | Prettier write (also sorts Tailwind classes)     |
+| `pnpm images`    | Encode new or changed rasters to AVIF + WebP     |
 
 Before claiming work is done, run `pnpm build && pnpm lint && pnpm test` and
 report the actual output. Prettier reorders Tailwind classes on `format`; that
@@ -30,7 +31,15 @@ is expected, not a conflict to undo.
 **only** through `src/features/track-records/index.ts`. Never import from
 `features/track-records/components/…`, `…/hooks/…`, `…/data/…` or `…/lib/…`
 outside the feature. The index exports `<TrackRecords />` plus a few types;
-that is the whole public surface. Inside the feature, import freely.
+that is the whole public surface. Inside the feature, import freely. And only
+`sections/TrackRecords` imports it, lazily, behind a placeholder that holds the
+section's height — a static import anywhere else silently folds the module and
+its path data back into the main chunk.
+
+**Rasters go through `<Picture>`.** It derives the AVIF and WebP sources from
+the original's path, so after adding or replacing an image under
+`public/images/`, run `pnpm images`. A test fails on a missing, stale or
+wrongly sized encode rather than letting a browser fetch a 404.
 
 **Colour, spacing, type and radius come from `src/styles/tokens.css`.** Never
 hardcode a hex value, a font stack or a shadow in a component. Add or edit the
@@ -41,11 +50,11 @@ props). One-off arbitrary values for _layout_ numbers taken from the design
 (`px-[72px]`, `text-[34px]`) are fine; one-off _colours_ are not.
 
 **Animation goes through `motion`.** Use `motion/react` components, or the
-wrappers in `src/components/motion/` (`Marquee`, `Pinned`, `CountUp`). Do not
-write CSS `@keyframes`. Per-frame work that
-must not re-render React goes through `useRafLoop` and writes to the DOM
-directly — that is the established pattern in the hero helmet fit and the lap
-animation.
+wrappers in `src/components/motion/` (`Marquee`, `Pinned`, `CountUp`,
+`StretchScrub`). Do not write CSS `@keyframes`. Per-frame work that must not
+re-render React goes through `useRafLoop` and writes to the DOM directly — that
+is the established pattern in the hero helmet reveal and the lap animation; the
+scroll rail does the same with motion values.
 
 **Every animation honours `prefers-reduced-motion`.** Call
 `usePrefersReducedMotion()` and render a static, immediately-visible state.
@@ -130,7 +139,7 @@ these by inventing values.
 | Where                                   | Placeholder                                                | Waiting on             |
 | --------------------------------------- | ---------------------------------------------------------- | ---------------------- |
 | `data/setup.ts`                         | All five rows read `MODEL — YER TUTUCU`                    | Yavuz's real hardware  |
-| `features/track-records/data/tracks.ts` | Lap times, lengths, corner counts                          | iRacing profile export |
+| `features/track-records/data/tracks.ts` | Lap times (lengths and corners are real)                   | iRacing profile export |
 | `data/profile.ts`                       | Empty e-mail/phone/socials when env is unset               | `.env.local` values    |
 | `data/simToReal.ts`                     | `karting` item has `src: null` (dashed slot)               | Karting photo          |
 | `data/contentStats.ts`                  | Hand-entered counters and reel captions                    | Instagram insights     |
@@ -150,10 +159,12 @@ Code, comments and documentation are English.
 ## Multi-session work
 
 Workstreams are planned out in [docs/plans/](docs/plans/), numbered in the
-order they must land. `01` has landed; three remain. **Starting one:** read its
-plan before touching code — it carries the reasoning behind its decisions, which
-the code does not record. **Resuming one:** its Progress list says where the
-last session stopped. Work one plan per session.
+order they must land. All four (`01`–`04`) have landed; their files stay for
+the **Reasoning** they record, which the code does not — read the relevant one
+before changing the part of the site it built. **Starting a new one:** give it
+the next number and the same shape (Reasoning, Steps, Done when, Progress).
+**Resuming one:** its Progress list says where the last session stopped. Work
+one plan per session.
 
 ## Further reading
 
@@ -161,4 +172,5 @@ last session stopped. Work one plan per session.
 - [docs/TRACK_RECORDS.md](docs/TRACK_RECORDS.md) — the animated circuit module
 - [docs/CONTENT.md](docs/CONTENT.md) — what is real, what is placeholder
 - [docs/ROADMAP.md](docs/ROADMAP.md) — what is next, and what is blocked
-- [docs/plans/](docs/plans/) — the four planned workstreams, in landing order
+- [docs/plans/](docs/plans/) — the four landed workstreams and why they went the
+  way they did

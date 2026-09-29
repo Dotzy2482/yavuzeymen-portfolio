@@ -10,8 +10,10 @@
  * or patch a path here; change docs/assets/circuits.json and regenerate. See
  * docs/TRACK_RECORDS.md.
  *
- * Lap times, lengths and corner counts are still placeholder values from the
- * design handoff, waiting on the iRacing profile. The flag gradient lives in
+ * Lengths and corner counts are the published figures for the layouts drawn,
+ * and the generator warns if a length drifts more than 3% from the measured
+ * ring (all twelve agree within 1.5%). Lap times are still placeholder
+ * personal bests from the design handoff, waiting on the iRacing profile. The flag gradient lives in
  * `flags.ts`, keyed by `country`.
  */
 
