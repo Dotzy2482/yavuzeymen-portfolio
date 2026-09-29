@@ -139,9 +139,11 @@ Yavuz (below) or deliberately unscheduled.
 
 No plan unblocks these — each is waiting on a person or a file.
 
-- **Real lap times, lengths and corner counts** from the iRacing profile,
-  replacing the handoff's placeholder numbers. Cheap, high-value, and it makes
-  the section's numbers as true as its geometry.
+- **Real lap times** from the iRacing profile, replacing the handoff's
+  placeholder personal bests. Cheap, high-value, and it makes the last number
+  in the section as true as its geometry: the lengths and corner counts are the
+  published figures for the layouts drawn, and every length agrees with the
+  measured OSM ring to within 1.5%.
 - **Setup hardware list** — five strings from Yavuz; flip each row's
   `placeholder` to `false` as it is filled.
 - **Contact environment values** — e-mail and the three social URLs in
