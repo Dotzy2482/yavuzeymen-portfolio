@@ -6,12 +6,19 @@
  * uppercase title and one line of Turkish description. Copy is design-final.
  */
 
+import type { MixedText } from '@/types';
+
 export interface CareerEntry {
   id: string;
   year: number;
-  title: string;
+  /**
+   * Rendered uppercase. A title that is Turkish apart from an English name
+   * lists its runs, so the name alone is tagged English: "Sim Racing'e" must
+   * read "SIM RACING'E", not "SİM RACİNG'E" (see MixedText).
+   */
+  title: string | MixedText;
   description: string;
-  /** BCP-47 tag when the title is not Turkish (see Achievement.lang). */
+  /** BCP-47 tag when the whole title is not Turkish (see Achievement.lang). */
   lang?: string;
 }
 
@@ -19,7 +26,7 @@ export const career: CareerEntry[] = [
   {
     id: 'start',
     year: 2019,
-    title: "Sim Racing'e Başlangıç",
+    title: [{ text: 'Sim Racing', lang: 'en' }, "'e Başlangıç"],
     description: 'İlk direksiyon setiyle rekabetçi liglerde yarışmaya başladım.',
   },
   {
@@ -32,7 +39,7 @@ export const career: CareerEntry[] = [
   {
     id: 'nogrip',
     year: 2022,
-    title: "NoGripSimRacing'in Kuruluşu",
+    title: [{ text: 'NoGripSimRacing', lang: 'en' }, "'in Kuruluşu"],
     description: 'Kendi içerik markamı kurdum; topluluk hızla büyüdü.',
   },
   {

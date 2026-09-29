@@ -8,14 +8,35 @@
  * dot + glow, full opacity) once the fill passes its dot.
  */
 
-import { useRef } from 'react';
+import { Fragment, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 
 import { cn } from '@/lib/cn';
 import { MonoLabel, SectionHeading } from '@/components/ui';
 import { useInView } from '@/hooks';
 import { career, careerRange, type CareerEntry } from '@/data';
-import type { SectionProps } from '@/types';
+import type { MixedText, SectionProps } from '@/types';
+
+interface TitleTextProps {
+  title: string | MixedText;
+}
+
+/**
+ * A title whose English runs carry `lang="en"` inside the Turkish document, so
+ * `uppercase` casts each run by its own language's rules.
+ */
+function TitleText({ title }: TitleTextProps) {
+  if (typeof title === 'string') return title;
+  return title.map((run, i) =>
+    typeof run === 'string' ? (
+      <Fragment key={i}>{run}</Fragment>
+    ) : (
+      <span key={i} lang={run.lang}>
+        {run.text}
+      </span>
+    ),
+  );
+}
 
 interface TimelineNodeProps {
   entry: CareerEntry;
@@ -55,7 +76,7 @@ function TimelineNode({ entry }: TimelineNodeProps) {
           lang={entry.lang}
           className="tracking-caps stretch-wide text-[17px] font-black uppercase md:text-[22px]"
         >
-          {entry.title}
+          <TitleText title={entry.title} />
         </div>
         <div className="text-text-secondary mt-1.5 text-[13px] leading-[1.7] md:mt-2.5 md:text-[15px]">
           {entry.description}
@@ -92,7 +113,7 @@ export function Career({ id = 'career', className }: SectionProps) {
           ))}
         </div>
       </div>
-      <MonoLabel size="sm" tracking="chip" className="mt-6 md:hidden">
+      <MonoLabel size="md" tracking="chip" className="mt-6 md:hidden">
         {careerRange}
       </MonoLabel>
     </section>
