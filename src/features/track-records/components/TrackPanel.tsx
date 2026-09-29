@@ -1,10 +1,22 @@
 /**
- * The right-hand panel: circuit name and meta, the chronometer, the map,
- * sector bars and transport controls.
+ * The right-hand panel: circuit name and meta, the timing block (personal
+ * best and lap replay), the map, sector bars and transport controls.
  *
- * Ordering differs between breakpoints — desktop puts the chronometer beside
- * the name, mobile stacks it above — which is what the `order-*` classes are
- * doing.
+ * The header is a column at every width. Desktop reads name, then timing; a
+ * phone leads with the timing block, as the design does — that is what the
+ * `order-*` classes are doing. The name comes first in the DOM either way, so
+ * a screen reader landing on the circuit's heading hears its personal best
+ * after it rather than having passed it.
+ *
+ * The desktop header used to be a wrapping row, the name beside the clock.
+ * Whenever a name was too long to share the row — Nürburgring GP at 1440, for
+ * one — the clock dropped onto a line of its own, so the panel's height
+ * depended on which circuit was picked. As a column it is one height for all
+ * twelve.
+ *
+ * Every label that carries meaning is at least 11px on both viewports. The
+ * OpenStreetMap credit is 10px: small print, but it has to stay legible — it
+ * is a licence obligation, not decoration.
  */
 
 import { MonoLabel } from '@/components/ui';
@@ -35,8 +47,7 @@ export function TrackPanel({
 }: TrackPanelProps) {
   return (
     <div className="border-hairline bg-surface min-w-0 overflow-hidden border px-5 py-[22px] md:px-11 md:py-10">
-      <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-start md:justify-between md:gap-8">
-        <LapTimer className="order-1 md:order-2" />
+      <div className="flex flex-col gap-5 md:gap-6">
         <div className="order-2 min-w-0 md:order-1">
           <h3
             lang="en"
@@ -44,10 +55,16 @@ export function TrackPanel({
           >
             {track.name}
           </h3>
-          <MonoLabel size="sm" tracking="chip" as="div" className="mt-2 md:mt-3.5 md:text-[11px]">
-            {track.length} · {track.corners} CORNERS · GT3 · IRACING
+          {/* At 11px the line no longer fits a phone, so it breaks on purpose,
+              between the circuit and the car, instead of wherever it runs out
+              and leaving a separator hanging at the end of the line. */}
+          <MonoLabel size="md" tracking="chip" as="div" className="mt-2 md:mt-3.5">
+            {track.length} · {track.corners} CORNERS
+            <span className="hidden md:inline"> · </span>
+            <span className="block md:inline">GT3 · IRACING</span>
           </MonoLabel>
         </div>
+        <LapTimer best={track.lap} className="order-1 md:order-2" />
       </div>
 
       <TrackMap path={track.path} trackName={track.name} driverName={driverName} />
@@ -64,14 +81,7 @@ export function TrackPanel({
 
       {/* The outlines are drawn from OpenStreetMap data, which is ODbL: a map
           derived from it must credit it wherever the map is shown. */}
-      <MonoLabel
-        as="div"
-        size="xs"
-        tone="faint"
-        tracking="chip"
-        lang="en"
-        className="mt-5 md:mt-6 md:text-[10px]"
-      >
+      <MonoLabel as="div" size="sm" tone="faint" tracking="chip" lang="en" className="mt-5 md:mt-6">
         Circuit maps ©{' '}
         <a
           href="https://www.openstreetmap.org/copyright"

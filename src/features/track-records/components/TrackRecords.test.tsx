@@ -97,11 +97,22 @@ const pauseButton = () => screen.getByRole('button', { name: 'Pause' });
 const playButton = () => screen.getByRole('button', { name: 'Play' });
 const speedButton = (speed: 1 | 2) => screen.getByRole('button', { name: `Speed ${speed}X` });
 
-/** The chronometer, in milliseconds. */
+/**
+ * The personal best the panel leads with, read the way the page pairs it with
+ * its label: the definition that follows the "Personal best" term.
+ */
+function personalBest(): string {
+  const term = screen.getByText('Personal best', { selector: 'dt' });
+  const value = term.nextElementSibling;
+  if (value?.tagName !== 'DD') throw new Error('the personal best label has no value after it');
+  return value.textContent ?? '';
+}
+
+/** The replay clock, in milliseconds. */
 function reading(): number {
   const text = screen.getByRole('timer').textContent ?? '';
   const ms = parseLapTime(text);
-  if (ms === null) throw new Error(`the chronometer reads something other than a time: ${text}`);
+  if (ms === null) throw new Error(`the replay clock reads something other than a time: ${text}`);
   return ms;
 }
 
@@ -111,6 +122,8 @@ function reading(): number {
 
 function expectPanelShows(track: Track): void {
   expect(screen.getByRole('heading', { level: 3, name: track.name })).toBeInTheDocument();
+  // The same string the circuit's row and chip show, not a reformatting of it.
+  expect(personalBest()).toBe(track.lap);
   expect(
     screen.getByText(
       (text) => text.includes(track.length) && text.includes(`${track.corners} CORNERS`),
@@ -138,7 +151,7 @@ function expectListing(region: TrackRegion): void {
 }
 
 /**
- * The chronometer after `screenMs` of playback at `speed`: the real lap time
+ * The replay clock after `screenMs` of playback at `speed`: the real lap time
  * scaled by how far round the marker is — never the screen time itself. Within
  * a millisecond, because the display floors and the loop sums per-frame steps.
  */
@@ -429,6 +442,37 @@ describe('TrackRecords', () => {
     });
   });
 
+  describe('timing block', () => {
+    // What the panel leads with is a layout question the browser answers;
+    // what these hold is that the personal best is there, labelled, and still,
+    // while the replay beside it is the one that moves.
+
+    it('leads with the personal best before any frame has run', () => {
+      render(<TrackRecords />);
+
+      expect(personalBest()).toBe(panelTrack().lap);
+      expect(reading()).toBe(0);
+    });
+
+    it('names the replay clock by the label it shows', () => {
+      render(<TrackRecords />);
+
+      expect(screen.getByRole('timer', { name: 'Lap replay' })).toBeInTheDocument();
+    });
+
+    it('keeps the personal best still while the replay counts', () => {
+      vi.stubGlobal('IntersectionObserver', OnScreenObserver);
+      render(<TrackRecords />);
+      const track = panelTrack();
+
+      clock.frames(60);
+
+      expect(reading()).toBeGreaterThan(0);
+      expect(reading()).toBeLessThan(lapMs(track));
+      expect(personalBest()).toBe(track.lap);
+    });
+  });
+
   describe('lap animation', () => {
     it('requests no frames while the panel is off screen', () => {
       // setup.ts's observer never reports an intersection.
@@ -485,6 +529,8 @@ describe('TrackRecords', () => {
 
       clock.frames(60);
       expect(reading()).toBe(0);
+      // Nothing is left waiting on an animation that is not going to run.
+      expect(personalBest()).toBe(track.lap);
 
       await user.click(playButton());
       const elapsed = clock.frames(60);
@@ -509,7 +555,7 @@ describe('TrackRecords', () => {
     });
 
     it.each(tracks)('reads exactly $lap as the marker crosses the line at $name', async (track) => {
-      // The module's critical rule (docs/TRACK_RECORDS.md): the chronometer
+      // The module's critical rule (docs/TRACK_RECORDS.md): the replay clock
       // lands on the personal best at the moment the marker is back on the
       // line. The frames are an uneven 97 ms, inside useRafLoop's 100 ms clamp,
       // so no frame lands on the line by arithmetic luck — the finish has to
@@ -528,6 +574,9 @@ describe('TrackRecords', () => {
 
       expect(readings).toContain(track.lap);
       for (const text of readings) expect(parseLapTime(text)).toBeLessThanOrEqual(lapMs(track));
+      // …and at the line it matches, character for character, the personal
+      // best the panel leads with.
+      expect(readings).toContain(personalBest());
     });
   });
 });
