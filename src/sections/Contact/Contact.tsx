@@ -43,8 +43,21 @@ import { profile } from '@/data';
 import { usePrefersReducedMotion } from '@/hooks';
 import type { SectionProps } from '@/types';
 
+/**
+ * The footer's small print keeps its size; the link box around it grows to the
+ * 24px WCAG minimum, centred on the text, so the row looks the same and a
+ * thumb has something to hit.
+ */
 const FOOTER_LINK_CLASSES =
-  'tracking-chip text-text-faint hover:text-text font-mono text-[9px] uppercase transition-colors md:text-[10px]';
+  'tracking-chip text-text-faint hover:text-text inline-flex min-h-6 items-center font-mono text-[9px] uppercase transition-colors md:text-[10px]';
+
+/**
+ * 44px tall on a phone, 24px with a pointer, the text centred in the box.
+ * These are Contact's own classes: SocialLinks is shared with the menu, which
+ * sizes its links itself.
+ */
+const SOCIAL_LINK_CLASSES =
+  'tracking-mono-lg text-text-secondary hover:text-accent-primary duration-base inline-flex min-h-11 items-center font-mono text-[11px] uppercase transition-colors md:min-h-6';
 
 const SECTION_CLASSES =
   'flex min-h-[92vh] flex-col items-center justify-center px-5 pt-[100px] text-center md:min-h-screen md:px-[72px] md:pt-[150px]';
@@ -122,7 +135,7 @@ function ContactBody({ progress }: { progress: MotionValue<number> | null }) {
         {hasEmail ? profile.email : 'Business Enquiries'} →
       </Button>
       <div className="mt-8 flex gap-6 md:mt-11 md:gap-9">
-        <SocialLinks linkClassName="tracking-mono-lg text-text-secondary hover:text-accent-primary py-2.5 font-mono text-[10px] uppercase transition-colors duration-base md:py-0 md:text-[11px]" />
+        <SocialLinks linkClassName={SOCIAL_LINK_CLASSES} />
       </div>
 
       {/* Footer */}
