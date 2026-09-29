@@ -8,8 +8,9 @@ src/
                        Providers.tsx holds cross-cutting context (MotionConfig).
   sections/            One folder per page section. A section owns its layout
                        and its copy, and nothing else. Barrel: sections/index.ts.
-    Nav/               Top bar, desktop side columns, full-screen mobile menu,
-                       and the scroll rail that replaces the page scrollbar
+    Nav/               Top bar, desktop side columns, the compact desktop bar
+                       that takes over past the hero, the full-screen overlay
+                       menu, and the scroll rail that replaces the scrollbar
     Hero/              Portrait + helmet (cursor reveal) + headline + marquee
     About/ Career/ Achievements/ TrackRecords/ SimToReal/
     Content/ Setup/ Partners/ Contact/
@@ -216,6 +217,37 @@ Every wrapper checks `usePrefersReducedMotion()` and degrades to a static,
 visible state. On a site this animation-heavy the opt-out is a requirement, not
 a nicety.
 
+### The nav chrome
+
+`sections/Nav/Nav.tsx` owns everything that navigates, inside one
+`<nav aria-label="Ana menü">`, and runs the page's one scroll-spy
+(`useActiveSection`), handing the result to every list that highlights it.
+
+- **Over the hero**, the top bar (wordmark + a 44 × 44 hamburger) and, on
+  desktop, the PAGES / FOLLOW ON columns. On desktop all of it is `absolute`
+  and scrolls away with the hero, as the design has it.
+- **On mobile** the top bar is `fixed`. Once the page leaves its very top a
+  surface fades in under it — `bg-bg/85` with a backdrop blur and a hairline —
+  so the wordmark always reads on the bar's own background rather than on the
+  copy, photos and counters scrolling under it.
+- **On desktop past the hero**, `DesktopBar.tsx`: a fixed 64px bar with the
+  wordmark, the four `NAV_ITEMS` (folded into the hamburger below `lg`, where
+  they do not fit) and the red Business Enquiries CTA. It is shown by
+  `useSectionPassed('hero', 64)` in `useNavChrome.ts` — an
+  IntersectionObserver on the hero with the bar's height taken off the top of
+  its root — so it arrives as the hero's own CTA leaves. While hidden it is
+  `inert` and, once it has slid away, `visibility: hidden`: nothing in it can
+  take focus. Its 40px side padding clears the lap rail by 16px, and the
+  rail's readout sits over the bar's right end, above its hairline.
+- **The overlay menu** (`MobileMenu.tsx`) is a real modal — focus trap,
+  Escape, focus returned on close — and carries the CTA too, which is the only
+  place a phone offers it before Contact. Its list is centred with `my-auto` in
+  a scrolling dialog, so a phone on its side can still reach every link.
+
+Stacking: nav chrome 30, scroll rail 40, overlay menu 50, skip link 60. Both
+bars slide or fade over `DURATION.base`, and switch instantly under
+`prefers-reduced-motion`.
+
 ### The scroll rail
 
 The native page scrollbar is hidden in `globals.css` (`scrollbar-width: none`
@@ -255,7 +287,9 @@ Vitest + jsdom, with Testing Library available. Current coverage is the
 track-records maths: lap-time formatting and parsing, dash geometry, sector
 fill, and a data-integrity suite asserting every circuit path is a single
 closed subpath with a unique id. Beside it: the nav's scroll-spy, the scroll
-rail's geometry (notch placement, pointer mapping, snapping), `Picture`'s
+rail's geometry (notch placement, pointer mapping, snapping), the nav chrome
+(when the desktop bar counts the hero as passed, that it is inert until then,
+and the menu's CTA), `Picture`'s
 derived sources, and `docs/assets/encode-images.test.mjs`, which runs
 `pnpm images --check` so that an original with missing, stale or wrongly sized
 encodes fails the suite. That one is plain `.mjs` outside `src/` on purpose —
