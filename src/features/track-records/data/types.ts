@@ -50,8 +50,9 @@ export interface Track {
    *
    * Real geometry, derived from OpenStreetMap (© OpenStreetMap contributors,
    * ODbL) by docs/assets/generate-track-paths.mjs into `trackPaths.ts`: a
-   * north-up polyline that runs in the circuit's direction of travel and is
-   * rotated so distance 0 *is* the start/finish line. That rotation is why
+   * polyline that runs in the circuit's direction of travel and is rotated so
+   * distance 0 *is* the start/finish line. North up, or turned a quarter where
+   * that lets a tall circuit lie landscape — the shape itself is untouched. That rotation is why
    * nothing downstream needs a start-line offset.
    */
   path: string;

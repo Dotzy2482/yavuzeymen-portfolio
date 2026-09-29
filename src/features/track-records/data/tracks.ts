@@ -4,8 +4,9 @@
  *
  * The outlines are the exception. Each `path` comes from `trackPaths.ts`,
  * which docs/assets/generate-track-paths.mjs derives from OpenStreetMap
- * (© OpenStreetMap contributors, ODbL) — real geometry, north up, running in
- * the direction of travel and starting on the start/finish line. Never inline
+ * (© OpenStreetMap contributors, ODbL) — real geometry, running in the
+ * direction of travel and starting on the start/finish line; north up, or a
+ * quarter turn from it where that lets a tall circuit lie landscape. Never inline
  * or patch a path here; change docs/assets/circuits.json and regenerate. See
  * docs/TRACK_RECORDS.md.
  *
