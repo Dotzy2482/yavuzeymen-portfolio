@@ -5,7 +5,7 @@
 **Foundations**
 
 - Design tokens extracted from the handoff style guide into
-  `styles/tokens.css` — ~60 CSS custom properties covering surfaces, the
+  `styles/tokens.css` — some seventy CSS custom properties covering surfaces, the
   white-alpha ladder, both accents, track-map colours, type, spacing, radius,
   shadows and layout measures, with mobile overrides in one media query.
 - Tailwind v4 theme bridge plus the custom utilities the design needs
@@ -15,10 +15,11 @@
 **Primitives**
 
 - App-wide hooks: `useInView`, `useMediaQuery`, `usePrefersReducedMotion`,
-  `useRafLoop`.
+  `useRafLoop`, and later `useActiveSection` (02).
 - UI primitives: `Button`, `Tag`, `MonoLabel`, `SectionHeading`, `StatValue`,
-  `Divider`, `PhotoCard`.
-- Motion vocabulary: `Marquee`, `Pinned`, `CountUp` — every one honouring
+  `Divider`, `PhotoCard`, and later `Picture` (03) and `SocialLinks`.
+- Motion vocabulary: `Marquee`, `Pinned`, `CountUp`, and later `StretchScrub`
+  (01) — every one honouring
   `prefers-reduced-motion`. (`Reveal`, `Stagger`, `ParallaxLayer` and a
   scroll-progress hook were built and then removed unused; the design's scroll
   language is scrub-linked, not entrance animations.)
@@ -26,11 +27,13 @@
 
 **Sections — all nine plus the hero**
 
-- Nav (top bar, desktop side columns, full-screen mobile menu).
+- Nav (top bar, desktop side columns, full-screen mobile menu; a desktop bar
+  past the hero since 05).
 - Hero: ambient background, portrait, headline, info cards, sponsor marquee,
   CTA. Two photos of the same frame are stacked — bare-headed and helmeted —
   and a soft-edged circle reveals the helmeted one under the cursor; below `md`
-  the pinned scroll irises it shut instead. (The fitted helmet cut-out and its
+  the pinned scroll irises it shut instead. Since 05 the reveal stops at the
+  neck, where the two bodies do not quite line up. (The fitted helmet cut-out and its
   wireframe scan band this replaced are gone.)
 - About, Career (scroll-filled timeline), Achievements, Sim to Real (pinned
   horizontal gallery), Content (counters + card fan), Setup, Partners,
@@ -38,16 +41,18 @@
 
 **Track Records**
 
-- Full module: region tabs, track list and mobile chips, animated panel,
-  chronometer, sector bars, transport controls, driver plate.
+- Full module: region tabs, track list and mobile chips, animated panel led by
+  the personal best with a lap-replay clock beside it (05), sector bars,
+  transport controls, driver plate.
 - Circuit data generated from the handoff rather than transcribed; the
   outlines have since been replaced by real geometry (workstream 04, below).
-- 34 unit tests covering lap-time round-tripping, dash geometry, sector fill
-  and path integrity.
+- Unit tests covering lap-time round-tripping, dash geometry, sector fill and
+  path integrity.
 
 **Assets**
 
-- 14 image assets in place; AVIF logo converted with a PNG fallback.
+- Every image the design references is in place; since 03 each raster is
+  served as AVIF and WebP ahead of the original. See [CONTENT.md](CONTENT.md).
 
 **The last third** — [workstream 01](plans/01-awaken-the-last-third.md)
 
@@ -129,11 +134,31 @@
   running lap stops if reduced motion is switched on mid-visit.
 - Vitest 4, with the coverage plugin moved alongside it.
 
+**Critique fixes** — [workstream 05](plans/05-critique-fixes.md)
+
+- A design critique of the live build, measured in headless Chrome, and the
+  fixes it called for. `<Picture>`'s `<source>` elements no longer become
+  flex and grid items. They had pushed Setup's photo into a second row (the
+  section is 445px shorter now) and put uneven gaps into the hero marquee.
+- The nav stays reachable. On phones the fixed bar gets a surface once the
+  page scrolls, so the wordmark no longer lands on content. On desktop a
+  compact bar appears once the hero has gone, with the four links, the
+  scroll-spy's marker (visible at last past the hero) and Business Enquiries.
+  The overlay menu offers the CTA too, and the menu button is 44 × 44.
+- Track Records leads with the personal best. The running clock stays as a
+  secondary "Lap replay" readout, and below 1024px the list stacks above the
+  panel instead of squeezing it.
+- Meaning-bearing labels are 11px or larger; English and brand names inside
+  Turkish titles keep their undotted I; phones get the role line under the
+  headline, stacked Achievements chips and bigger contact targets.
+- The helmet reveal is held above the neck, so the two photos' mismatched
+  shoulders never show.
+
 ## Planned work
 
-None. All four workstreams in [plans/](plans/) have landed; their files stay for
-the reasoning they record. What is left is either blocked on material from
-Yavuz (below) or deliberately unscheduled.
+None. All five workstreams in [plans/](plans/) have landed; their files stay for
+the reasoning they record. What is left is either blocked on material or a
+decision from Yavuz (below), or deliberately unscheduled.
 
 ## Blocked on material we do not have
 
@@ -155,6 +180,14 @@ No plan unblocks these — each is waiting on a person or a file.
 - **Instagram figures** refreshed from the account with a visible "as of" date,
   since they are hand-entered snapshots.
 - **Legal page copy.** `Gizlilik` and `Şartlar` link to `#`.
+- **A final domain**, for `og:url`, a canonical link and a `robots.txt` /
+  sitemap worth having.
+- **Two decisions for Yavuz**, flagged in [CONTENT.md](CONTENT.md): whether the
+  document head speaks English or Turkish, and how often the iRacing and
+  Instagram figures get refreshed.
+- **Private vulnerability reporting** is off in the repository settings, so the
+  flow [SECURITY.md](../SECURITY.md) describes does not work until the owner
+  switches it on (Settings → Code security).
 
 ## Unscheduled
 
@@ -166,9 +199,14 @@ No plan unblocks these — each is waiting on a person or a file.
 - **Real sector splits.** The bars are even thirds of path length. The
   mechanism is the start line's — pin two more coordinates beside `startLine`
   in `docs/assets/circuits.json` and emit their fractions — but it changes
-  `getSectorFill` and the three unit tests that hardcode thirds.
+  `getSectorFill` and the unit tests that hardcode thirds.
 - **Analytics**, if it is ever wanted — privacy-preserving and cookieless, or
   not at all.
+- **A lighter social card.** `og-image.png` is ~280 KB straight out of headless
+  Chrome; compressing it inside `generate-og-images.mjs` would cut that without
+  touching the card.
+- **A web manifest and JSON-LD** (`Person`) — cheap, but only worth it once
+  there is a domain to point them at.
 
 ## Explicitly not planned
 
