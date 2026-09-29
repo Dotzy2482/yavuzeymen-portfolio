@@ -5,13 +5,15 @@ exists.
 
 ## What it does
 
-Pick a region (Europe / America / Asia-Pacific), pick a circuit from the list, and a
-car marker drives the lap around the circuit outline. As it goes:
+Pick a region (Europe / America / Asia-Pacific), pick a circuit from the list, and
+the panel leads with that circuit's **personal best**, the largest number in
+the section. A car marker then drives the lap around the circuit outline. As it
+goes:
 
 - the outline fills in cyan behind it, with a short bright trail pinned to the
   marker;
-- a chronometer counts up and lands **exactly** on the personal best as the
-  marker crosses the start/finish line;
+- a small cyan replay clock beside the personal best counts up and lands
+  **exactly** on it as the marker crosses the start/finish line;
 - three sector bars fill in sequence;
 - a driver plate follows the marker, flipping to its other side before it would
   run off the panel edge.
@@ -49,8 +51,13 @@ the section file the only importer, and it has to stay that way: a static
 import of any _value_ from the index anywhere else folds the module back into
 the main bundle without an error or a warning. Type-only imports are erased
 and cost nothing. While the chunk loads, `TrackRecordsPlaceholder` holds the
-module's footprint; if the layout here changes, that file's heights want
-re-measuring.
+module's footprint, from heights measured at 390×844 and 1440×900. If the
+layout here changes, re-measure them: on the dev server, block requests
+matching `features/track-records` so the placeholder stays up, and compare
+its height with the loaded module's at both sizes. They should be equal to
+the hundredth of a pixel — last measured 887.14px and 743.64px. (Before plan
+05 they were 39px and 47px apart: the OpenStreetMap credit line had been added
+under the map and never to the placeholder.)
 
 ## The `Track` type
 
@@ -105,7 +112,8 @@ Module-level constants, also in `types.ts`:
 **These are two independent concepts and must never be conflated.**
 
 - **Real lap time** is the driver's personal best — `track.lap`, e.g.
-  `'1:54.318'`. This is what the chronometer displays.
+  `'1:54.318'`. The panel leads with it, and it is what the chronometer — the
+  replay clock beside it — counts out.
 - **On-screen duration** is how long the marker takes to travel the circuit —
   `LAP_DURATION_MS / speed`, i.e. 12 seconds at 1× and 6 seconds at 2×. It is
   the same for every circuit.
@@ -146,8 +154,8 @@ Decoupling them keeps the animation watchable **and** the number true.
 `lib/formatLapTime.test.ts` protects the formatting half. The other half is
 `components/TrackRecords.test.tsx`, which drives the real component through a
 full lap of every circuit on a hand-cranked frame clock, in uneven frames, and
-asserts the chronometer shows exactly `track.lap` at the line and never passes
-it.
+asserts the chronometer shows exactly `track.lap` at the line — the same string
+as the personal best the panel leads with — and never passes it.
 
 A future improvement is a per-track `displayDurationMs`, so a short technical
 circuit and a long endurance circuit can differ on screen. The scaffold's
@@ -170,7 +178,7 @@ simply hardcoded one global value, so that is what shipped.
         ├─ progress path   stroke-dasharray = "distance total"
         ├─ trail path      dasharray + dashoffset, pinned to the marker
         ├─ car marker      transform="translate(x,y)"
-        ├─ chronometer     textContent = formatLapTime(fraction × lapMs)
+        ├─ replay clock    textContent = formatLapTime(fraction × lapMs)
         ├─ sector bars ×3  style.width = fill%
         └─ driver plate    transform, in panel pixels, with edge flip
 ```
@@ -199,8 +207,9 @@ ref objects and threading it down through props — puts mutable values in the
 render path, which React's compiler lint rules reject outright ("cannot access
 refs during render"). Callback refs stored in a `useMemo` hit the same wall
 once the compiler taints them. The `data-*` approach keeps refs out of the
-component API entirely, and as a bonus `CarMarker`, `LapTimer` and `SectorBar`
-take no props at all.
+component API entirely: `CarMarker` and `SectorBar` take no props at all, and
+`LapTimer` takes only the personal-best string it renders — the loop finds the
+replay clock beside it on its own.
 
 **Visibility gating.** The loop only runs while the section is on screen, via
 `useInView({ once: false })`. There is no reason to burn frames on a panel
@@ -258,18 +267,59 @@ and the loop has no opinion about what the buttons do.
 
 ## Components
 
-| Component          | Notes                                                                                |
-| ------------------ | ------------------------------------------------------------------------------------ |
-| `TrackRecords`     | Orchestrator. Region tabs, the container ref, and the responsive grid.               |
-| `TrackList`        | Desktop rows and the mobile chip scroller — same data, media-query choice.           |
-| `TrackListItem`    | One desktop row: index, flag chip, name, best lap.                                   |
-| `TrackPanel`       | The right-hand panel; reorders the chronometer above the name on mobile.             |
-| `TrackMap`         | The SVG: base outline, progress, trail, S/F tick across the straight, marker, plate. |
-| `CarMarker`        | Bright core inside a cyan halo. No props — moved by attribute.                       |
-| `DriverLabel`      | HTML overlay plus leader line. Never rotates; flips side past 66% of panel width.    |
-| `LapTimer`         | The chronometer. Renders `0:00.000`; the loop writes the rest.                       |
-| `SectorBar`        | S1/S2/S3 bars.                                                                       |
-| `PlaybackControls` | PAUSE/PLAY and 1X/2X.                                                                |
+| Component          | Notes                                                                                                    |
+| ------------------ | -------------------------------------------------------------------------------------------------------- |
+| `TrackRecords`     | Orchestrator. Region tabs, the container ref, and the responsive grid.                                   |
+| `TrackList`        | Desktop rows and the mobile chip scroller — same data, media-query choice.                               |
+| `TrackListItem`    | One desktop row: index, flag chip, name, best lap.                                                       |
+| `TrackPanel`       | The right-hand panel. Its header is a column: name then timing on desktop, timing first on mobile.       |
+| `TrackMap`         | The SVG: base outline, progress, trail, S/F tick across the straight, marker, plate.                     |
+| `CarMarker`        | Bright core inside a cyan halo. No props — moved by attribute.                                           |
+| `DriverLabel`      | HTML overlay plus leader line. Never rotates; flips side past 66% of panel width.                        |
+| `LapTimer`         | The timing block: the personal best, rendered by React, and the replay clock (`0:00.000`, loop-written). |
+| `SectorBar`        | S1/S2/S3 bars.                                                                                           |
+| `PlaybackControls` | PAUSE/PLAY and 1X/2X.                                                                                    |
+
+### The panel leads with the personal best
+
+The personal best is what the section is named for, so it is the largest
+number in it: 56px on desktop, 40px on a phone, in plain white, rendered by
+React from `track.lap` — the string the list shows — and never moved by the
+loop. The chronometer is the secondary readout, labelled **Lap replay**: 20px
+and 16px, in the working cyan of the marker and the line it traces, with a
+car-dot glyph that says which moving thing it belongs to. It counts up to the
+personal best and lands on it at the line.
+
+It used to be the other way round. The running clock was the biggest figure
+in the section, labelled "Lap time", and the personal best only appeared at
+list size, so a visitor read `0:08.044`, caught at a random moment of the
+on-screen lap, as the record.
+
+The two sit in a `<dl>` — two labelled values, each label before its value — so
+a screen reader hears "Personal best, 1:54.318". The replay keeps
+`role="timer"` and `aria-live="off"`, and is named by its visible label through
+`aria-labelledby`, like every UI label here in English.
+
+The block is a wrapping flex row aligned on _last_ baselines. Where the panel
+is wide enough (1440px) the replay sits beside the personal best, on the same
+baseline as its digits; on a phone it drops beneath; at the very narrowest (a
+768px viewport, where the panel is narrower than on a phone) its label and
+value wrap apart rather than overflow. There is no breakpoint in it, because
+the panel's width does not track the viewport's.
+
+The desktop header used to be a wrapping row, the name beside the clock.
+Whenever a name was too long to share the row — Nürburgring GP at 1440, for
+one — the clock dropped onto a line of its own, so the panel's height depended
+on which circuit was picked. As a column it is one height for all twelve,
+which is also what lets the placeholder match it.
+
+Every label in the panel that carries meaning — the two timing labels,
+`S1`–`S3`, the length · corners line, the transport buttons — is at least 11px
+at both design widths. The OpenStreetMap credit is 10px: small print, but it
+must stay legible. The driver plate stays at 9–10px on purpose: it is
+decorative and `aria-hidden`, and at 390px its 9px plate already comes within
+1px of the panel's edge just before it flips — at 10px it would be clipped by
+9px. Enlarging it means moving `LABEL_FLIP_AT` in `useLapAnimation` with it.
 
 ## Real geometry: the OpenStreetMap pipeline
 

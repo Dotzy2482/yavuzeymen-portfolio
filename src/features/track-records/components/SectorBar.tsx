@@ -19,7 +19,9 @@ export function SectorBar({ className }: SectorBarProps) {
     <div className={cn('flex flex-1 items-center gap-2 md:gap-2.5', className)}>
       {LABELS.map((label, i) => (
         <div key={label} className="flex flex-1 items-center gap-2 md:gap-2.5">
-          <span className="tracking-mono text-text-quiet font-mono text-[9px] md:w-5">{label}</span>
+          <span className="tracking-mono text-text-quiet font-mono text-[11px] md:w-6">
+            {label}
+          </span>
           <div className="bg-track-sector-track h-[3px] flex-1">
             <div data-lap-sector={i} className="bg-accent-primary h-full w-0" />
           </div>

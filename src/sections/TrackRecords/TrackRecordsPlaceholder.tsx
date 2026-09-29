@@ -10,12 +10,16 @@
  * The geometry mirrors the module's layout rather than guessing a height: the
  * same grid, the same panel padding, and the circuit map's own 1000:620 aspect
  * ratio, which is what makes the module's height track the viewport width. The
- * fixed heights are the rest of the module as measured — the tab row, the
- * mobile chip strip, the five-row desktop list, the panel's header and its
- * transport row. The header is the one part that varies, because the circuit
- * name and meta line wrap differently at different widths; its heights are
- * taken at the design's two widths, 390 and 1440. Change the module's layout
- * and these want re-measuring.
+ * fixed heights are the rest of the module as measured in Chrome at the
+ * design's two widths, 390 and 1440 — the tab row, the mobile chip strip, the
+ * five-row desktop list, and the panel's header, transport row and map credit.
+ * The header is the part that varies, because the circuit name, the meta line
+ * and the timing block wrap differently at different widths; between the two
+ * design widths this holds the space approximately rather than exactly.
+ * Change the module's layout and these want re-measuring: with the chunk held
+ * back (on the dev server, block requests matching `features/track-records`),
+ * this placeholder should be exactly as tall as the loaded module — 887.14px
+ * at 1440×900 and 743.64px at 390×844 when last measured.
  *
  * With `status`, the panel frame carries a message instead of standing empty —
  * that is the section's error fallback, when the chunk fails to load.
@@ -37,9 +41,14 @@ export function TrackRecordsPlaceholder({ status }: TrackRecordsPlaceholderProps
         <div className="md:border-hairline md:bg-surface-2 h-[72px] md:h-[312px] md:border" />
 
         <div className="border-hairline bg-surface relative border px-5 py-[22px] md:px-11 md:py-10">
-          <div className="h-[155px] md:h-[184px]" />
+          {/* Header: name, meta line, personal best and lap replay. */}
+          <div className="h-[187.69px] md:h-[173.69px]" />
+          {/* The map. */}
           <div className="mt-4 aspect-[1000/620] md:mt-6" />
-          <div className="mt-[18px] h-[76px] md:mt-7 md:h-[37px]" />
+          {/* Sector bars and transport controls. */}
+          <div className="mt-[18px] h-[79px] md:mt-7 md:h-[38.5px]" />
+          {/* The OpenStreetMap credit line — two lines on a phone. */}
+          <div className="mt-5 h-[30px] md:mt-6 md:h-[15px]" />
 
           {status && (
             <p
