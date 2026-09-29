@@ -77,7 +77,7 @@ export function TrackRecords({ className }: TrackRecordsProps) {
 
       <div
         ref={panelRef}
-        className="mt-3 grid items-start gap-7 md:mt-7 md:grid-cols-[minmax(300px,35fr)_65fr]"
+        className="mt-3 grid items-start gap-7 md:mt-7 lg:grid-cols-[minmax(300px,35fr)_65fr]"
       >
         <TrackList
           tracks={visibleTracks}
