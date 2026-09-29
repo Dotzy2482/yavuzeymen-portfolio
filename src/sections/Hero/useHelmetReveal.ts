@@ -3,9 +3,12 @@
  * opens as it nears Yavuz's head, showing the helmeted photograph through the
  * bare-headed one underneath.
  *
- * One layer, one mask. The two photos are the same crop, so nothing has to be
- * fitted or aligned per frame — the entire effect is a radial-gradient mask
- * whose centre, radius and softness this hook rewrites.
+ * One layer, one moving mask. The two photos are the same crop, so nothing has
+ * to be fitted or aligned per frame — the entire effect is a radial-gradient
+ * mask whose centre, radius and softness this hook rewrites. It goes on the
+ * wrapper around the helmeted photo; the photo inside carries a second, fixed
+ * mask that stops the reveal at the neck line (`helmetRegion.ts`), so however
+ * large this circle grows, it can only ever uncover the helmet.
  *
  * Two modes:
  * - `pointer` — desktop. The circle chases the cursor and its radius grows from
@@ -83,7 +86,7 @@ function setMask(el: HTMLElement, value: string): void {
 }
 
 export interface UseHelmetRevealOptions {
-  /** The masked layer — the helmeted photo sitting over the bare-headed one. */
+  /** The masked layer — the wrapper around the helmeted photo, in its box. */
   targetRef: RefObject<HTMLElement | null>;
   /** Where the opening comes from. See the mode notes above. */
   mode: 'pointer' | 'scrub';

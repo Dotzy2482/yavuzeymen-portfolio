@@ -167,6 +167,22 @@ then run `pnpm images`. That step is not optional: the old encodes beside the
 file would otherwise keep winning the `<picture>`, and the new photo would
 never be seen. `pnpm test` fails until the encodes are rewritten.
 
+### The hero pair
+
+The two hero portraits are one pose shot twice, bare-headed and helmeted, and
+the hero stacks them in one box. The heads line up; the bodies under them nearly
+do — the collar and the neck differ by a few pixels — and wherever the cursor
+circle's edge crossed them that showed as a seam. So the helmeted layer is also
+held to a fixed region that ends at a neck line just under the chin bar, the
+line the owner drew on a screenshot. Below it only the bare-headed photo ever
+shows, at any cursor position or scroll.
+
+The region is measured in these two files' own pixels
+(`sections/Hero/helmetRegion.ts`), which is one more reason neither may be
+recropped or resized. A replacement pair shot at the same crop still needs the
+line checked: `helmetRegion.test.ts` lists the helmet's silhouette, and fails if
+any of it falls outside the fully opaque part of the region.
+
 ### Logo provenance
 
 The gelbura source file supplied in the handoff
