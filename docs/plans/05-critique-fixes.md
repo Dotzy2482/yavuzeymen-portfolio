@@ -130,7 +130,7 @@ sections)
 ## Progress
 
 - [x] A — Navigation
-- [ ] B — Track Records hierarchy
+- [x] B — Track Records hierarchy
 - [x] C — Type and layout
 - [ ] D — Helmet mask
 - [ ] Docs swept for stale to-dos; ROADMAP and plans README updated
