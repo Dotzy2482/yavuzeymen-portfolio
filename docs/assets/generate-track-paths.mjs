@@ -62,9 +62,16 @@
  *      times; the final value is written into trackPaths.ts. Rotation comes
  *      first: RDP pins its endpoints, so the artificial anchor lands on the
  *      start line — always on a straight — instead of flattening a corner.
- *   8. Fit into the 1000×620 viewBox, north up, aspect preserved, with a
- *      margin wide enough for the S/F tick and its label; round to 0.1 units;
- *      emit `M x y L x y … Z` without repeating the first point (Z closes it).
+ *   8. Orient: north up, unless a quarter turn lets the circuit fill the
+ *      landscape box at least LANDSCAPE_GAIN times larger — a tall circuit
+ *      drawn north up letterboxes to a sliver on a phone (Watkins Glen was
+ *      66 px wide at 390). Of the two quarter turns, the one that puts the
+ *      start line nearer the foot of the box, where broadcast maps tend to
+ *      keep the pit straight. `view.turn` in circuits.json overrides it.
+ *      Turning is rigid, so shape, aspect and direction of travel all survive.
+ *   9. Fit into the 1000×620 viewBox, aspect preserved, with a margin wide
+ *      enough for the S/F tick and its label; round to 0.1 units; emit
+ *      `M x y L x y … Z` without repeating the first point (Z closes it).
  *
  * Crossings are not junctions. Suzuka's crossover is a bridge: the two
  * carriageways share no node, so the walk never faces a choice there and the
@@ -119,6 +126,10 @@ const SF_TICK = { halfWidth: 4, halfLength: 18 };
 const SF_LABEL = { ahead: 16, aside: 22, width: 3 * 0.7 * 22, height: 0.8 * 22 };
 /** The driver plate flips left of the dot past this fraction of the width. */
 const PLATE_FLIPS_AT = 0.66;
+
+/** How much bigger a quarter turn must draw a circuit before it leaves north up. */
+const LANDSCAPE_GAIN = 1.25;
+const TURNS = [0, 90, -90];
 
 /** Every corner of the S/F tick and label, relative to the start point. */
 function startMarkerCorners([x0, y0], [x1, y1]) {
@@ -552,10 +563,12 @@ export function generateCircuit(circuit, cached, defaults) {
     );
   }
   const simplified = indices.map((i) => metres[i]);
+  const turn = chooseTurn(circuit, simplified, knobs.margin);
+  const oriented = turnPoints(simplified, turn);
 
-  // Fit: north up, aspect preserved, centred, y flipped for SVG.
-  const xs = simplified.map((p) => p[0]);
-  const ys = simplified.map((p) => p[1]);
+  // Fit: aspect preserved, centred, y flipped for SVG.
+  const xs = oriented.map((p) => p[0]);
+  const ys = oriented.map((p) => p[1]);
   const [minX, maxX, minY, maxY] = [
     Math.min(...xs),
     Math.max(...xs),
@@ -570,7 +583,7 @@ export function generateCircuit(circuit, cached, defaults) {
   const offsetX = (VIEW.width - (maxX - minX) * fit) / 2;
   const offsetY = (VIEW.height - (maxY - minY) * fit) / 2;
   const points = [];
-  for (const [x, y] of simplified) {
+  for (const [x, y] of oriented) {
     const point = [
       formatNumber(offsetX + (x - minX) * fit),
       formatNumber(offsetY + (maxY - y) * fit),
@@ -596,6 +609,7 @@ export function generateCircuit(circuit, cached, defaults) {
     points: points.length,
     rawPoints: rotated.length,
     tolerance,
+    turn,
     measured,
     corners,
     ringWays,
@@ -604,6 +618,48 @@ export function generateCircuit(circuit, cached, defaults) {
     startOffset,
   };
 }
+
+/**
+ * Turns local metres (x east, y north) clockwise on screen by a multiple of
+ * 90°. Rigid, so lengths, shape and direction of travel are untouched.
+ */
+function turnPoints(points, degrees) {
+  if (degrees === 0) return points;
+  const radians = (degrees * Math.PI) / 180;
+  const [c, s] = [Math.round(Math.cos(radians)), Math.round(Math.sin(radians))];
+  return points.map(([x, y]) => [x * c + y * s, -x * s + y * c]);
+}
+
+function fitScale(points, margin) {
+  const xs = points.map((p) => p[0]);
+  const ys = points.map((p) => p[1]);
+  return Math.min(
+    (VIEW.width - 2 * margin) / (Math.max(...xs) - Math.min(...xs)),
+    (VIEW.height - 2 * margin) / (Math.max(...ys) - Math.min(...ys)),
+  );
+}
+
+/** Step 8: north up, or the quarter turn that draws it landscape — see the header. */
+function chooseTurn(circuit, points, margin) {
+  const authored = circuit.view?.turn;
+  if (authored !== undefined) {
+    if (!TURNS.includes(authored))
+      fail(`${circuit.id}: view.turn must be one of ${TURNS.join(', ')}`);
+    return authored;
+  }
+  if (fitScale(turnPoints(points, 90), margin) < fitScale(points, margin) * LANDSCAPE_GAIN)
+    return 0;
+  // Both quarter turns fit identically; keep the start line low. Heights are
+  // measured up from the foot of the bbox, since y still points north here.
+  const startHeight = (degrees) => {
+    const turned = turnPoints(points, degrees);
+    const ys = turned.map((p) => p[1]);
+    return (turned[0][1] - Math.min(...ys)) / (Math.max(...ys) - Math.min(...ys));
+  };
+  return startHeight(90) <= startHeight(-90) ? 90 : -90;
+}
+
+const describeTurn = (turn) => (turn === 0 ? 'north up' : turn === 90 ? '90° cw' : '90° ccw');
 
 function selfCheck(id, path, points) {
   if ((path.match(/M/g) ?? []).length !== 1) fail(`${id}: path must contain exactly one M`);
@@ -636,7 +692,7 @@ async function render(results, cache) {
   const rows = results.map(
     (r) =>
       ` * | ${r.id}  | ${String(r.points).padStart(6)} | ${r.tolerance.toFixed(2).padStart(7)} m ` +
-      `| ${(r.measured / 1000).toFixed(3)} km |`,
+      `| ${(r.measured / 1000).toFixed(3)} km | ${describeTurn(r.turn).padEnd(8)} |`,
   );
   const entries = results.map((r) => `  ${r.id}: { path: '${r.path}' },`);
 
@@ -653,15 +709,16 @@ async function render(results, cache) {
  *            docs/assets/circuit-rings.json (the pinned ways, as fetched)
  * Generator: docs/assets/generate-track-paths.mjs
  *
- * Each path is one closed polyline in the ${VIEW.width}×${VIEW.height} viewBox, north up,
- * running in the circuit's direction of travel, and rotated so its first point
- * is the start/finish line — getPointAtLength(0) is the line itself.
+ * Each path is one closed polyline in the ${VIEW.width}×${VIEW.height} viewBox, running in
+ * the circuit's direction of travel, and rotated so its first point is the
+ * start/finish line — getPointAtLength(0) is the line itself. A circuit is
+ * drawn north up unless a quarter turn lets it lie landscape (Turn column).
  *
  * Final RDP tolerance per circuit, in metres, so the output is reproducible
  * from the committed inputs alone:
  *
- * | Id   | Points | Tolerance | Measured |
- * | ---- | ------ | --------- | -------- |
+ * | Id   | Points | Tolerance | Measured | Turn     |
+ * | ---- | ------ | --------- | -------- | -------- |
 ${rows.join('\n')}
  */
 
@@ -830,13 +887,13 @@ async function main() {
     }
   }
 
-  console.log('\n id   points  tolerance  measured   authored   start-line offset');
+  console.log('\n id   points  tolerance  measured   authored   start-line offset  turn');
   for (const r of results) {
     const authored = lengths.get(r.id);
     console.log(
       ` ${r.id}  ${String(r.points).padStart(6)}  ${r.tolerance.toFixed(2).padStart(7)} m  ` +
         `${(r.measured / 1000).toFixed(3)} km  ${authored ? (authored / 1000).toFixed(3) : '    ?'} km  ` +
-        `${r.startOffset.toFixed(1)} m`,
+        `${r.startOffset.toFixed(1).padStart(5)} m            ${describeTurn(r.turn)}`,
     );
   }
   for (const warning of warnings) console.warn(`warning: ${warning}`);

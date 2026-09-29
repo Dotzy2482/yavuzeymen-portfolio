@@ -210,9 +210,10 @@ Every `path` is a **polyline**: `M x y`, then `L x y` for each vertex, then
    tick goes and where the chronometer reads `0:00.000`, and the path runs the
    way the cars do. Nothing downstream applies an offset, so nothing
    downstream can get one wrong.
-4. **In the 1000×620 viewBox, north up, aspect preserved,** inside a 48-unit
-   margin so the S/F tick and its label are never clipped at an edge. A long
-   thin circuit letterboxes; it is never stretched.
+4. **In the 1000×620 viewBox, aspect preserved,** inside a 48-unit margin so
+   the S/F tick and its label are never clipped at an edge. North up, unless a
+   quarter turn draws the circuit at least 1.25× larger — then it is turned so
+   it lies landscape. A circuit is never stretched.
 
 **Relative commands (`m`, `l`, `c`) are never emitted** — the single-`M` test
 greps for move commands, and relative authoring invites accidental subpath
@@ -330,9 +331,17 @@ rotation, the point count — is derived, and logged when the generator runs.
 5. **Simplify** with Ramer–Douglas–Peucker in true metres (1 m tolerance, so a
    3.6 km and a 6.2 km circuit get the same fidelity), after rotating, so the
    algorithm's fixed anchor sits on a straight rather than flattening a corner.
-6. **Fit** into the viewBox — Web Mercator, north up, aspect preserved, a
-   48-unit margin — and emit the polyline.
-7. **Check.** The generator refuses to write a path with more than one `M`, no
+6. **Orient.** North up, unless a quarter turn lets the circuit fill the
+   landscape box at least 1.25× larger. North up, Watkins Glen drew 66 px wide
+   on a 390 px phone; turned, it is 278 px. Of the two quarter turns the
+   generator takes the one that puts the start line nearer the foot of the box,
+   where broadcast maps tend to keep the pit straight. Six circuits turn
+   (Nürburgring, Silverstone, Watkins Glen, Road Atlanta, Interlagos, Mount
+   Panorama); the table in `trackPaths.ts` records which way. `view.turn` in
+   `circuits.json` overrides the choice for one circuit.
+7. **Fit** into the viewBox — Web Mercator, aspect preserved, a 48-unit
+   margin — and emit the polyline.
+8. **Check.** The generator refuses to write a path with more than one `M`, no
    closing `Z`, a relative command, a vertex outside the viewBox or a clipped
    S/F label, and refuses a lap whose `raceway:corner_number` tags run
    backwards (Suzuka's run 1 → 18, Interlagos's 1 → 15). It also measures every
@@ -411,13 +420,16 @@ a design tweak.
   `startLine` in `circuits.json` and emit their fractions — but they change
   `getSectorFill` and the three unit tests that hardcode thirds.
 - **The trail is 70 path units on every circuit.** Real outlines run from about
-  1,300 units (Road Atlanta, tall and letterboxed) to 2,850 (the Red Bull Ring),
-  so the trail covers 2.5–5.3% of a lap — but it is the same length on screen
-  everywhere and reads as a short comet on all twelve, so it was left alone.
-- **Tall circuits draw small on a phone.** North up with the aspect preserved
-  means Watkins Glen, Road Atlanta, Laguna Seca and Mount Panorama letterbox in
-  the 1000×620 box. That is correct, and deliberately not "fixed" by stretching
-  or by turning maps away from north.
+  1,930 units (Laguna Seca, the one tall circuit left north up) to 3,390
+  (Interlagos), so the trail covers 2.1–3.6% of a lap — but it is the same
+  length on screen everywhere and reads as a short comet on all twelve, so it
+  was left alone.
+- **Not every map is north up.** Six are turned a quarter so they lie
+  landscape instead of letterboxing to a sliver on a phone. Turning is rigid —
+  shape, aspect and direction of travel are exactly OSM's — but a visitor who
+  knows a circuit from a north-up satellite view will see it on its side.
+  Laguna Seca stays north up: a quarter turn would draw it just under 1.25×
+  larger.
 - **Suzuka's crossover has no bridge treatment.** The figure-eight is one
   self-intersecting ring, and at a 3–4 unit stroke the crossing reads without a
   casing layer.

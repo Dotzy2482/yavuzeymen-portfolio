@@ -432,3 +432,16 @@ nothing rotates by it.
 and Mount Panorama letterbox north-up in the 1000×620 box. That is the plan's
 "correct" letterbox; turning maps away from north to fill it would be a
 separate decision, and one to make with Yavuz.
+
+**After it landed.** Both of the last two paragraphs moved on in the session
+that merged this workstream. The chronometer reading one frame short of the
+personal best was not a geometry effect: the lap loop wrapped with `% 1`, so no
+frame was ever drawn at the line. The component tests caught it and the loop
+now wraps one frame late, so the line reads exactly `track.lap`. And the tall
+circuits were turned: the generator keeps a circuit north up unless a quarter
+turn draws it at least 1.25× larger, and then takes the turn that puts the
+start line lower in the box. Six turn; Watkins Glen goes from 66 px wide on a
+390 px phone to 278 px. Turning is rigid, so none of the checks above change —
+the shapes, lengths, directions and start lines are the same data on its side.
+`view.turn` in `circuits.json` overrides the choice if Yavuz wants a circuit
+back north up.
