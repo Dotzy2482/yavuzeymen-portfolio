@@ -207,9 +207,9 @@ ref objects and threading it down through props — puts mutable values in the
 render path, which React's compiler lint rules reject outright ("cannot access
 refs during render"). Callback refs stored in a `useMemo` hit the same wall
 once the compiler taints them. The `data-*` approach keeps refs out of the
-component API entirely: `CarMarker` and `SectorBar` take no props at all, and
-`LapTimer` takes only the personal-best string it renders — the loop finds the
-replay clock beside it on its own.
+component API entirely: `CarMarker` takes no props, `SectorBar` only a
+`className`, and `LapTimer` only the personal-best string it renders and a
+`className` — the loop finds the replay clock beside it on its own.
 
 **Visibility gating.** The loop only runs while the section is on screen, via
 `useInView({ once: false })`. There is no reason to burn frames on a panel
@@ -443,8 +443,8 @@ delicate code.
 
 So the generator **rotates the ring** until its first vertex is the start line.
 The runtime offset is then always zero, and `useLapAnimation`, `usePathPoint`
-and `lib/svgPath.ts` did not change at all. (`getPointAt` still carries an
-`offset` parameter from the scaffold; it stays unused.)
+and `lib/svgPath.ts` did not change at all. (The scaffold's `getPointAt`, whose
+`offset` parameter was the other design, had no caller and is gone.)
 
 ### The S/F tick crosses the straight it is on
 
@@ -481,7 +481,7 @@ a design tweak.
   handoff has no sector data and the design draws them as thirds. Real splits
   are the start line's mechanism again — pin two more coordinates beside
   `startLine` in `circuits.json` and emit their fractions — but they change
-  `getSectorFill` and the three unit tests that hardcode thirds.
+  `getSectorFill` and the unit tests that hardcode thirds.
 - **The trail is 70 path units on every circuit.** Real outlines run from about
   1,930 units (Laguna Seca, the one tall circuit left north up) to 3,390
   (Interlagos), so the trail covers 2.1–3.6% of a lap — but it is the same

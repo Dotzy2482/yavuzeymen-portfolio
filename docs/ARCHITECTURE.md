@@ -17,13 +17,14 @@ src/
   components/
     ui/                Presentational primitives with no domain knowledge:
                        Button, Tag, MonoLabel, SectionHeading, StatValue,
-                       Divider, PhotoCard, Picture
-    motion/            The animation vocabulary: Marquee, Pinned, CountUp
+                       Divider, PhotoCard, Picture, SocialLinks
+    motion/            The animation vocabulary: Marquee, Pinned, CountUp,
+                       StretchScrub
   features/
     track-records/     Self-contained module behind a single index.ts.
                        See docs/TRACK_RECORDS.md.
   hooks/               App-wide hooks: useInView, useMediaQuery, useRafLoop,
-                       usePrefersReducedMotion
+                       usePrefersReducedMotion, useActiveSection
   lib/                 cn (class joiner), format (tr-TR number formatting),
                        constants (section order, breakpoints, timing)
   data/                Hand-maintained static content, one file per section
@@ -118,6 +119,8 @@ src/components/{ui,motion}     presentational, no imports from data/
 - **`data/` never imports from `sections/` or `components/`.** It is leaf data.
 - **`components/ui` and `components/motion` never import from `data/`.** They
   receive everything as props, which is what makes them reusable and testable.
+  The one exception is `SocialLinks`, which reads `socialLinks` itself so the
+  three places that list the channels cannot drift apart.
 - **`sections/` is the only layer that knows both.** It reads `@/data` and
   composes primitives.
 - **`features/track-records/` owns its own data** (`features/track-records/data/`)
@@ -136,7 +139,7 @@ typo fails the build rather than silently producing a dead anchor.
 
 Tokens are **CSS custom properties**, not a JavaScript config object.
 
-**`src/styles/tokens.css`** declares roughly sixty variables on `:root`:
+**`src/styles/tokens.css`** declares some seventy variables on `:root`:
 surfaces, the white-alpha ladder used for hairlines and secondary text, the two
 accents, track-map colours, font stacks, Archivo width-axis steps, spacing,
 radius, shadows, motion timing and layout measures. A `max-width: 47.9375rem`
@@ -210,7 +213,10 @@ The reveal itself is two photographs of the same frame — Yavuz bare-headed, an
 the identical pose helmeted — stacked in the same box, with the top one masked
 down to a soft-edged circle. Because both photos are the same 1323x1189 crop,
 alignment is a layout fact rather than a per-frame calculation; the effect never
-does more than move a gradient. That is what replaced an earlier build that
+does more than move a gradient. The bodies below the neck do not quite match,
+so a second, static mask — the region above the neck line, drawn in the photos'
+own coordinates in `sections/Hero/helmetRegion.ts` — sits on the helmet image
+inside the circle, and the helmet never shows below the chin bar. That is what replaced an earlier build that
 fitted a separate helmet cut-out onto the head with trigonometry every frame.
 
 Every wrapper checks `usePrefersReducedMotion()` and degrades to a static,
@@ -283,14 +289,15 @@ must not also carry Tailwind translate utilities.
 
 ## Testing
 
-Vitest + jsdom, with Testing Library available. Current coverage is the
-track-records maths: lap-time formatting and parsing, dash geometry, sector
-fill, and a data-integrity suite asserting every circuit path is a single
-closed subpath with a unique id. Beside it: the nav's scroll-spy, the scroll
+Vitest + jsdom, with Testing Library available. The track-records module has
+the most: its maths (lap-time formatting and parsing, dash geometry, sector
+fill, the start line), a data-integrity suite asserting every circuit path is a
+single closed subpath with a unique id, and component and hook tests that drive
+the picker, the transport and the lap loop the way a visitor would. Beside it: the nav's scroll-spy, the scroll
 rail's geometry (notch placement, pointer mapping, snapping), the nav chrome
 (when the desktop bar counts the hero as passed, that it is inert until then,
-and the menu's CTA), `Picture`'s
-derived sources, and `docs/assets/encode-images.test.mjs`, which runs
+and the menu's CTA), `Picture`'s derived sources and hidden `<source>`
+elements, the hero's helmet region, and `docs/assets/encode-images.test.mjs`, which runs
 `pnpm images --check` so that an original with missing, stale or wrongly sized
 encodes fails the suite. That one is plain `.mjs` outside `src/` on purpose —
 it reads the file system, and the app's TypeScript program has no Node types.
@@ -308,11 +315,13 @@ access refs during render", which is what pushed `useLapAnimation` to the
 Prettier owns formatting and sorts Tailwind classes; do not fight its output.
 
 CI runs the same gates on every push to `main` and every pull request, in this
-order: lint, format check, typecheck, **test**, build. The test step was missing
+order: lint, format check, typecheck, **test**, the circuit outlines' `--check`,
+build. The test step was missing
 for a long time, so the suite only ever ran on contributors' machines — if it
 disappears again, the suite stops being enforced by anything. A second job
-runs gitleaks over the full history; it needs `pull-requests: read` to scan a
-PR's commit range, and without that permission it fails with a 403 that says
+checks out the full history and runs gitleaks over each run's new commits —
+a pull request's commit range, or what a push brought in. It needs
+`pull-requests: read` to list a PR's commits, and without that permission it fails with a 403 that says
 nothing about whether a secret is present.
 
 `workflow_dispatch` is enabled, so a run can be requested for any ref when an
