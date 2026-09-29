@@ -129,7 +129,7 @@ sections)
 
 ## Progress
 
-- [ ] A — Navigation
+- [x] A — Navigation
 - [ ] B — Track Records hierarchy
 - [ ] C — Type and layout
 - [ ] D — Helmet mask
