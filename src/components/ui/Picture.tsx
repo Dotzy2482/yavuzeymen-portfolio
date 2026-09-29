@@ -17,6 +17,14 @@
  * `display: contents`, so it generates no box: in a flex row, a grid cell or an
  * absolutely positioned stack the <img> lays out exactly as it would bare.
  * `width` and `height` describe all three files, which share one pixel size.
+ *
+ * That only holds because each <source> is `display: none` as well. With the
+ * <picture> box gone, its children are laid out by the <picture>'s parent, and
+ * Chrome blockifies a <source> there like any other child: two empty items in a
+ * flex row (two extra gaps beside every raster logo in the hero marquee), or
+ * two cells in a grid (Setup's rig photo pushed down a row). Hiding a <source>
+ * does not change which file the browser picks — selection reads the
+ * attributes, not the box.
  */
 
 import type { ComponentPropsWithRef } from 'react';
@@ -35,8 +43,8 @@ export function Picture({ src, alt, ...img }: PictureProps) {
 
   return (
     <picture className="contents">
-      <source type="image/avif" srcSet={src.replace(RASTER, '.avif')} />
-      <source type="image/webp" srcSet={src.replace(RASTER, '.webp')} />
+      <source type="image/avif" srcSet={src.replace(RASTER, '.avif')} className="hidden" />
+      <source type="image/webp" srcSet={src.replace(RASTER, '.webp')} className="hidden" />
       <img src={src} alt={alt} {...img} />
     </picture>
   );
