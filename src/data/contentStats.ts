@@ -69,19 +69,19 @@ export interface ReelCard {
    * cards loop, so four of them cost about what one full clip does to decode.
    */
   preview?: string;
-  /** Cyan figure on the card — an Instagram reel's real view count. */
+  /** Cyan figure on the card, e.g. a real view count; none of the cards uses it now. */
   stat?: string;
   /** The post this card is, when it is one: the card links to it. */
   href?: string;
 }
 
 /**
- * The playlist, in order. Five of Yavuz's most-watched Instagram reels (from
- * 797K views down; the 247K one is age-restricted and cannot be fetched, so
- * the 152K Monza reel stands in) alternate with five clips of his own
- * footage. Each reel card is a ~9 s cut of the reel and links to it; the
- * footage cards link nowhere. `FAN_CENTER_INDEX` is the card the fan opens
- * on, in the centre slot; the mobile carousel leads with it too.
+ * The playlist, in order. Four Instagram reels Yavuz chose himself — his
+ * iRacing work with a facecam — alternate with five clips of his own
+ * footage. Each reel card is a ~9 s cut of the reel and links to it,
+ * with no view count: he picked these for how they look, not how they did.
+ * The footage cards link nowhere. `FAN_CENTER_INDEX` is the card the fan
+ * opens on, in the centre slot; the mobile carousel leads with it too.
  */
 export const reelCards: ReelCard[] = [
   {
@@ -92,22 +92,20 @@ export const reelCards: ReelCard[] = [
     preview: '/videos/reels/preview/paddock.mp4',
   },
   {
-    id: 'ig-hayat-bitti',
-    caption: 'HAYAT BİTTİ',
-    src: '/images/reels/ig-hayat-bitti.jpg',
-    video: '/videos/reels/ig-hayat-bitti.mp4',
-    preview: '/videos/reels/preview/ig-hayat-bitti.mp4',
-    stat: '482K',
-    href: 'https://www.instagram.com/reel/C3AQQy2Nstg/',
+    id: 'ig-atak',
+    caption: 'ATAK',
+    src: '/images/reels/ig-atak.jpg',
+    video: '/videos/reels/ig-atak.mp4',
+    preview: '/videos/reels/preview/ig-atak.mp4',
+    href: 'https://www.instagram.com/p/De02mEGtNKC/',
   },
   {
-    id: 'ig-takip-hocam',
-    caption: 'TAKİP HOCAM',
-    src: '/images/reels/ig-takip-hocam.jpg',
-    video: '/videos/reels/ig-takip-hocam.mp4',
-    preview: '/videos/reels/preview/ig-takip-hocam.mp4',
-    stat: '797K',
-    href: 'https://www.instagram.com/reel/DAG2tZJN-7F/',
+    id: 'ig-merhaba',
+    caption: 'MERHABA, BEN YAVUZ',
+    src: '/images/reels/ig-merhaba.jpg',
+    video: '/videos/reels/ig-merhaba.mp4',
+    preview: '/videos/reels/preview/ig-merhaba.mp4',
+    href: 'https://www.instagram.com/p/DdRozgKsxF1/',
   },
   {
     id: 'rig',
@@ -117,13 +115,12 @@ export const reelCards: ReelCard[] = [
     preview: '/videos/reels/preview/rig.mp4',
   },
   {
-    id: 'ig-takip-etsenize',
-    caption: 'TAKİP ETSENİZE',
-    src: '/images/reels/ig-takip-etsenize.jpg',
-    video: '/videos/reels/ig-takip-etsenize.mp4',
-    preview: '/videos/reels/preview/ig-takip-etsenize.mp4',
-    stat: '378K',
-    href: 'https://www.instagram.com/reel/C3w6-ZqtD7W/',
+    id: 'ig-kevin-estre',
+    caption: 'LIKE A KEVIN ESTRE',
+    src: '/images/reels/ig-kevin-estre.jpg',
+    video: '/videos/reels/ig-kevin-estre.mp4',
+    preview: '/videos/reels/preview/ig-kevin-estre.mp4',
+    href: 'https://www.instagram.com/p/De3m1Y9NyVG/',
   },
   {
     id: 'fiat',
@@ -133,13 +130,12 @@ export const reelCards: ReelCard[] = [
     preview: '/videos/reels/preview/fiat.mp4',
   },
   {
-    id: 'ig-eau-rouge',
-    caption: 'EAU ROUGE',
-    src: '/images/reels/ig-eau-rouge.jpg',
-    video: '/videos/reels/ig-eau-rouge.mp4',
-    preview: '/videos/reels/preview/ig-eau-rouge.mp4',
-    stat: '177K',
-    href: 'https://www.instagram.com/reel/C4XWnqmNQM9/',
+    id: 'ig-estre-atagi',
+    caption: 'ESTRE ATAĞI',
+    src: '/images/reels/ig-estre-atagi.jpg',
+    video: '/videos/reels/ig-estre-atagi.mp4',
+    preview: '/videos/reels/preview/ig-estre-atagi.mp4',
+    href: 'https://www.instagram.com/p/DfxU3XZxPLR/',
   },
   {
     id: 'bts',
@@ -147,15 +143,6 @@ export const reelCards: ReelCard[] = [
     src: '/images/reels/bts.jpg',
     video: '/videos/reels/bts.mp4',
     preview: '/videos/reels/preview/bts.mp4',
-  },
-  {
-    id: 'ig-monza',
-    caption: 'MONZA',
-    src: '/images/reels/ig-monza.jpg',
-    video: '/videos/reels/ig-monza.mp4',
-    preview: '/videos/reels/preview/ig-monza.mp4',
-    stat: '152K',
-    href: 'https://www.instagram.com/reel/C3ouh14NwdR/',
   },
   {
     id: 'race-day',

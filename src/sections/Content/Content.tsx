@@ -15,17 +15,17 @@
  *
  * ## The fan is a playlist
  *
- * Ten cards take turns in five slots: five of Yavuz's most-watched Instagram
- * reels, each a link to the reel, alternating with five clips of his own
- * footage, which link nowhere. The centre card plays its clip once at full
- * size; when it ends every card travels one slot left — position, size and
- * tilt together — the outer-left card glides offstage and the next one in the
- * playlist glides in at the right. The ← → buttons at the top right step it by
- * hand. Side cards loop 270 × 480 previews and offstage cards hold a poster,
- * so one full clip and four small ones decode at a time: five full clips in a
- * fan that rotates and scrolls made the section stutter. The playlist waits
- * while the fan is off screen; under reduced motion the cards jump instead of
- * travelling and nothing plays.
+ * Nine cards take turns in five slots: four Instagram reels Yavuz chose, each
+ * a link to the reel, alternating with five clips of his own footage, which
+ * link nowhere. The centre card plays its clip once at full size; when it
+ * ends every card travels one slot left — position, size and tilt together —
+ * the outer-left card glides offstage and the next one in the playlist glides
+ * in at the right. The ← → buttons under the fan, either side of an "03 / 09"
+ * counter, step it by hand. Side cards loop 270 × 480 previews and offstage
+ * cards hold a poster, so one full clip and four small ones decode at a time:
+ * five full clips in a fan that rotates and scrolls made the section stutter.
+ * The playlist waits while the fan is off screen; under reduced motion the
+ * cards jump instead of travelling and nothing plays.
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -40,6 +40,7 @@ import {
 } from 'motion/react';
 
 import { cn } from '@/lib/cn';
+import { padNumber } from '@/lib/format';
 import { CountUp } from '@/components/motion';
 import { MonoLabel, PhotoCard, SectionHeading } from '@/components/ui';
 import { useInView, usePrefersReducedMotion } from '@/hooks';
@@ -180,9 +181,11 @@ function FanCard({
     if (!visible) {
       // Leaving: on past the outer slot it last held, fading as it goes.
       const exitX = fanSlot(previousPosition).x - direction * OFFSTAGE;
+      // Gone within the first third of the move: a card still half visible
+      // past the outer slot read as a ghost of the fan.
       const moves = [
         animate(slotX, exitX, transition),
-        animate(opacity, 0, { ...transition, duration: instant ? 0 : transition.duration * 0.7 }),
+        animate(opacity, 0, { duration: instant ? 0 : transition.duration * 0.3, ease: 'easeOut' }),
       ];
       return () => moves.forEach((move) => move.stop());
     }
@@ -199,7 +202,14 @@ function FanCard({
       animate(slotY, slot.y, transition),
       animate(slotRotate, slot.rotate, transition),
       animate(slotScale, slot.scale, transition),
-      animate(opacity, 1, transition),
+      // An arriving card fades in once it is under way, not while offstage.
+      animate(
+        opacity,
+        1,
+        wasVisible || instant
+          ? transition
+          : { duration: transition.duration * 0.6, delay: transition.duration * 0.35 },
+      ),
     ];
     return () => moves.forEach((move) => move.stop());
   }, [
@@ -306,7 +316,7 @@ const FAN_CLASSES = cn(
 );
 
 const ARROW_CLASSES =
-  'border-hairline-strong text-text hover:border-accent-primary hover:text-accent-primary duration-base flex size-11 items-center justify-center border font-mono text-[15px] transition-colors disabled:opacity-40';
+  'border-hairline-strong text-text hover:border-accent-primary hover:text-accent-primary duration-base flex size-11 items-center justify-center rounded-full border font-mono text-[16px] transition-colors disabled:opacity-40';
 
 interface FanBodyProps {
   spread: MotionValue<number> | null;
@@ -381,8 +391,9 @@ function FanBody({ spread, active }: FanBodyProps) {
           />
         );
       })}
-      {/* The playlist's own controls, top right where the outer card leaves room. */}
-      <div className="absolute top-0 right-0 z-20 flex gap-2">
+      {/* The playlist's own controls, centred under the fan: back, where the
+          playlist is, forward. */}
+      <div className="absolute -bottom-14 left-1/2 z-20 flex -translate-x-1/2 items-center gap-5">
         <button
           type="button"
           lang="en"
@@ -393,6 +404,13 @@ function FanBody({ spread, active }: FanBodyProps) {
         >
           ←
         </button>
+        <span className="num text-text-faint w-[64px] text-center text-[12px]" aria-live="polite">
+          <span className="text-text">
+            {padNumber(((step.offset + FAN_CENTER_INDEX) % count) + 1, 2)}
+          </span>
+          {' / '}
+          {padNumber(count, 2)}
+        </span>
         <button
           type="button"
           lang="en"

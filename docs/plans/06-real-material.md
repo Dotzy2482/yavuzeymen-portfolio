@@ -60,7 +60,14 @@ then every card travels one slot left — the card itself, with its position,
 size and tilt, not the picture inside a fixed frame, which the owner read as
 broken. Clicking a card to move the fan made cards jump two slots and swing
 across each other, so clicks were dropped: reel cards are links to the reel,
-footage cards are not clickable, and ← → buttons step the fan.
+footage cards are not clickable, and ← → buttons under the fan, either side
+of an "03 / 09" counter, step it.
+
+Which reels: the first cut used his five most-watched (797K down), F1-game
+crash memes. Yavuz did not like how they represented him and picked his
+own — four reels of his iRacing work with a facecam — so the fan shows
+those, **with no view counts**: they were chosen for how they look,
+not how they did. The view figures live on in the counters only.
 
 ### Photos: originals first, AI only where it adds pixels
 
@@ -115,8 +122,6 @@ and says where it came from in `data/` or `docs/CONTENT.md`; `pnpm build`,
 - **Live iRacing figures.** A request for a Password Limited OAuth client went
   to auth@iracing.com on 26 Nov 2026; iRacing has paused client creation. When
   a client arrives: a daily scheduled job, credentials in repository secrets.
-- **The 247K reel** (`C5dtLILNp_H`) is age-restricted and cannot be fetched;
-  if Yavuz sends the original file it can join the fan.
 - **Sim screenshots** from Yavuz, for Sim to Real or a gallery of their own.
 - **Shifter** — a Logitech Driving Force shifter seems to be beside the wheel
   in the rig photo; not listed until Yavuz confirms.

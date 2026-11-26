@@ -172,10 +172,11 @@
   the Egea through the cones, the TOSFED sim rig, the paddock, his home rig
   and telemetry, and a kart onboard. Each loads nothing until its card is on
   screen and pauses when it leaves; under reduced motion it is its poster.
-- The Content fan is a playlist of ten cards in five slots: five of Yavuz's
-  most-watched Instagram reels (797K down), each linking to the reel, between
-  five clips of his own footage. The centre plays once at full size, then
-  every card travels one slot left; ← → buttons step it by hand. Side cards
+- The Content fan is a playlist of nine cards in five slots: four Instagram
+  reels Yavuz picked (his iRacing work with a facecam), each linking to the
+  reel with no view count, between five clips of his own footage. The centre
+  plays once at full size, then every card travels one slot left; ← → buttons
+  under the fan step it by hand. Side cards
   loop 270 × 480 previews. The counters are the signed-in reading of all 346
   reels: 5M+ views, 797,000 on the best, nine past 100K. See
   [plans/06](plans/06-real-material.md).
