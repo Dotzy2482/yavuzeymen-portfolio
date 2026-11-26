@@ -2,7 +2,8 @@
  * Circuit data. Hand-maintained: edit a lap time, a length or a name here and
  * nothing else needs running.
  *
- * The outlines are the exception. Each `path` comes from `trackPaths.ts`,
+ * The outlines are the exception. Each `path` and its `sectors` (where the
+ * real timing lines fall) come from `trackPaths.ts`,
  * which docs/assets/generate-track-paths.mjs derives from OpenStreetMap
  * (© OpenStreetMap contributors, ODbL) — real geometry, running in the
  * direction of travel and starting on the start/finish line; north up, or a
@@ -37,6 +38,7 @@ export const tracks: Track[] = [
     length: '7.004 KM',
     corners: 19,
     path: trackPaths.SPA.path,
+    sectors: trackPaths.SPA.sectors,
   },
   {
     id: 'NOS',
@@ -48,6 +50,7 @@ export const tracks: Track[] = [
     length: '20.832 KM',
     corners: 73,
     path: trackPaths.NOS.path,
+    sectors: trackPaths.NOS.sectors,
   },
   {
     id: 'MON',
@@ -59,6 +62,7 @@ export const tracks: Track[] = [
     length: '5.793 KM',
     corners: 11,
     path: trackPaths.MON.path,
+    sectors: trackPaths.MON.sectors,
   },
   {
     id: 'BAR',
@@ -70,6 +74,7 @@ export const tracks: Track[] = [
     length: '4.657 KM',
     corners: 14,
     path: trackPaths.BAR.path,
+    sectors: trackPaths.BAR.sectors,
   },
   {
     id: 'LMS',
@@ -81,6 +86,7 @@ export const tracks: Track[] = [
     length: '13.626 KM',
     corners: 38,
     path: trackPaths.LMS.path,
+    sectors: trackPaths.LMS.sectors,
   },
   {
     id: 'RAM',
@@ -92,6 +98,7 @@ export const tracks: Track[] = [
     length: '6.515 KM',
     corners: 14,
     path: trackPaths.RAM.path,
+    sectors: trackPaths.RAM.sectors,
   },
   {
     id: 'SEB',
@@ -103,6 +110,7 @@ export const tracks: Track[] = [
     length: '6.019 KM',
     corners: 17,
     path: trackPaths.SEB.path,
+    sectors: trackPaths.SEB.sectors,
   },
   {
     id: 'VIR',
@@ -114,6 +122,7 @@ export const tracks: Track[] = [
     length: '5.263 KM',
     corners: 17,
     path: trackPaths.VIR.path,
+    sectors: trackPaths.VIR.sectors,
   },
   {
     id: 'IND',
@@ -125,6 +134,7 @@ export const tracks: Track[] = [
     length: '3.925 KM',
     corners: 14,
     path: trackPaths.IND.path,
+    sectors: trackPaths.IND.sectors,
   },
   {
     id: 'RAT',
@@ -136,6 +146,7 @@ export const tracks: Track[] = [
     length: '4.088 KM',
     corners: 12,
     path: trackPaths.RAT.path,
+    sectors: trackPaths.RAT.sectors,
   },
   {
     id: 'LAG',
@@ -147,6 +158,7 @@ export const tracks: Track[] = [
     length: '3.602 KM',
     corners: 11,
     path: trackPaths.LAG.path,
+    sectors: trackPaths.LAG.sectors,
   },
   {
     id: 'BAT',
@@ -158,6 +170,7 @@ export const tracks: Track[] = [
     length: '6.213 KM',
     corners: 23,
     path: trackPaths.BAT.path,
+    sectors: trackPaths.BAT.sectors,
   },
   {
     id: 'FUJ',
@@ -169,6 +182,7 @@ export const tracks: Track[] = [
     length: '4.563 KM',
     corners: 16,
     path: trackPaths.FUJ.path,
+    sectors: trackPaths.FUJ.sectors,
   },
   {
     id: 'OKA',
@@ -180,6 +194,7 @@ export const tracks: Track[] = [
     length: '3.703 KM',
     corners: 13,
     path: trackPaths.OKA.path,
+    sectors: trackPaths.OKA.sectors,
   },
 ];
 

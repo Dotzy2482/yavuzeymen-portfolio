@@ -49,7 +49,28 @@ describe('wrapDistance', () => {
 });
 
 describe('getSectorFill', () => {
-  it('fills each sector across its own third of the lap', () => {
+  it('fills each sector between its own timing lines', () => {
+    // Spa-like splits: S1 is a third of the lap, S2 four tenths, S3 the rest.
+    const splits = [0.32, 0.73] as const;
+    expect(getSectorFill(0.16, 0, splits)).toBeCloseTo(0.5);
+    expect(getSectorFill(0.32, 0, splits)).toBe(1);
+    expect(getSectorFill(0.32, 1, splits)).toBe(0);
+    expect(getSectorFill(0.525, 1, splits)).toBeCloseTo(0.5);
+    expect(getSectorFill(0.73, 1, splits)).toBeCloseTo(1);
+    expect(getSectorFill(0.865, 2, splits)).toBeCloseTo(0.5);
+    expect(getSectorFill(1, 2, splits)).toBe(1);
+  });
+
+  it('fills sector by sector: a sector is full before the next one starts', () => {
+    const splits = [0.12, 0.68] as const;
+    for (let progress = 0; progress <= 1; progress += 0.01) {
+      const fills = ([0, 1, 2] as const).map((s) => getSectorFill(progress, s, splits));
+      expect(fills[1] > 0 ? fills[0] : 1).toBe(1);
+      expect(fills[2] > 0 ? fills[1] : 1).toBe(1);
+    }
+  });
+
+  it('falls back to even thirds, for a circuit with no published split', () => {
     expect(getSectorFill(0, 0)).toBe(0);
     expect(getSectorFill(1 / 6, 0)).toBeCloseTo(0.5);
     expect(getSectorFill(1 / 3, 0)).toBe(1);

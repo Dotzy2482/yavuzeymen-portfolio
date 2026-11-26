@@ -62,10 +62,23 @@ export interface Track {
    * nothing downstream needs a start-line offset.
    */
   path: string;
+
+  /**
+   * Where S2 and S3 begin, as fractions of the path's length — the circuit's
+   * real timing lines, pinned with their sources in docs/assets/circuits.json
+   * and projected onto the path by the generator, which writes them into
+   * `trackPaths.ts` beside `path`. A circuit with no published split (the
+   * Nordschleife on its own) gets even thirds there, and says why in
+   * circuits.json.
+   */
+  sectors: SectorSplits;
 }
 
+/** Fractions of the lap at which S2 and S3 begin; S1 begins on the line, at 0. */
+export type SectorSplits = readonly [number, number];
+
 /** The part of a `Track` the geometry generator owns. */
-export type TrackGeometry = Pick<Track, 'path'>;
+export type TrackGeometry = Pick<Track, 'path' | 'sectors'>;
 
 /** A point on the circuit plus the heading at that point, for the car marker. */
 export interface PathPoint {

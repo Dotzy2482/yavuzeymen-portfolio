@@ -14,7 +14,8 @@ goes:
   marker;
 - a small cyan replay clock beside the personal best counts up and lands
   **exactly** on it as the marker crosses the start/finish line;
-- three sector bars fill in sequence;
+- three sector bars fill in sequence, each across one of the circuit's real
+  timing sectors, whose boundaries are ticked on the map;
 - a driver plate follows the marker, flipping to its other side before it would
   run off the panel edge.
 
@@ -208,8 +209,9 @@ a Porsche Cup among them — inside the 15% that `speedProfile.test.ts` holds
 every lap to. That catches a typo in a constant without pretending to be a
 simulation of any one car.
 
-The sector bars follow the marker, not the clock. They are thirds of the
-circuit's length, so a sector full of slow corners now fills slowly.
+The sector bars follow the marker, not the clock. Each spans one of the
+circuit's real timing sectors (see [Real sectors](#real-sectors) below), so a
+sector full of slow corners fills slowly, and a short one is over quickly.
 
 **If you change this**, keep the invariant: _the chronometer must read exactly
 `track.lap` at the moment the marker crosses the line._ The round-trip test in
@@ -336,7 +338,7 @@ and the loop has no opinion about what the buttons do.
 | `TrackList`        | Desktop rows and the mobile chip scroller — same data, media-query choice.                               |
 | `TrackListItem`    | One desktop row: index, flag chip, name, best lap.                                                       |
 | `TrackPanel`       | The right-hand panel. Its header is a column: name then timing on desktop, timing first on mobile.       |
-| `TrackMap`         | The SVG: base outline, progress, trail, S/F tick across the straight, marker, plate.                     |
+| `TrackMap`         | The SVG: base outline, progress, trail, sector ticks, S/F tick across the straight, marker, plate.       |
 | `CarMarker`        | Bright core inside a cyan halo. No props — moved by attribute.                                           |
 | `DriverLabel`      | HTML overlay plus leader line. Never rotates; flips side past 66% of panel width.                        |
 | `LapTimer`         | The timing block: the personal best, rendered by React, and the replay clock (`0:00.000`, loop-written). |
@@ -427,6 +429,9 @@ generator did not emit is a compile error rather than `d="undefined"`.
   tagged as the start/finish or finish line (the finish, where both are mapped:
   it is the line a lap is timed across). Watkins Glen, Road Atlanta and Suzuka
   have none mapped and are authored on the pit straight.
+- **`sectorLines`** — the two intermediate timing lines, where S2 and S3
+  begin, each a coordinate with a `source`. Or `null`, with a `sectorsNote`
+  saying why the circuit has none. See [Real sectors](#real-sectors).
 - **`excludeWays`** — ways the walk must never take, each with its reason. Only
   the Red Bull Ring needs any.
 - **`simplify`** — per-circuit overrides of the tolerance, point limits and
@@ -533,6 +538,53 @@ the loop still only translates the S/F group, and did not change. The generator
 mirrors the same placement when it checks that no label is clipped, and a unit
 test checks every circuit from the component's side.
 
+### Real sectors
+
+S1, S2 and S3 are the circuit's real timing sectors, not thirds of the lap.
+Each circuit pins its two intermediate timing lines as `sectorLines` in
+`circuits.json`, beside `startLine`:
+
+```json
+"sectorLines": [
+  { "lat": 50.432596, "lon": 5.9770816, "source": "FIA WEC Al Kamel timekeeping circuit map, … i1 at 2243.5 m …" },
+  { "lat": 50.4297114, "lon": 5.9597741, "source": "… i2 at 5112.7 m …" }
+]
+```
+
+The generator projects each onto the raw ring — it must lie within 30 m of it,
+like the start line — then onto the emitted polyline near that position, and
+writes the fraction of the path's length into `trackPaths.ts` as
+`sectors: [s2, s3]`, beside `path`. Sectors must run in order and none may be
+under 5% of the lap. `getSectorFill(progress, sector, track.sectors)` fills
+each bar between its own two lines, and `TrackMap` ticks both lines across the
+track, labelled with the sector each begins (`S2`, `S3`; S1 begins at `S/F`).
+
+**Where the numbers come from.** iRacing does not publish its split points,
+and its own splits are many short sections rather than three, so the lines
+are the circuits' official three-sector timing lines, from the timing service
+of a series that races the layout drawn:
+
+| Circuits                                                            | Source                                                                                                                                        |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sebring, Road America, VIR, Indianapolis, Road Atlanta, Laguna Seca | IMSA's 2025 timing 3-sector maps (Al Kamel): each sector's length                                                                             |
+| Spa, Monza, Barcelona, Le Mans, Fuji                                | FIA WEC timekeeping circuit maps (Al Kamel, 2025–26): i1 and i2 from the finish line                                                          |
+| Okayama                                                             | GT World Challenge Asia track map (TSL Timing, 2022): I1 and I2                                                                               |
+| Mount Panorama                                                      | Motorsport Australia circuit diagram 2023.1: sector loops from the control line, cross-checked against the 2025 Bathurst 12 Hour sector times |
+| Nordschleife                                                        | None: NLS and the 24h time the combined lap in many short sectors, and the Industriefahrten layout is not raced. It keeps even thirds.        |
+
+Every source gives distances along the lap, measured from its finish line.
+Each point is placed that far round the OSM ring — scaled from the published
+length to the measured one — and then checked against where the source's map
+draws the line, by its neighbouring corners. Where the source's finish line is
+not where this ring starts, the distance is counted from the finish line
+instead, and `source` says by how much: Monza's is 500 m before (just past the
+Parabolica, while the ring starts in front of the pits), Barcelona's 100 m,
+Fuji's and Sebring's about 80 m, and Okayama's 185 m after (at the pit exit).
+The full citation, URL included, is in each `source`.
+
+Changing a sector line is offline, like the start line: edit `circuits.json`
+and run `node docs/assets/generate-track-paths.mjs`.
+
 ### Licence
 
 OpenStreetMap data is © OpenStreetMap contributors, under the
@@ -545,11 +597,9 @@ a design tweak.
 
 ## Also worth knowing
 
-- **Sectors are even thirds of path length**, not real timing-loop splits. The
-  handoff has no sector data and the design draws them as thirds. Real splits
-  are the start line's mechanism again — pin two more coordinates beside
-  `startLine` in `circuits.json` and emit their fractions — but they change
-  `getSectorFill` and the unit tests that hardcode thirds.
+- **The sector timing lines are approximate to a few tens of metres.** They are
+  placed by published distance and checked against each source's map, not
+  surveyed. On screen, at 1000 units for a 4–20 km lap, that is a pixel or two.
 - **The trail is 70 path units on every circuit.** Real outlines run from about
   1,840 units (Fuji) to 3,170 (Road America), so the trail covers 2.2–3.8% of a
   lap — but it is the same

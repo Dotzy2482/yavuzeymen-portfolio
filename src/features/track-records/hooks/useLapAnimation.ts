@@ -176,10 +176,12 @@ export function useLapAnimation({
       n.chrono.textContent = formatLapTime(progress * lapMs);
     }
 
-    // Sectors are thirds of the circuit's length, so they fill with the car's
+    // Sectors end where the circuit's timing lines are, and fill with the car's
     // position, not the clock: a sector of slow corners fills slowly.
     n.sectors.forEach((sector, i) => {
-      if (sector) sector.style.width = `${getSectorFill(lapDistance, i as SectorIndex) * 100}%`;
+      if (sector) {
+        sector.style.width = `${getSectorFill(lapDistance, i as SectorIndex, track.sectors) * 100}%`;
+      }
     });
 
     // Driver plate tracks the dot in panel pixels, flipping before it would

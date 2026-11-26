@@ -72,7 +72,12 @@ export function TrackPanel({
         <LapTimer best={track.lap} className="order-1 md:order-2" />
       </div>
 
-      <TrackMap path={track.path} trackName={track.name} driverName={driverName} />
+      <TrackMap
+        path={track.path}
+        sectors={track.sectors}
+        trackName={track.name}
+        driverName={driverName}
+      />
 
       <div className="mt-[18px] flex flex-col gap-[18px] md:mt-7 md:flex-row md:items-center md:gap-7">
         <SectorBar />
