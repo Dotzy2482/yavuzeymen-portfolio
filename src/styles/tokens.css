@@ -77,6 +77,8 @@
   --ambient-line-3: rgba(255, 255, 255, 0.04);
   --ambient-line-4: rgba(255, 255, 255, 0.035);
   --hero-headline-shadow: 0 4px 60px rgba(10, 11, 13, 0.55);
+  /* The page-wide ambient below the hero (app/PageAmbient): its dot grid. */
+  --ambient-dot: rgba(255, 255, 255, 0.05);
 
   /* --- Typography --------------------------------------------------------- */
   /* Archivo is a variable font (wdth 62–125, wght 100–900); headings run at
