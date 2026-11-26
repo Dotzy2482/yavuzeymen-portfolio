@@ -83,7 +83,7 @@ export function Setup({ id = 'setup', className }: SectionProps) {
       <StretchScrub>
         <SectionHeading index="07" title="Setup" meta="EQUIPMENT SPEC" stretch="scrub" />
       </StretchScrub>
-      <div className="mt-7 grid items-start gap-7 md:mt-[72px] md:grid-cols-[1.2fr_1fr] md:gap-20">
+      <div className="mt-7 grid items-start gap-7 md:mt-[72px] md:grid-cols-[1.2fr_1fr] md:gap-10 lg:gap-20">
         <SpecList />
         <Picture
           src="/images/simtoreal/rig.png"
