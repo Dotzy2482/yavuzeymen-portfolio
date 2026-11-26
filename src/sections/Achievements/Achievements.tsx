@@ -6,8 +6,9 @@
  * — red and cyan never on the same element at the same time, per the style
  * guide, which is why hover clears to cyan on neutral cards only.
  *
- * Desktop: 3-column grid of tall cards. Mobile: the same cards stacked in one
- * column. The chip and index sit above the title on both: beside it, on a phone,
+ * Desktop: 3-column grid of tall cards; tablets get two columns, since three
+ * at 768px broke every title over three lines. Mobile: the same cards stacked
+ * in one column. The chip and index sit above the title on both: beside it, on a phone,
  * the chip took a third of the row and broke titles like "iRacing 24h Le Mans"
  * over two lines.
  */
@@ -64,7 +65,7 @@ export function Achievements({ id = 'achievements', className }: SectionProps) {
   return (
     <section id={id} className={cn('container-section', className)}>
       <SectionHeading index="03" title="Achievements" meta="6 HIGHLIGHTS" />
-      <div className="mt-9 flex flex-col gap-3.5 md:mt-[72px] md:grid md:grid-cols-3 md:gap-5">
+      <div className="mt-9 flex flex-col gap-3.5 md:mt-[72px] md:grid md:grid-cols-2 md:gap-5 lg:grid-cols-3">
         {achievements.map((achievement, i) => (
           <AchievementCard key={achievement.id} achievement={achievement} index={i} />
         ))}
