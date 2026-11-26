@@ -12,6 +12,7 @@
  */
 
 import { ErrorBoundary } from './ErrorBoundary';
+import { PageAmbient } from './PageAmbient';
 import { Providers } from './Providers';
 import {
   About,
@@ -39,6 +40,8 @@ export function App() {
         <a href="#main" className="skip-link">
           İçeriğe geç
         </a>
+        {/* Behind every section; the hero's opaque stage covers it. */}
+        <PageAmbient />
         <Nav />
         {/*
           tabIndex -1 so the skip link actually moves focus here. Without it the

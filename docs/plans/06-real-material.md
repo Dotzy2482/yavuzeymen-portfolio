@@ -69,6 +69,17 @@ own — four reels of his iRacing work with a facecam — so the fan shows
 those, **with no view counts**: they were chosen for how they look,
 not how they did. The view figures live on in the counters only.
 
+### A background below the hero
+
+Past the hero the page was a flat #0a0b0d. `app/PageAmbient` is one fixed
+layer in the hero's language (red and blue fields, racing lines with cyan
+runners, a dot grid) that the hero's opaque stage covers. Its first cut read
+as a filter over the page — fields that barely moved, lines across the
+heading band — and a per-section glow behind each heading, tried next, looked
+like slides. The kept version is the first, corrected: fainter fields that
+travel far over the scroll, so the light is somewhere else on every screen,
+and two lines held to the viewport's top and bottom edges.
+
 ### Photos: originals first, AI only where it adds pixels
 
 The professional set (`rv__*`) is 6–8K and is used as is. The low-res files on
@@ -126,11 +137,3 @@ and says where it came from in `data/` or `docs/CONTENT.md`; `pnpm build`,
 - **Shifter** — a Logitech Driving Force shifter seems to be beside the wheel
   in the rig photo; not listed until Yavuz confirms.
 - Legal page copy, a domain (`og:url`, canonical), a phone number if wanted.
-- **A background below the hero.** Past the hero the page is flat #0a0b0d,
-  and the owner wants something there. A fixed full-page layer in the hero's
-  language (red and blue fields, racing lines with scroll-driven cyan
-  runners, a dot grid) was tried and rejected: being fixed, it put the same
-  wash in the same place on every screen, so it read as a filter over the page
-  rather than a designed background, and the lines ran behind the headings.
-  Next attempt should be anchored to the sections and scroll with them — an
-  accent per section, varied by side — and stay clear of text.

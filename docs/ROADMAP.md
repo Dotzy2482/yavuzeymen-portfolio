@@ -180,6 +180,9 @@
   loop 270 × 480 previews. The counters are the signed-in reading of all 346
   reels: 5M+ views, 797,000 on the best, nine past 100K. See
   [plans/06](plans/06-real-material.md).
+- The page below the hero has an ambient background (`app/PageAmbient`): the
+  hero's colour fields and racing lines, fixed behind the sections, moving
+  with the scroll.
 - Setup shows his own rig at home with numbered markers on the wheel,
   pedals, displays and PC, matching the numbers on the rows; the list grew to
   his displays, PC parts and sim.
