@@ -2,14 +2,16 @@
  * The Content section's data: three headline counters and the five reel
  * cards of the fan/carousel.
  *
- * The counters are Instagram, his main platform: a snapshot of @yavuzeymen_12
- * read on 27 November 2026 — 1,344 followers, 507 posts, and 7,810 views on
- * the most-watched of the reels Instagram shows a logged-out visitor (the
- * latest twelve; an older reel may have done better, which only his Insights
- * can say). They replaced the handoff's illustrative figures (146.848 views,
- * a 797K reel), which were never his. There is no live fetch: that needs an
- * approved Meta app and a server-side token, which this static site does not
- * have — so refresh them by hand, and keep the date above honest.
+ * The counters are Instagram, his main platform: @yavuzeymen_12's reels, all
+ * 346 of them, read signed in on 27 November 2026. His best reel has 797,000
+ * views (the handoff's 797K was right), nine have passed 100,000, and the
+ * reels add up to about five million views — "about", because Instagram
+ * rounds every count past ten thousand ("84,6 B"), so the total is stated as
+ * a floor. A signed-out visitor sees only the latest twelve reels, which is
+ * how an earlier version of this file came to claim 7,810. There is no live
+ * fetch: that needs an approved Meta app and a server-side token, which this
+ * static site does not have — refresh by hand, signed in, and keep the date
+ * above honest.
  */
 
 export interface ContentCounter {
@@ -18,30 +20,33 @@ export interface ContentCounter {
   /** Decimal places (82.3 → "%82,3"). */
   decimals: number;
   prefix?: string;
+  /** Shown after the number, e.g. `+` for a floor. */
+  suffix?: string;
   label: string;
   accent: boolean;
 }
 
 export const contentCounters: ContentCounter[] = [
   {
-    id: 'instagram-followers',
-    value: 1_344,
+    id: 'reel-views',
+    value: 5_000_000,
     decimals: 0,
-    label: 'INSTAGRAM TAKİPÇİ',
+    suffix: '+',
+    label: 'TOPLAM REEL İZLENMESİ',
     accent: false,
   },
   {
     id: 'top-reel',
-    value: 7_810,
+    value: 797_000,
     decimals: 0,
     label: 'EN ÇOK İZLENEN REEL',
     accent: true,
   },
   {
-    id: 'instagram-posts',
-    value: 507,
+    id: 'reels-over-100k',
+    value: 9,
     decimals: 0,
-    label: 'INSTAGRAM GÖNDERİ',
+    label: '100 BİN ÜSTÜ İZLENEN REEL',
     accent: false,
   },
 ];
