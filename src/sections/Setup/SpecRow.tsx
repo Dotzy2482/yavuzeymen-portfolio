@@ -66,6 +66,14 @@ export function SpecRow({ item, progress, index, count }: SpecRowProps) {
   return (
     <div className="border-hairline-mid relative flex items-baseline justify-between gap-5 border-b py-[18px] md:gap-8 md:py-6">
       <MonoLabel size="md" tracking="chip" className="md:tracking-mono-lg">
+        {/* The photo marker this row belongs to; the same number sits on the
+            object in the photo. */}
+        <span
+          aria-hidden="true"
+          className={cn('mr-3 inline-block w-[2ch]', item.marker && 'text-accent-primary')}
+        >
+          {item.marker ?? ''}
+        </span>
         {item.label}
       </MonoLabel>
       <span className="tracking-caps stretch-ui text-right text-[13px] font-extrabold uppercase md:text-[16px]">

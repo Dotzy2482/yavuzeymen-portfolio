@@ -23,5 +23,5 @@ export type { ContentCounter, ReelCard } from './contentStats';
 export { simToRealItems } from './simToReal';
 export type { SimToRealItem } from './simToReal';
 
-export { setupItems } from './setup';
-export type { SetupItem } from './setup';
+export { setupItems, setupMarkers } from './setup';
+export type { SetupItem, SetupMarker } from './setup';

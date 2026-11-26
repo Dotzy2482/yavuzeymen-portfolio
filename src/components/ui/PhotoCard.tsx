@@ -11,15 +11,17 @@
  * ## Video
  *
  * With a `video`, the card plays that clip muted and looped — but only while
- * it is on screen: it is `preload="none"`, starts when a quarter of the card
- * is in view and pauses when it leaves, so five clips never download or
- * decode at once and a visitor who never reaches the section fetches none of
- * them. `src` is the poster, shown until the first frame is ready. Under
+ * it is on screen: it is `preload="none"`, starts when `playThreshold` of the
+ * card is in view and pauses when it leaves, so a visitor who never reaches
+ * the section fetches none of them. `play="hover"` waits for the pointer as
+ * well: five 540 × 960 clips decoding at once inside a fan that rotates and
+ * scrolls made the section stutter, so the fan autoplays its centre card only
+ * and its side cards come alive under the pointer. `src` is the poster, shown until the first frame is ready. Under
  * reduced motion the card is the poster alone, as a picture: a looping video
  * is motion, and the still says the same thing.
  */
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { cn } from '@/lib/cn';
 import { useInView, usePrefersReducedMotion } from '@/hooks';
@@ -33,8 +35,20 @@ export interface PhotoCardProps {
   video?: string;
   alt?: string;
   caption: string;
-  /** Right-aligned cyan figure, e.g. `'797K'`. */
+  /** Right-aligned cyan figure, e.g. a real view count. */
   stat?: string;
+  /**
+   * `view`: loop whenever on screen. `hover`: loop only while the pointer is on
+   * it. `manual`: play once, when `playing` says so, and report the end through
+   * `onEnded` — the fan's playlist drives its centre card this way.
+   */
+  play?: 'view' | 'hover' | 'manual';
+  /** For `play="manual"`: whether the clip should be running now. */
+  playing?: boolean;
+  /** For `play="manual"`: called when the clip reaches its end. */
+  onEnded?: () => void;
+  /** Share of the card that must be visible for its video to run. */
+  playThreshold?: number;
   /** The centre card of the fan: full-opacity picture, stronger border. */
   emphasis?: boolean;
   className?: string;
@@ -47,15 +61,22 @@ interface CardVideoProps {
   src: string;
   poster: string;
   className: string;
+  /** False holds the clip paused even while it is on screen. */
+  active: boolean;
+  threshold: number;
+  /** Ignore visibility and play whenever `active` (the caller has checked it). */
+  manual: boolean;
+  onEnded?: () => void;
 }
 
-function CardVideo({ src, poster, className }: CardVideoProps) {
-  const { ref, inView } = useInView<HTMLVideoElement>({ threshold: 0.25, once: false });
+function CardVideo({ src, poster, className, active, threshold, manual, onEnded }: CardVideoProps) {
+  const { ref, inView } = useInView<HTMLVideoElement>({ threshold, once: false });
+  const shouldPlay = active && (manual || inView);
 
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
-    if (inView) {
+    if (shouldPlay) {
       // play() returns a promise in browsers (rejected if autoplay is
       // refused, which muted inline video never is) and nothing in jsdom.
       const playing = video.play() as Promise<void> | undefined;
@@ -63,7 +84,9 @@ function CardVideo({ src, poster, className }: CardVideoProps) {
     } else {
       video.pause();
     }
-  }, [inView, ref]);
+    // `src` too: a card that reaches the fan's centre swaps its preview for
+    // the full clip, and the new source has to be started again.
+  }, [shouldPlay, src, ref]);
 
   return (
     <video
@@ -71,8 +94,9 @@ function CardVideo({ src, poster, className }: CardVideoProps) {
       src={src}
       poster={poster}
       muted
-      loop
+      loop={!manual}
       playsInline
+      onEnded={onEnded}
       preload="none"
       aria-hidden="true"
       className={className}
@@ -87,13 +111,20 @@ export function PhotoCard({
   caption,
   stat,
   emphasis = false,
+  play = 'view',
+  playing = false,
+  onEnded,
+  playThreshold = 0.25,
   className,
 }: PhotoCardProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const [hovered, setHovered] = useState(false);
   const mediaClasses = cn(MEDIA_CLASSES, !emphasis && 'opacity-85');
 
   return (
     <div
+      onPointerEnter={play === 'hover' ? () => setHovered(true) : undefined}
+      onPointerLeave={play === 'hover' ? () => setHovered(false) : undefined}
       className={cn(
         'bg-surface group rounded-card relative aspect-[9/16] overflow-hidden border',
         emphasis ? 'border-border-emphasis' : 'border-hairline-strong',
@@ -101,7 +132,15 @@ export function PhotoCard({
       )}
     >
       {video && !prefersReducedMotion ? (
-        <CardVideo src={video} poster={src} className={mediaClasses} />
+        <CardVideo
+          src={video}
+          poster={src}
+          className={mediaClasses}
+          active={play === 'manual' ? playing : play === 'view' || hovered}
+          threshold={playThreshold}
+          manual={play === 'manual'}
+          onEnded={onEnded}
+        />
       ) : (
         <Picture src={src} alt={alt} loading="lazy" className={mediaClasses} />
       )}
@@ -112,12 +151,11 @@ export function PhotoCard({
         )}
       >
         {/* 11px so the caption can be read; tracking closed to `caps` to pay
-            for it, which keeps "REEL — BEHIND THE SCENES" on one line in the
-            fan's 230px card. Wrapped, its first line started under the centre
-            card that overlaps it and read "— BEHIND THE". It still wrapped at
-            some widths with a pixel to spare, so the caption is held to one
-            line too, with an ellipsis rather than a second line if it ever
-            runs out of room. */}
+            for it, which keeps a long caption on one line in the fan's 230px
+            card. Wrapped, the first line of one started under the centre card
+            that overlaps it. It still wrapped at some widths with a pixel to
+            spare, so the caption is held to one line too, with an ellipsis
+            rather than a second line if it ever runs out of room. */}
         <span
           className={cn(
             'tracking-caps min-w-0 truncate font-mono text-[11px]',

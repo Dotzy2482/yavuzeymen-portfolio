@@ -2,9 +2,13 @@
  * The Content section's data: three headline counters and the five reel
  * cards of the fan/carousel.
  *
- * These are snapshot values, entered by hand. There is no API integration and
- * none is planned — a live fetch would need a server-side token, which this
- * static site deliberately does not have.
+ * The counters are a snapshot of Yavuz's public profiles, read on 27 November
+ * 2026: @yavuzeymen_12 on Instagram (1,344 followers; best reel 7,810 views)
+ * and on TikTok (7,224 likes; best video 8,920 views). They replaced the
+ * handoff's illustrative figures (146.848 views, a 797K reel), which were
+ * never his. There is no live fetch: both platforms need an approved app and
+ * a server-side token for that, which this static site does not have — so
+ * refresh them by hand, and keep the date above honest.
  */
 
 export interface ContentCounter {
@@ -19,25 +23,24 @@ export interface ContentCounter {
 
 export const contentCounters: ContentCounter[] = [
   {
-    id: 'views-90d',
-    value: 146_848,
+    id: 'instagram-followers',
+    value: 1_344,
     decimals: 0,
-    label: 'SON 90 GÜNDE GÖRÜNTÜLENME',
+    label: 'INSTAGRAM TAKİPÇİ',
     accent: false,
   },
   {
-    id: 'top-reel',
-    value: 797_000,
+    id: 'top-video',
+    value: 8_920,
     decimals: 0,
-    label: 'EN YÜKSEK REEL İZLENMESİ',
+    label: 'EN ÇOK İZLENEN VİDEO',
     accent: true,
   },
   {
-    id: 'reels-share',
-    value: 82.3,
-    decimals: 1,
-    prefix: '%',
-    label: 'REELS AĞIRLIĞI',
+    id: 'tiktok-likes',
+    value: 7_224,
+    decimals: 0,
+    label: 'TIKTOK BEĞENİ',
     accent: false,
   },
 ];
@@ -55,6 +58,11 @@ export interface ReelCard {
    * footage; it plays only while the card is on screen. See PhotoCard.
    */
   video?: string;
+  /**
+   * The same clip at 270 × 480 and 24 fps (120–200 KB): what the fan's side
+   * cards loop, so four of them cost about what one full clip does to decode.
+   */
+  preview?: string;
   /** Cyan view-count shown on the emphasised card. */
   stat?: string;
 }
@@ -66,34 +74,38 @@ export interface ReelCard {
 export const reelCards: ReelCard[] = [
   {
     id: 'paddock',
-    caption: 'REEL — PADDOCK',
+    caption: 'PADDOCK',
     src: '/images/reels/paddock.jpg',
     video: '/videos/reels/paddock.mp4',
+    preview: '/videos/reels/preview/paddock.mp4',
   },
   {
     id: 'rig',
-    caption: 'REEL — SIM RIG',
+    caption: 'SIM RIG',
     src: '/images/reels/rig.jpg',
     video: '/videos/reels/rig.mp4',
+    preview: '/videos/reels/preview/rig.mp4',
   },
   {
     id: 'fiat',
-    caption: 'REEL — FIAT EGEA',
+    caption: 'FIAT EGEA',
     src: '/images/reels/fiat.jpg',
     video: '/videos/reels/fiat.mp4',
-    stat: '797K',
+    preview: '/videos/reels/preview/fiat.mp4',
   },
   {
     id: 'bts',
-    caption: 'REEL — BEHIND THE SCENES',
+    caption: 'BEHIND THE SCENES',
     src: '/images/reels/bts.jpg',
     video: '/videos/reels/bts.mp4',
+    preview: '/videos/reels/preview/bts.mp4',
   },
   {
     id: 'race-day',
-    caption: 'REEL — ONBOARD',
+    caption: 'ONBOARD',
     src: '/images/reels/race-day.jpg',
     video: '/videos/reels/race-day.mp4',
+    preview: '/videos/reels/preview/race-day.mp4',
   },
 ];
 
