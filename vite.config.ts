@@ -18,6 +18,10 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     css: true,
+    // Claude Code worktrees live under .claude/worktrees/ with their own copy
+    // of src/ and node_modules/; without this a stale one doubles the suite
+    // and fails it against a different React instance.
+    exclude: ['**/node_modules/**', '**/dist/**', '.claude/**'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
