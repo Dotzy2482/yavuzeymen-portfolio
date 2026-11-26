@@ -29,7 +29,7 @@
 
 - Nav (top bar, desktop side columns, full-screen mobile menu; a desktop bar
   past the hero since 05).
-- Hero: ambient background, portrait, headline, info cards, sponsor marquee,
+- Hero: ambient background, portrait, headline, info cards, sponsor marquee (later a still bar),
   CTA. Two photos of the same frame are stacked — bare-headed and helmeted —
   and a soft-edged circle reveals the helmeted one under the cursor; below `md`
   the pinned scroll irises it shut instead. Since 05 the reveal stops at the
@@ -137,7 +137,7 @@
   profile from its own outline (corner speed from curvature, then braking and
   acceleration passes), so the car slows into a hairpin and accelerates down
   the straight, while the chronometer still lands on the personal best at the
-  line. Modelled against plausible GT3 laps, all twelve come within 6%. See
+  line. Modelled against plausible GT3 laps, all twelve then came within 6%. See
   [TRACK_RECORDS.md](TRACK_RECORDS.md#the-marker-brakes-for-corners).
 - The Content reel fan was rebuilt. The cards are rounded (the one exception to
   the site's square corners, since they are phone screens) and step down an
@@ -151,6 +151,24 @@
   portraits over the FIAT Egea wide shot, the race crop and the karting slot.
   Each photo drifts inside its frame against the scroll, every column at its
   own pace, so the grid has depth and the scroll stays the reader's.
+- Track Records shows Yavuz's real iRacing personal bests: fourteen circuits,
+  each with his fastest lap in any car and session and the car named in the
+  panel. Nine circuits he had never driven left with their placeholder times;
+  Spa, the Nordschleife, Monza, Barcelona, Le Mans, Road America, Sebring,
+  VIR, Indianapolis, Fuji and Okayama arrived, their outlines fetched through
+  the generator's new `--changed --api` mode while Overpass was down. See
+  [TRACK_RECORDS.md](TRACK_RECORDS.md#real-lap-times).
+- Only Yavuz's own partner is shown. gelbura, SPARDOX and DriveHunter sponsor
+  his team, not him, so they left the hero strip and the Partners grid, logo
+  files and all. Partners is now one feature card for Team Curve Hunters, logo
+  in colour, with a "become a partner" line in place of the dashed slots.
+- The hero's scrolling logo strip is a still bar: Kick status on the left —
+  "LIVE ON KICK" with the viewer count while Yavuz is streaming, polled from
+  the browser every two minutes — the Business Enquiries button in the middle
+  and a scroll cue on the right. The KICK social link gets a red dot while
+  live. `Marquee` is no longer used anywhere.
+- Setup lists his real wheel and pedals, and the contact CTA and social row
+  (Kick added) point at his accounts through `.env.local`.
 
 **Critique fixes** — [workstream 05](plans/05-critique-fixes.md)
 
@@ -182,15 +200,9 @@ decision from Yavuz (below), or deliberately unscheduled.
 
 No plan unblocks these — each is waiting on a person or a file.
 
-- **Real lap times** from the iRacing profile, replacing the handoff's
-  placeholder personal bests. Cheap, high-value, and it makes the last number
-  in the section as true as its geometry: the lengths and corner counts are the
-  published figures for the layouts drawn, and every length agrees with the
-  measured OSM ring to within 1.5%.
-- **Setup hardware list** — five strings from Yavuz; flip each row's
-  `placeholder` to `false` as it is filled.
-- **Contact environment values** — e-mail and the three social URLs in
-  `.env.local`, so the CTA and the link rows point somewhere.
+- **A phone number**, if one is ever wanted on the page: `VITE_CONTACT_PHONE`
+  is the one contact value still empty. (Real lap times, the Setup list, the
+  e-mail and the four social URLs all arrived in November 2026.)
 - **Hi-res photography**, same crops and filenames, followed by `pnpm images`.
   `rig.png`, `paddock.jpg` and `fiat-front.png` are the three that visibly need
   it. See [CONTENT.md](CONTENT.md).

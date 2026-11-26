@@ -140,16 +140,13 @@ it. Either keep the ref in the component that renders the node, or use the
 Everything below renders correctly but is waiting on real data. Do not "fix"
 these by inventing values.
 
-| Where                                   | Placeholder                                                | Waiting on             |
-| --------------------------------------- | ---------------------------------------------------------- | ---------------------- |
-| `data/setup.ts`                         | All five rows read `MODEL — YER TUTUCU`                    | Yavuz's real hardware  |
-| `features/track-records/data/tracks.ts` | Lap times (lengths and corners are real)                   | iRacing profile export |
-| `data/profile.ts`                       | Empty e-mail/phone/socials when env is unset               | `.env.local` values    |
-| `data/simToReal.ts`                     | `karting` item has `src: null` (dashed slot)               | Karting photo          |
-| `data/contentStats.ts`                  | Hand-entered counters and reel captions                    | Instagram insights     |
-| Footer links                            | `Gizlilik` / `Şartlar` point at `#`                        | Legal pages            |
-| `public/favicon.svg`                    | Placeholder mark, and the source of `apple-touch-icon.png` | Final visual identity  |
-| `index.html`                            | No `og:url`, no canonical link                             | A final domain         |
+| Where                  | Placeholder                                        | Waiting on          |
+| ---------------------- | -------------------------------------------------- | ------------------- |
+| `data/profile.ts`      | Empty phone (and e-mail/socials when env is unset) | `.env.local` values |
+| `data/simToReal.ts`    | `karting` item has `src: null` (dashed slot)       | Karting photo       |
+| `data/contentStats.ts` | Hand-entered counters and reel captions            | Instagram insights  |
+| Footer links           | `Gizlilik` / `Şartlar` point at `#`                | Legal pages         |
+| `index.html`           | No `og:url`, no canonical link                     | A final domain      |
 
 The site must render with an empty `.env` — every variable is optional and
 resolves to an empty string.

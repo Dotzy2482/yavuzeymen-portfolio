@@ -39,6 +39,7 @@ export interface Profile {
     instagram: string;
     youtube: string;
     tiktok: string;
+    kick: string;
   };
 }
 
@@ -63,6 +64,7 @@ export const profile: Profile = {
     instagram: import.meta.env.VITE_INSTAGRAM_URL ?? '',
     youtube: import.meta.env.VITE_YOUTUBE_URL ?? '',
     tiktok: import.meta.env.VITE_TIKTOK_URL ?? '',
+    kick: import.meta.env.VITE_KICK_URL ?? '',
   },
 };
 
@@ -71,4 +73,5 @@ export const socialLinks = [
   { label: 'INSTAGRAM', href: profile.socials.instagram || '#' },
   { label: 'YOUTUBE', href: profile.socials.youtube || '#' },
   { label: 'TIKTOK', href: profile.socials.tiktok || '#' },
+  { label: 'KICK', href: profile.socials.kick || '#' },
 ] as const;

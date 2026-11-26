@@ -88,8 +88,8 @@ describe('dash maths', () => {
 });
 
 describe('track data integrity', () => {
-  it('has twelve circuits across three regions', () => {
-    expect(tracks).toHaveLength(12);
+  it('has fourteen circuits across three regions', () => {
+    expect(tracks).toHaveLength(14);
     expect(new Set(tracks.map((t) => t.region))).toEqual(new Set(['EUROPE', 'AMERICA', 'APAC']));
   });
 

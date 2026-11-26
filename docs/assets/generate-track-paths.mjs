@@ -1,10 +1,23 @@
 /**
- * Turns real circuit geometry from OpenStreetMap into the twelve `path`
+ * Turns real circuit geometry from OpenStreetMap into the fourteen `path`
  * strings the Track Records map draws:
  *
  *   node docs/assets/generate-track-paths.mjs --fetch   # network: refresh ./circuit-rings.json
  *   node docs/assets/generate-track-paths.mjs           # offline: rewrite trackPaths.ts
  *   node docs/assets/generate-track-paths.mjs --check   # offline: assert the two are in sync
+ *
+ * Two modifiers for --fetch:
+ *
+ *   --changed  fetch only circuits that are new to circuits.json or whose
+ *              pinned ids changed, and leave every other cache entry exactly
+ *              as it is (entries for circuits no longer listed are dropped).
+ *              Adding a circuit then never drags a month of upstream edits
+ *              into the eleven that were not touched.
+ *   --api      read from the main OpenStreetMap API (relation/full, ways,
+ *              nodes) instead of Overpass. Same data, same cache shape; use
+ *              it when every Overpass instance is timing out, as they all
+ *              were in November 2026. The API has no database timestamp, so
+ *              osmBase records the moment of the fetch.
  *
  * Inputs, both committed:
  *
@@ -81,7 +94,7 @@
  * SELF-CHECKS. The generator fails rather than writing a bad path: exactly one
  * `M`, ends in `Z`, no relative commands, every coordinate inside the viewBox,
  * the S/F label unclipped, oneway ways never run backwards, corner numbers
- * (`raceway:corner_number`) never decreasing along the lap, twelve circuits.
+ * (`raceway:corner_number`) never decreasing along the lap, fourteen circuits.
  * It also measures each ring and compares it with the authored `length` in
  * tracks.ts — a divergence usually means the walk took a wrong branch.
  *
@@ -111,7 +124,7 @@ const USER_AGENT =
 
 /** Mirrors TRACK_VIEW_WIDTH / TRACK_VIEW_HEIGHT in data/types.ts. */
 const VIEW = { width: 1000, height: 620 };
-const EXPECTED_CIRCUITS = 12;
+const EXPECTED_CIRCUITS = 14;
 
 /**
  * The S/F group TrackMap draws around the start point, in viewBox units —
@@ -802,7 +815,83 @@ async function fetchCircuit(circuit) {
   };
 }
 
-async function writeCache(circuits) {
+const OSM_API = 'https://api.openstreetmap.org/api/0.6';
+
+async function osmApi(path) {
+  for (let attempt = 0; ; attempt++) {
+    const response = await fetch(`${OSM_API}/${path}`, { headers: { 'User-Agent': USER_AGENT } });
+    if (response.ok) return (await response.json()).elements;
+    const retryable = response.status === 429 || response.status >= 500;
+    if (!retryable || attempt >= 4) {
+      throw new Error(`OSM API answered ${response.status} for ${path}`);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 3000 * 2 ** attempt));
+  }
+}
+
+/** fetchCircuit's result, read from the main OSM API instead of Overpass. */
+async function fetchCircuitFromApi(circuit) {
+  const { relations, ways } = circuit.osm;
+  const elements = [];
+  for (const id of relations) elements.push(...(await osmApi(`relation/${id}/full.json`)));
+  if (ways.length > 0) {
+    const pinned = await osmApi(`ways.json?ways=${ways.join(',')}`);
+    elements.push(...pinned);
+    const nodeIds = [...new Set(pinned.flatMap((way) => way.nodes))];
+    for (let i = 0; i < nodeIds.length; i += 200) {
+      elements.push(...(await osmApi(`nodes.json?nodes=${nodeIds.slice(i, i + 200).join(',')}`)));
+    }
+  }
+  const nodes = new Map(elements.filter((e) => e.type === 'node').map((n) => [n.id, n]));
+  const wayById = new Map(elements.filter((e) => e.type === 'way').map((w) => [w.id, w]));
+  const found = {
+    relations: relations.map((id) => {
+      const relation =
+        elements.find((e) => e.type === 'relation' && e.id === id) ??
+        fail(`${circuit.id}: relation ${id} not found`);
+      return {
+        id,
+        members: relation.members
+          .filter((m) => m.type === 'way')
+          .map((m) => ({ way: m.ref, role: m.role })),
+      };
+    }),
+    ways: [...wayById.values()]
+      .map((e) => ({
+        id: e.id,
+        tags: Object.fromEntries(
+          Object.entries(e.tags ?? {}).filter(([k]) => KEEP_TAGS.includes(k)),
+        ),
+        nodes: e.nodes,
+        coords: e.nodes.flatMap((id) => {
+          const node = nodes.get(id) ?? fail(`${circuit.id}: node ${id} of w${e.id} not returned`);
+          return [node.lon, node.lat];
+        }),
+      }))
+      .sort((p, q) => p.id - q.id),
+  };
+  for (const id of ways) {
+    if (!wayById.has(id)) fail(`${circuit.id}: way ${id} not found`);
+  }
+  return {
+    pinned: { relations: [...relations], ways: [...ways] },
+    osmBase: `${new Date().toISOString().slice(0, 19)}Z`,
+    ...found,
+  };
+}
+
+/** True when the cache holds exactly the ids circuits.json pins for this circuit. */
+function pinsMatch(cached, circuit) {
+  const same = (p, q) => p.length === q.length && p.every((v, i) => v === q[i]);
+  return (
+    cached !== undefined &&
+    same(cached.pinned.relations, circuit.osm.relations) &&
+    same(cached.pinned.ways, circuit.osm.ways)
+  );
+}
+
+async function writeCache(circuits, { changedOnly, api }) {
+  const previous = changedOnly ? JSON.parse(await readFile(RINGS, 'utf8')).circuits : {};
   const cache = {
     about:
       'Written by generate-track-paths.mjs --fetch; do not edit. The OSM relations and ways ' +
@@ -813,10 +902,15 @@ async function writeCache(circuits) {
       'https://www.openstreetmap.org/copyright',
     circuits: {},
   };
-  for (const [i, circuit] of circuits.entries()) {
-    if (i > 0) await new Promise((resolve) => setTimeout(resolve, 4000));
-    console.log(`fetching ${circuit.id}`);
-    cache.circuits[circuit.id] = await fetchCircuit(circuit);
+  let fetched = 0;
+  for (const circuit of circuits) {
+    if (changedOnly && pinsMatch(previous[circuit.id], circuit)) {
+      cache.circuits[circuit.id] = previous[circuit.id];
+      continue;
+    }
+    if (fetched++ > 0) await new Promise((resolve) => setTimeout(resolve, api ? 1000 : 4000));
+    console.log(`fetching ${circuit.id}${api ? ' (OSM API)' : ''}`);
+    cache.circuits[circuit.id] = await (api ? fetchCircuitFromApi : fetchCircuit)(circuit);
   }
   const path = fileURLToPath(RINGS);
   const config = await resolveConfig(path);
@@ -844,11 +938,7 @@ export function generateAll(circuitsFile, cache) {
   return circuits.map((circuit) => {
     const cached = cache.circuits[circuit.id];
     if (!cached) fail(`${circuit.id}: not in circuit-rings.json — run with --fetch`);
-    const same = (p, q) => p.length === q.length && p.every((v, i) => v === q[i]);
-    if (
-      !same(cached.pinned.relations, circuit.osm.relations) ||
-      !same(cached.pinned.ways, circuit.osm.ways)
-    ) {
+    if (!pinsMatch(cached, circuit)) {
       fail(
         `${circuit.id}: circuits.json pins ids the cache was not fetched for — run with --fetch`,
       );
@@ -863,7 +953,10 @@ async function main() {
 
   if (args.has('--fetch')) {
     const circuitsFile = JSON.parse(await readFile(CIRCUITS, 'utf8'));
-    await writeCache(circuitsFile.circuits);
+    await writeCache(circuitsFile.circuits, {
+      changedOnly: args.has('--changed'),
+      api: args.has('--api'),
+    });
   }
 
   const { circuitsFile, cache } = await loadInputs();

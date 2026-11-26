@@ -1,9 +1,10 @@
 /**
  * Sim rig hardware — the technical-document list of the Setup section.
  *
- * All values are explicit placeholders per the handoff ("MODEL — YER
- * TUTUCU"); real models are still to come. `placeholder: false` once a row
- * has its real value, which switches the text from 45% white to full white.
+ * Yavuz's own list: the wheel and base, and the pedals. He asked for those two
+ * rows and nothing else, so the rig, display and PC rows the handoff reserved
+ * are gone rather than left as placeholders. `placeholder: true` would render a
+ * row's value as a dashed reserved slot (see SpecRow); none needs it now.
  */
 
 export interface SetupItem {
@@ -17,9 +18,6 @@ export interface SetupItem {
 }
 
 export const setupItems: SetupItem[] = [
-  { id: 'wheel', label: 'STEERING WHEEL', value: 'MODEL — YER TUTUCU', placeholder: true },
-  { id: 'pedals', label: 'PEDALS', value: 'MODEL — YER TUTUCU', placeholder: true },
-  { id: 'rig', label: 'RIG & SEAT', value: 'MODEL — YER TUTUCU', placeholder: true },
-  { id: 'display', label: 'DISPLAY', value: 'MODEL — YER TUTUCU', placeholder: true },
-  { id: 'pc', label: 'PC', value: 'MODEL — YER TUTUCU', placeholder: true },
+  { id: 'wheel', label: 'WHEEL & BASE', value: 'LOGITECH G29', placeholder: false },
+  { id: 'pedals', label: 'PEDALS', value: 'MOZA SRP — LOAD CELL', placeholder: false },
 ];

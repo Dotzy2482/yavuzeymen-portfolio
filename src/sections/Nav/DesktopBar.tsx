@@ -46,6 +46,7 @@ import { motion, type Variants } from 'motion/react';
 import { DURATION, EASE_OUT, NAV_ITEMS } from '@/lib/constants';
 import { cn } from '@/lib/cn';
 import { usePrefersReducedMotion } from '@/hooks';
+import { LogoMark } from '@/components/ui';
 import type { SectionId } from '@/types';
 
 import { EnquiriesLink } from './EnquiriesLink';
@@ -97,8 +98,9 @@ export function DesktopBar({
       <a
         href="#hero"
         lang="en"
-        className="tracking-wordmark stretch-display text-[15px] font-black uppercase"
+        className="tracking-wordmark stretch-display flex items-center gap-3 text-[15px] font-black uppercase"
       >
+        <LogoMark className="w-[34px]" />
         Yavuz Eymen
       </a>
 

@@ -14,8 +14,8 @@ export type MonoLabelTone = 'secondary' | 'faint' | 'accent' | 'text';
 
 /**
  * `xs` and `sm` (9 and 10px) are for decoration and for placeholder copy that
- * is waiting on real material: section kickers, the dashed "Your brand here"
- * and karting slots. Anything a reader needs in order to understand the page
+ * is waiting on real material: section kickers and the dashed
+ * karting slot. Anything a reader needs in order to understand the page
  * (a stat's name, a photo caption, a spec row, a card's result) starts at `md`,
  * 11px, on every viewport.
  */

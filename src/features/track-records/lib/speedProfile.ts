@@ -26,13 +26,11 @@
  *
  * The constants are a GT3 car, loosely: about 1.7 g of cornering, 1.4 g of
  * braking, power-limited acceleration, 275 km/h at the top. They are not a
- * simulation of anything, but they were tuned against the lap times in
- * tracks.ts. Those are placeholders, but plausible GT3 times. With these
- * constants every one of the twelve modelled laps lands within 6% of its lap
- * time (the Nürburgring to a tenth), and the slowest corners come out at
- * 65–96 km/h. That is a fair sign the shape of each lap is right too. A test
- * holds every lap within 15%, which is loose enough for Yavuz's real personal
- * bests to replace the placeholders without tripping it.
+ * simulation of anything. They were tuned against the handoff's placeholder
+ * GT3 lap times, where every modelled lap landed within 6% and the slowest
+ * corners came out at 65–96 km/h — a fair sign the shape of each lap is right.
+ * A test holds every lap within 15% of `track.lap`, and Yavuz's real personal
+ * bests, in five different cars, sit inside it.
  *
  * Everything here is pure arithmetic on the `d` string, so it runs, and is
  * tested, without a browser. It relies on the outlines being polylines

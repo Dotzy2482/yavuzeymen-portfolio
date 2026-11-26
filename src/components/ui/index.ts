@@ -26,3 +26,6 @@ export type { PhotoCardProps } from './PhotoCard';
 
 export { SocialLinks } from './SocialLinks';
 export type { SocialLinksProps } from './SocialLinks';
+
+export { LogoMark } from './LogoMark';
+export type { LogoMarkProps } from './LogoMark';

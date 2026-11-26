@@ -13,8 +13,8 @@ import { parseLapTime } from '../lib/formatLapTime';
 // Rendered through the feature's public entry point, and queried the way a
 // visitor meets it: by role and accessible name. Every region, circuit and
 // count is derived from the data rather than written out, because the data is
-// expected to change — real lap times are still to come, and circuits may be
-// added — and none of that should change what the controls do.
+// expected to change — Yavuz's lap times move as he improves, and circuits
+// are added as he drives them — and none of that should change what the controls do.
 
 // ---------------------------------------------------------------------------
 // Data

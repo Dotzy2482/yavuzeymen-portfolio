@@ -13,8 +13,8 @@
 import type { CountryCode } from './flags';
 
 /**
- * Geographic grouping used by the region tabs. `APAC` is Asia-Pacific — Suzuka
- * and Mount Panorama — and is abbreviated because `ASIA-PACIFIC` wraps onto two
+ * Geographic grouping used by the region tabs. `APAC` is Asia-Pacific — Mount
+ * Panorama, Fuji and Okayama — and is abbreviated because `ASIA-PACIFIC` wraps onto two
  * lines in the tab row at 390px wide.
  */
 export type TrackRegion = 'EUROPE' | 'AMERICA' | 'APAC';
@@ -31,6 +31,12 @@ export interface Track {
    * what gets displayed; the chronometer parses it to milliseconds.
    */
   lap: string;
+  /**
+   * The car the personal best was set in, as iRacing names it
+   * (`'Ford Mustang GT3'`). Yavuz's fastest lap at a circuit is not always in the
+   * same car, so this is per circuit, not a section-wide constant.
+   */
+  car: string;
   /** Circuit length with the unit baked in, e.g. `'5.148 KM'`. */
   length: string;
   corners: number;

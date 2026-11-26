@@ -41,7 +41,7 @@ const TrackRecordsFeature = lazy(() =>
 export function TrackRecords({ id = 'track-records', className }: SectionProps) {
   return (
     <section id={id} className={cn('container-section container-wide', className)}>
-      <SectionHeading index="04" title="Track Records" meta="PERSONAL BESTS — GT3 / IRACING" />
+      <SectionHeading index="04" title="Track Records" meta="PERSONAL BESTS — IRACING" />
       <ErrorBoundary
         label="Track records"
         fallback={

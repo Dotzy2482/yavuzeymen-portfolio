@@ -131,3 +131,12 @@ Object.defineProperty(SVGElement.prototype, 'getPointAtLength', {
     return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
   },
 });
+
+// No network in tests. The Kick live-status poll (hooks/useKickLive) calls
+// fetch on mount whenever VITE_KICK_URL is set, and a test run must never
+// reach kick.com; a rejected fetch is exactly its "offline" path.
+Object.defineProperty(globalThis, 'fetch', {
+  writable: true,
+  configurable: true,
+  value: () => Promise.reject(new Error('fetch is disabled in tests')),
+});

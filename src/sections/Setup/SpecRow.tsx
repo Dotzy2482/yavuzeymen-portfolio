@@ -5,12 +5,12 @@
  *
  * ## The placeholder is a slot, not dim text
  *
- * All five values are still the handoff's `MODEL — YER TUTUCU`. Rendered as
+ * The handoff shipped every value as `MODEL — YER TUTUCU`. Rendered as
  * 45%-white text it read as forgotten, because that is what dim grey text
- * means. The site already has a deliberate empty-slot language and uses it
- * twice — Partners' dashed "YOUR BRAND HERE" cells and Sim to Real's dashed
- * karting slot — and Setup was the third empty thing on the page and the only
- * one not speaking it. A dashed slot says "reserved" where dim text says
+ * means. The site already had a deliberate empty-slot language — Partners'
+ * dashed "YOUR BRAND HERE" cells at the time, and Sim to Real's dashed karting
+ * slot — and Setup was the third empty thing on the page and the only one not
+ * speaking it. A dashed slot says "reserved" where dim text says
  * "unfinished", using an existing token and no new copy.
  *
  * No status word is invented for it, deliberately: the row labels are English

@@ -11,8 +11,11 @@
  * The desktop header used to be a wrapping row, the name beside the clock.
  * Whenever a name was too long to share the row — Nürburgring GP at 1440, for
  * one — the clock dropped onto a line of its own, so the panel's height
- * depended on which circuit was picked. As a column it is one height for all
- * twelve.
+ * depended on which circuit was picked. As a column it is one height for every
+ * circuit.
+ *
+ * The meta line names the car the lap was set in: Yavuz's bests are spread
+ * over five cars, so it is per circuit (`track.car`), not a fixed "GT3".
  *
  * Every label that carries meaning is at least 11px on both viewports. The
  * OpenStreetMap credit is 10px: small print, but it has to stay legible — it
@@ -61,7 +64,9 @@ export function TrackPanel({
           <MonoLabel size="md" tracking="chip" as="div" className="mt-2 md:mt-3.5">
             {track.length} · {track.corners} CORNERS
             <span className="hidden md:inline"> · </span>
-            <span className="block md:inline">GT3 · IRACING</span>
+            <span lang="en" className="block md:inline">
+              {track.car} · IRACING
+            </span>
           </MonoLabel>
         </div>
         <LapTimer best={track.lap} className="order-1 md:order-2" />

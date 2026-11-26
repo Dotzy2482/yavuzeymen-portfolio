@@ -62,17 +62,20 @@ under the map and never to the placeholder.)
 ## The `Track` type
 
 Defined in `features/track-records/data/types.ts`. Data lives in
-`features/track-records/data/tracks.ts` — 12 circuits: 5 Europe, 5 America,
-2 Asia-Pacific (`APAC`: Suzuka and Mount Panorama).
+`features/track-records/data/tracks.ts` — 14 circuits: 5 Europe, 6 America,
+3 Asia-Pacific (`APAC`: Mount Panorama, Fuji and Okayama). They are the
+circuits Yavuz has a lap at in iRacing, each with his fastest lap there in any
+car and any session; see [Real lap times](#real-lap-times) below.
 
 | Field     | Type          | Unit / format                                                     | Example                          |
 | --------- | ------------- | ----------------------------------------------------------------- | -------------------------------- |
-| `id`      | `string`      | 3-letter code, unique                                             | `'NUR'`                          |
+| `id`      | `string`      | 3-letter code, unique                                             | `'NOS'`                          |
 | `region`  | `TrackRegion` | `'EUROPE' \| 'AMERICA' \| 'APAC'`                                 | `'EUROPE'`                       |
-| `name`    | `string`      | Display name                                                      | `'Nürburgring GP'`               |
-| `lap`     | `string`      | **`M:SS.mmm`** — a string, not a number                           | `'1:54.318'`                     |
-| `length`  | `string`      | Unit baked into the string                                        | `'5.148 KM'`                     |
-| `corners` | `number`      | Count                                                             | `15`                             |
+| `name`    | `string`      | Display name                                                      | `'Nordschleife'`                 |
+| `lap`     | `string`      | **`M:SS.mmm`** — a string, not a number                           | `'6:26.143'`                     |
+| `car`     | `string`      | The car the lap was set in, as iRacing names it                   | `'Ford Mustang GT3'`             |
+| `length`  | `string`      | Unit baked into the string                                        | `'20.832 KM'`                    |
+| `corners` | `number`      | Count                                                             | `73`                             |
 | `country` | `CountryCode` | Key into `COUNTRIES` in `flags.ts`                                | `'DE'`                           |
 | `path`    | `string`      | SVG `d` in the 1000×620 viewBox, from `trackPaths.ts` (generated) | `'M578.6 189.4L533.7 235.3 … Z'` |
 
@@ -82,12 +85,12 @@ Two of these are worth explaining:
 the display form; `parseLapTime()` converts it to milliseconds when the
 chronometer needs a number. Storing milliseconds instead would mean formatting
 on every read and would let the list and the panel drift apart. A test asserts
-all 12 values round-trip through `parseLapTime` → `formatLapTime` unchanged,
+all 14 values round-trip through `parseLapTime` → `formatLapTime` unchanged,
 which is exactly the guarantee that keeps the panel and the list agreeing.
 
 **The flag is a CSS gradient, not an image.** `country` resolves through
-`COUNTRIES` in `flags.ts` to a gradient and a country name. Twelve flag PNGs
-for 20×13 chips would be twelve requests for a few hundred pixels; the
+`COUNTRIES` in `flags.ts` to a gradient and a country name. A flag PNG per
+circuit, at 20×13, would be fourteen requests for a few hundred pixels; the
 gradients render sharp at any size and cost nothing. They are applied as a
 `style` background — data, not a hardcoded design value — and the name is what
 makes the chip accessible to anyone who cannot see or does not recognise it.
@@ -97,6 +100,30 @@ makes the chip accessible to anyone who cannot see or does not recognise it.
 [Real geometry](#real-geometry-the-openstreetmap-pipeline) below. Everything
 else in `tracks.ts` is hand-maintained, so changing a lap time never means
 running a script.
+
+### Real lap times
+
+The lap times are Yavuz's own iRacing personal bests, read off his profile in
+November 2026 (they replaced the handoff's placeholder times, and with them
+the circuits he had never driven: Nürburgring GP, Zandvoort, Imola,
+Silverstone, Red Bull Ring, COTA, Watkins Glen, Interlagos and Suzuka). The
+profile lists a best per car, per layout and per session; the site shows one
+number per circuit, so the rule is:
+
+- **The fastest lap at the circuit, in any car and any session.** Practice,
+  qualifying and race all count; `car` names the car it was set in, and the
+  panel shows it (`… · FORD MUSTANG GT3 · IRACING`).
+- **One layout per circuit, the one the time is for.** Spa is the Grand Prix
+  layout (iRacing's "Grand Prix Pits"), Fuji the Grand Prix circuit with the
+  chicane, not the faster no-chicane variant, and the Nürburgring is the
+  Nordschleife on its own (iRacing's "Industriefahrten", 6:26.143) rather than
+  one of the three combined 24h/VLN/Long layouts. Barcelona's "Historic"
+  layout is left out for the same reason.
+- **A circuit with no lap is not listed.** Nothing is invented to fill a tab.
+
+To add a circuit he has since driven: pin it in `circuits.json`, run
+`node docs/assets/generate-track-paths.mjs --fetch --changed`, then add the row
+to `tracks.ts` with its published length and corner count.
 
 Module-level constants, also in `types.ts`:
 
@@ -145,9 +172,9 @@ the line, lap fully traced, sectors full, chronometer on `track.lap` — and the
 next frame starts the new lap from whatever that frame overshot by, so the
 average lap still takes `LAP_DURATION_MS / speed`.
 
-**Why it has to work this way:** lap times across the twelve circuits range
-from about 1:22 to over 2:00, and the real target is endurance circuits where a
-lap can run to eight minutes. Nobody watches a dot crawl for eight minutes. If
+**Why it has to work this way:** lap times across the fourteen circuits range
+from 1:17 at Road Atlanta to 6:26 on the Nordschleife, and an endurance layout
+can run to eight minutes. Nobody watches a dot crawl for eight minutes. If
 the marker moved in real time the section would be unwatchable; if the
 chronometer ran at screen speed it would show a number that is simply false.
 Decoupling them keeps the animation watchable **and** the number true.
@@ -175,11 +202,11 @@ the marker now agree roughly as they would on a real lap, which they never did
 at an even pace.
 
 The constants are a loose GT3: about 1.7 g of cornering, 1.4 g of braking,
-power-limited acceleration, 275 km/h. They were tuned against the lap times in
-`tracks.ts`, which are placeholders but plausible. All twelve modelled laps
-come within 6% of them (the Nürburgring to a tenth), and the slowest corners
-come out at 65–96 km/h. `speedProfile.test.ts` holds every lap within 15%.
-That catches a typo in a constant but leaves room for real personal bests.
+power-limited acceleration, 275 km/h. They were tuned against the handoff's
+placeholder lap times, and still bring Yavuz's real ones — five different cars,
+a Porsche Cup among them — inside the 15% that `speedProfile.test.ts` holds
+every lap to. That catches a typo in a constant without pretending to be a
+simulation of any one car.
 
 The sector bars follow the marker, not the clock. They are thirds of the
 circuit's length, so a sector full of slow corners now fills slowly.
@@ -281,7 +308,7 @@ exact and cheap.
 
 The generator refuses to write a path that breaks any of this, and the
 data-integrity test in `lib/svgPath.test.ts` re-checks (1) and (2) for all
-twelve circuits.
+fourteen circuits.
 
 > **Do not hand-edit these strings, and do not inline them in `tracks.ts`.**
 > They are generated into `trackPaths.ts` from committed inputs, so a patch is
@@ -444,8 +471,9 @@ rotation, the point count — is derived, and logged when the generator runs.
    closing `Z`, a relative command, a vertex outside the viewBox or a clipped
    S/F label, and refuses a lap whose `raceway:corner_number` tags run
    backwards (Suzuka's run 1 → 18, Interlagos's 1 → 15). It also measures every
-   ring against the `length` in `tracks.ts` and warns past 3%; all twelve agree
-   within 1.5%, so a warning means the walk took a wrong branch.
+   ring against the `length` in `tracks.ts` and warns past 3%; all fourteen agree
+   within 2.6% (Sebring is the furthest out), so a warning means the walk took
+   a wrong branch.
 
 ### Fixing or adding a circuit
 
@@ -456,9 +484,13 @@ rotation, the point count — is derived, and logged when the generator runs.
 2. Author `startLine`: a tagged node on the pit straight if OSM has one, the pit
    straight between the last corner and Turn 1 otherwise, and say which in
    `source`.
-3. `node docs/assets/generate-track-paths.mjs --fetch` if the cache does not
-   hold the ids yet; plain `node docs/assets/generate-track-paths.mjs`
-   otherwise.
+3. `node docs/assets/generate-track-paths.mjs --fetch --changed` if the cache
+   does not hold the ids yet — it fetches only new or re-pinned circuits and
+   leaves the rest of the cache byte for byte; plain
+   `node docs/assets/generate-track-paths.mjs` otherwise. Add `--api` to read
+   the main OpenStreetMap API instead of Overpass: in November 2026 every
+   Overpass instance was timing out, and the eleven circuits added then came
+   through the API. The cache is the same shape either way.
 4. Read the output: the branch decisions, the corner order, measured against
    authored length. Then **look at it** against satellite imagery, direction
    included — the self-checks catch broken paths, not wrong ones. Add
@@ -499,7 +531,7 @@ exactly.
 It is pure string maths on `d`, so it renders on the first frame and in jsdom;
 the loop still only translates the S/F group, and did not change. The generator
 mirrors the same placement when it checks that no label is clipped, and a unit
-test checks all twelve from the component's side.
+test checks every circuit from the component's side.
 
 ### Licence
 
@@ -519,21 +551,18 @@ a design tweak.
   `startLine` in `circuits.json` and emit their fractions — but they change
   `getSectorFill` and the unit tests that hardcode thirds.
 - **The trail is 70 path units on every circuit.** Real outlines run from about
-  1,930 units (Laguna Seca, the one tall circuit left north up) to 3,390
-  (Interlagos), so the trail covers 2.1–3.6% of a lap — but it is the same
-  length on screen everywhere and reads as a short comet on all twelve, so it
+  1,840 units (Fuji) to 3,170 (Road America), so the trail covers 2.2–3.8% of a
+  lap — but it is the same
+  length on screen everywhere and reads as a short comet on every circuit, so it
   was left alone.
-- **Not every map is north up.** Six are turned a quarter so they lie
+- **Not every map is north up.** Nine of the fourteen are turned a quarter so they lie
   landscape instead of letterboxing to a sliver on a phone. Turning is rigid —
   shape, aspect and direction of travel are exactly OSM's — but a visitor who
   knows a circuit from a north-up satellite view will see it on its side.
   Laguna Seca stays north up: a quarter turn would draw it just under 1.25×
   larger.
-- **Suzuka's crossover has no bridge treatment.** The figure-eight is one
-  self-intersecting ring, and at a 3–4 unit stroke the crossing reads without a
-  casing layer.
 - **The third region is `APAC`, not `ASIA`.** The design filed Mount Panorama
   under Asia, and Australia is not in Asia. Giving it an Oceania tab of its own
-  would have left Asia with Suzuka alone, so the tab was renamed to something
-  both circuits honestly fit. It reads `APAC` because `ASIA-PACIFIC` wraps onto
+  would have left Asia with Suzuka alone (Fuji and Okayama have since joined
+  it), so the tab was renamed to something every circuit in it honestly fits. It reads `APAC` because `ASIA-PACIFIC` wraps onto
   two lines in the tab row at 390px wide.
