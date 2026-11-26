@@ -1,11 +1,16 @@
 /**
  * 07 — SETUP: the technical-document equipment list next to the rig photo.
  *
- * Rows are mono component labels with bold values; every value is still the
- * handoff's `MODEL — YER TUTUCU` placeholder, rendered as the dashed reserved
- * slot the site already uses in Partners and Sim to Real. See SpecRow.
+ * Rows are mono component labels with bold values: Yavuz's wheel and base and
+ * his pedals, the two rows he asked for. A row whose value is still unknown
+ * renders as the dashed reserved slot the site uses in Partners and Sim to
+ * Real (see SpecRow); none is, today.
  *
- * One `useScroll` on the rows container drives all five rows: each carves its
+ * Two rows run far shorter than the rig photo beside them, so from `md` the
+ * list sits on the photo's vertical centre instead of hanging off its top
+ * edge over an empty column.
+ *
+ * One `useScroll` on the rows container drives every row: each carves its
  * own 0–1 window out of that progress and fills a cyan overlay on its hairline,
  * so the list draws itself top to bottom. Offsets match Career's timeline fill
  * (`['start 0.8', 'end 0.8']`, the 80%-viewport line) — this is that fill
@@ -83,7 +88,7 @@ export function Setup({ id = 'setup', className }: SectionProps) {
       <StretchScrub>
         <SectionHeading index="07" title="Setup" meta="EQUIPMENT SPEC" stretch="scrub" />
       </StretchScrub>
-      <div className="mt-7 grid items-start gap-7 md:mt-[72px] md:grid-cols-[1.2fr_1fr] md:gap-10 lg:gap-20">
+      <div className="mt-7 grid items-start gap-7 md:mt-[72px] md:grid-cols-[1.2fr_1fr] md:items-center md:gap-10 lg:gap-20">
         <SpecList />
         <Picture
           src="/images/simtoreal/rig.png"

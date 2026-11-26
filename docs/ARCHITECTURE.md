@@ -11,7 +11,7 @@ src/
     Nav/               Top bar, desktop side columns, the compact desktop bar
                        that takes over past the hero, the full-screen overlay
                        menu, and the scroll rail that replaces the scrollbar
-    Hero/              Portrait + helmet (cursor reveal) + headline + marquee
+    Hero/              Portrait + helmet (cursor reveal) + headline + bar
     About/ Career/ Achievements/ TrackRecords/ SimToReal/
     Content/ Setup/ Partners/ Contact/
   components/

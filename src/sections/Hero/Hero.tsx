@@ -2,10 +2,16 @@
  * Full-viewport opening section. Carries the page's only <h1>.
  *
  * Layer order (bottom→top): ambient background → portrait → headline →
- * helmet → info cards → sponsor marquee + CTA. The helmet sits above the
+ * helmet → info cards → bottom bar. The helmet sits above the
  * headline on purpose: where the reveal opens, the shell occludes the type the
  * way it would in a photograph. The Nav chrome overlays this section from
  * outside.
+ *
+ * The bar along the foot is HeroBar: Kick live status, the Business Enquiries
+ * button and a scroll cue. On desktop the team card and the tagline sit above
+ * it with no text-shadow halo — it read as a dark smudge on the ambient
+ * background, and there the portrait is centred, clear of both. A phone keeps
+ * the halo on the team card, which does sit over the portrait's arms.
  *
  * Desktop: a plain 100vh stage, with the helmet revealed under the cursor.
  * Mobile: a pinned 180vh wrapper; scrolling irises the helmet shut instead.
@@ -61,35 +67,14 @@ import { motion, useMotionValue, useTransform, type MotionValue } from 'motion/r
 import { cn } from '@/lib/cn';
 import { BREAKPOINTS } from '@/lib/constants';
 import { useMediaQuery, usePrefersReducedMotion } from '@/hooks';
-import { Marquee, Pinned } from '@/components/motion';
-import { MonoLabel, Picture } from '@/components/ui';
-import { partners, profile } from '@/data';
+import { Pinned } from '@/components/motion';
+import { MonoLabel } from '@/components/ui';
+import { profile } from '@/data';
 import type { SectionProps } from '@/types';
 
 import { HeroAmbient } from './HeroAmbient';
+import { HeroBar } from './HeroBar';
 import { HeroPortrait } from './HeroPortrait';
-
-interface PartnerLogoProps {
-  heightKey: 'marqueeHeight' | 'gridHeight';
-}
-
-function PartnerLogo({ heightKey }: PartnerLogoProps) {
-  return (
-    <>
-      {partners.map((partner) => (
-        <Picture
-          key={partner.id}
-          src={partner.logoSrc}
-          alt={partner.logoAlt}
-          width={partner.intrinsicWidth}
-          height={partner.intrinsicHeight}
-          style={{ height: partner[heightKey] }}
-          className={cn('w-auto', partner.marqueeClass)}
-        />
-      ))}
-    </>
-  );
-}
 
 interface HeroStageProps {
   /** Pin progress; null on desktop, which has no pin. */
@@ -153,7 +138,7 @@ function HeroStage({ progress }: HeroStageProps) {
       </motion.div>
 
       {/* Bottom-left: current team card. */}
-      <div className="border-accent-primary absolute bottom-[86px] left-5 z-[6] flex flex-col gap-1 border-l-2 pl-3 [text-shadow:var(--hero-headline-shadow)] md:bottom-[110px] md:left-10 md:gap-1.5 md:pl-4">
+      <div className="border-accent-primary absolute bottom-[86px] left-5 z-[6] flex flex-col gap-1 border-l-2 pl-3 [text-shadow:var(--hero-headline-shadow)] md:bottom-[110px] md:left-10 md:gap-1.5 md:pl-4 md:[text-shadow:none]">
         <MonoLabel size="md" tracking="xl">
           {profile.currentTeam.label}
         </MonoLabel>
@@ -172,7 +157,7 @@ function HeroStage({ progress }: HeroStageProps) {
         size="md"
         tracking="sub"
         lang="en"
-        className="absolute right-10 bottom-[110px] z-[5] hidden max-w-[340px] text-right leading-loose [text-shadow:var(--hero-headline-shadow)] md:block"
+        className="absolute right-10 bottom-[110px] z-[5] hidden max-w-[340px] text-right leading-loose md:block"
       >
         {profile.tagline.map((line, i) => (
           <Fragment key={line}>
@@ -182,25 +167,7 @@ function HeroStage({ progress }: HeroStageProps) {
         ))}
       </MonoLabel>
 
-      {/* Sponsor marquee + CTA. */}
-      <div className="border-hairline-mid bg-bg absolute inset-x-0 bottom-0 z-[7] flex h-[60px] items-center border-t md:h-[76px]">
-        {/* flex-1 so the strip fills the bar; without it the marquee sizes to
-            its own content and the right of the bar stays empty. */}
-        <Marquee
-          duration={42}
-          className="min-w-0 flex-1"
-          trackClassName="gap-12 pr-12 md:gap-[72px] md:pr-[72px]"
-        >
-          <PartnerLogo heightKey="marqueeHeight" />
-        </Marquee>
-        <a
-          href="#contact"
-          lang="en"
-          className="bg-accent-secondary tracking-btn text-text stretch-ui hover:bg-accent-secondary-hover duration-base absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 px-[26px] py-[15px] text-[13px] font-extrabold whitespace-nowrap uppercase shadow-[0_0_0_14px_var(--bg)] transition-colors md:inline-block"
-        >
-          Business Enquiries →
-        </a>
-      </div>
+      <HeroBar />
     </div>
   );
 }

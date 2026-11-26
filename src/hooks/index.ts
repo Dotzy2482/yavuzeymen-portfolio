@@ -11,3 +11,6 @@ export { useRafLoop } from './useRafLoop';
 export type { RafCallback } from './useRafLoop';
 
 export { usePrefersReducedMotion } from './usePrefersReducedMotion';
+
+export { useKickLive } from './useKickLive';
+export type { KickLiveStatus } from './useKickLive';

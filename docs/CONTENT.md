@@ -15,20 +15,19 @@ layout or a crash.
 | `data/profile.ts`           | Current team + "main driver since"                   | **Real**            | Team Curve Hunters                                                   |
 | `data/profile.ts`           | iRating 4.020, License A 1.39, Türkiye Top 50, 7 yrs | **Real** (snapshot) | iRacing profile — re-check before launch                             |
 | `data/profile.ts`           | E-mail, phone                                        | **Env-driven**      | `.env.local`; empty string when unset                                |
-| `data/profile.ts`           | Instagram / YouTube / TikTok URLs                    | **Env-driven**      | `.env.local`; fall back to `#`                                       |
+| `data/profile.ts`           | Instagram / YouTube / TikTok / Kick URLs             | **Env-driven**      | `.env.local`; fall back to `#`                                       |
 | `sections/About/About.tsx`  | Four Turkish bio paragraphs                          | **Real**            | Design handoff, final copy                                           |
 | `data/career.ts`            | Six timeline entries, 2019–2025                      | **Real**            | Design handoff, final copy                                           |
 | `data/achievements.ts`      | Six result cards                                     | **Real**            | Design handoff, final copy                                           |
-| `data/partners.ts`          | Four sponsors                                        | **Real**            | Logos supplied; see assets below                                     |
-| `data/partners.ts`          | Two "YOUR BRAND HERE" slots                          | **Intentional**     | Not a placeholder — the section doubles as a pitch                   |
+| `data/partners.ts`          | Team Curve Hunters, the one partner                  | **Real**            | gelbura, SPARDOX, DriveHunter sponsor the team, not Yavuz — removed  |
 | `data/contentStats.ts`      | 146.848 views / 797.000 top reel / %82,3 reels       | **Placeholder**     | Instagram insights export                                            |
 | `data/contentStats.ts`      | Five reel cards (captions + covers)                  | **Placeholder**     | Real reel thumbnails + real captions                                 |
-| `data/setup.ts`             | All five rows: `MODEL — YER TUTUCU`                  | **Placeholder**     | Yavuz's actual hardware list; renders as a dashed slot               |
+| `data/setup.ts`             | Logitech G29, Moza SRP load-cell pedals              | **Real**            | Yavuz, November 2026 — the two rows he asked for                     |
 | `data/simToReal.ts`         | Five photos + labels                                 | **Real** (low-res)  | Photos supplied; see assets below                                    |
 | `data/simToReal.ts`         | `karting` — `src: null`                              | **Placeholder**     | Karting photo, renders as a dashed empty slot                        |
-| `features/…/data/tracks.ts` | 12 circuit names + regions                           | **Real**            | Yavuz's circuit list                                                 |
-| `features/…/data/tracks.ts` | Lengths, corner counts                               | **Real**            | Published figures; every length agrees with the OSM geometry to 1.5% |
-| `features/…/data/tracks.ts` | Lap times                                            | **Placeholder**     | iRacing personal-best export                                         |
+| `features/…/data/tracks.ts` | 14 circuit names + regions                           | **Real**            | Every circuit he has an iRacing lap at                               |
+| `features/…/data/tracks.ts` | Lengths, corner counts                               | **Real**            | Published figures; every length agrees with the OSM geometry to 2.6% |
+| `features/…/data/tracks.ts` | Lap times + car                                      | **Real** (snapshot) | iRacing profile, November 2026 — see TRACK_RECORDS.md                |
 | `features/…/trackPaths.ts`  | Circuit `path` geometry                              | **Real**            | Generated from OpenStreetMap; see TRACK_RECORDS.md                   |
 | `sections/Contact`          | Invitation paragraph                                 | **Real**            | Design handoff, final copy                                           |
 | `sections/Contact`          | `Gizlilik` / `Şartlar` footer links                  | **Placeholder**     | Legal pages not written                                              |
@@ -68,12 +67,11 @@ supplied files are low-resolution working copies (see below); the brief is that
 hi-res versions replace them **at identical crops**, so no layout changes are
 needed. The karting slot is waiting on a shoot that has not happened.
 
-**Yavuz directly** — the Setup list (wheel, pedals, rig, display, PC). Five
-strings, currently all reading `MODEL — YER TUTUCU`. Each row renders as a
-dashed reserved slot — the same empty-slot language as the Partners cells and
-the karting photo — sized to roughly the width a model name occupies. Setting
-`placeholder: false` on a row swaps the slot for the real value with no layout
-shift, so the section can be filled in one row at a time.
+**Yavuz directly** — the Setup list. Filled in November 2026 with the two rows
+he wanted (wheel and base, pedals); the rig, display and PC rows the handoff
+reserved were dropped rather than left empty. A row added later with
+`placeholder: true` renders as a dashed reserved slot, the same empty-slot
+language as the Partners cells and the karting photo.
 
 ## Image assets
 
@@ -97,10 +95,7 @@ and the AVIF, which is what a current browser actually downloads.
 | `simtoreal/fiat-egea.jpg`     | 1600 × 1066   | 224 KB   | 94 KB | Sim to Real                   | Adequate                                                             |
 | `simtoreal/fiat-front.png`    | **828 × 788** | 1.18 MB  | 48 KB | Sim to Real, centre reel card | Low-res, and a photograph stored as PNG                              |
 | `simtoreal/rig.png`           | **433 × 545** | 425 KB   | 23 KB | Sim to Real, Setup, reel card | **Too low-res** — shown large in Setup                               |
-| `partners/gelbura.png`        | 178 × 63      | 8 KB     | 2 KB  | Marquee, Partners             | Derived white-on-transparent crop                                    |
-| `partners/spardox.png`        | 500 × 167     | 4 KB     | 6 KB  | Marquee, Partners             | Black on transparent, inverted in CSS. The one AVIF that is larger   |
-| `partners/drivehunter.svg`    | 360 × 80      | 9 KB     | —     | Marquee, Partners             | Vector — ideal, nothing to encode                                    |
-| `partners/tch.png`            | 256 × 75      | 20 KB    | 6 KB  | Marquee, Partners             |                                                                      |
+| `partners/tch.png`            | 256 × 75      | 20 KB    | 6 KB  | Partners                      |                                                                      |
 
 What a browser that takes AVIF downloads for the whole page went from 4.50 MB
 to 484 KB when the encodes landed in [03](plans/03-weight-and-wiring.md); the
@@ -143,8 +138,9 @@ a visitor anything: the file is fetched by crawlers and never by the page.
 taking one day — [03](plans/03-weight-and-wiring.md) left it alone because its
 job was what the page costs, and this file is not on the page.
 
-The touch icon inherits `favicon.svg`'s **placeholder** status — when the real
-visual identity lands, both change together.
+Both carry Yavuz's YE monogram, traced into SVG from the artwork he supplied
+in November 2026 (`components/ui/LogoMark.tsx` draws the same polygons in the
+nav). Change the favicon, the component and the touch icon together.
 
 ### Resolution notes
 
@@ -185,13 +181,10 @@ any of it falls outside the fully opaque part of the region.
 
 ### Logo provenance
 
-The gelbura source file supplied in the handoff
-(`316821634_…_n.jpg`) is a 200 × 200 JPEG on a **white background** and is
-unusable on a dark page. What ships is `gelbura.png`, a derived white-on-
-transparent crop. In the Partners grid every logo is forced to pure white with
-`brightness-0 invert`, so colour is discarded there anyway; the marquee is where
-a proper vector would show. A real SVG would be an improvement if the sponsor
-can supply one.
+`tch.png` is the only logo left, shown in its own colours and never above its
+native 256px width. The three team-sponsor logos (gelbura, SPARDOX,
+DriveHunter) were removed in November 2026 along with their files; see
+`data/partners.ts`.
 
 ### Not copied from the handoff
 

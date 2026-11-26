@@ -14,7 +14,7 @@ export type { CareerEntry } from './career';
 export { achievements } from './achievements';
 export type { Achievement } from './achievements';
 
-export { partners, emptySlots } from './partners';
+export { partners } from './partners';
 export type { Partner } from './partners';
 
 export { contentCounters, reelCards, FAN_CENTER_INDEX } from './contentStats';

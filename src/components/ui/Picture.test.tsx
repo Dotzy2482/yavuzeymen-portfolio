@@ -46,11 +46,9 @@ describe('Picture', () => {
   });
 
   it('renders an SVG as a bare <img>, with nothing to encode', () => {
-    const { container } = render(
-      <Picture src="/images/partners/drivehunter.svg" alt="drivehunter" />,
-    );
+    const { container } = render(<Picture src="/images/brand/mark.svg" alt="mark" />);
     expect(container.querySelector('picture')).toBeNull();
     expect(container.querySelector('source')).toBeNull();
-    expect(screen.getByRole('img', { name: 'drivehunter' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'mark' })).toBeInTheDocument();
   });
 });

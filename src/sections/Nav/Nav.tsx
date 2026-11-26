@@ -45,7 +45,7 @@ import { motion } from 'motion/react';
 import { DURATION, NAV_ITEMS } from '@/lib/constants';
 import { cn } from '@/lib/cn';
 import { useActiveSection, usePrefersReducedMotion } from '@/hooks';
-import { MonoLabel, SocialLinks } from '@/components/ui';
+import { LogoMark, MonoLabel, SocialLinks } from '@/components/ui';
 
 import { DesktopBar, DESKTOP_BAR_HEIGHT } from './DesktopBar';
 import { MenuButton } from './MenuButton';
@@ -91,8 +91,9 @@ export function Nav({ className }: NavProps) {
           <a
             href="#hero"
             lang="en"
-            className="tracking-wordmark stretch-display text-[15px] font-black uppercase md:text-[17px]"
+            className="tracking-wordmark stretch-display flex items-center gap-2.5 text-[15px] font-black uppercase md:gap-3 md:text-[17px]"
           >
+            <LogoMark className="w-[30px] md:w-[36px]" />
             Yavuz Eymen
           </a>
           {/* -3px: the 44px box is wider than the old 38px one, and this keeps

@@ -52,6 +52,14 @@
   --accent-secondary-hover: #ff3b42;
   --accent-secondary-border: rgba(232, 35, 42, 0.45); /* champion card edge */
 
+  /* --- Brand mark --------------------------------------------------------- */
+  /* Yavuz's YE monogram (components/ui/LogoMark, public/favicon.svg): a navy
+     body with the shared Y/E stroke and the E's middle bar in purple, as in
+     the supplied artwork. Logo colours only — the UI keeps working in cyan
+     and red. */
+  --brand-navy: #121a49;
+  --brand-purple: #7d36fe;
+
   /* --- Track map ---------------------------------------------------------- */
   --track-base: rgba(255, 255, 255, 0.22); /* circuit outline */
   --track-trail: #b2fff4; /* bright trail behind the dot */
