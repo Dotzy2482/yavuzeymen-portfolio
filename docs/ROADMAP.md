@@ -35,9 +35,9 @@
   the pinned scroll irises it shut instead. Since 05 the reveal stops at the
   neck, where the two bodies do not quite line up. (The fitted helmet cut-out and its
   wireframe scan band this replaced are gone.)
-- About, Career (scroll-filled timeline), Achievements, Sim to Real (pinned
-  horizontal gallery), Content (counters + card fan), Setup, Partners,
-  Contact + footer.
+- About, Career (scroll-filled timeline), Achievements, Sim to Real (a photo
+  grid with in-frame parallax, since the pinned horizontal gallery was
+  retired), Content (counters + card fan), Setup, Partners, Contact + footer.
 
 **Track Records**
 
@@ -145,6 +145,12 @@
   scrub, and a hovered card lifts on a spring and turns square to the reader,
   without covering the centre card's view count any more. Below 1024px tablets
   get the phone's carousel.
+- Sim to Real no longer pins the page. The 240vh pinned gallery held the page
+  still for more than two screens while the photos slid sideways, which read
+  as the page seizing up. It is now a grid that reads left to right: three
+  portraits over the FIAT Egea wide shot, the race crop and the karting slot.
+  Each photo drifts inside its frame against the scroll, every column at its
+  own pace, so the grid has depth and the scroll stays the reader's.
 
 **Critique fixes** — [workstream 05](plans/05-critique-fixes.md)
 
