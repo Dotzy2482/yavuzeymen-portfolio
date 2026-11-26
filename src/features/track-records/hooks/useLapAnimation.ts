@@ -15,6 +15,13 @@
  * LAP_DURATION_MS / speed, while the chronometer shows `fraction × lapMs`, so
  * it lands exactly on the personal best as the dot crosses the line. Screen
  * duration and real lap time are independent.
+ *
+ * `fraction` is how far through the lap the *clock* is, and it runs evenly.
+ * Where the dot is at that moment comes from the circuit's speed profile
+ * (lib/speedProfile.ts): it brakes into corners and accelerates out, so it
+ * spends longer in a hairpin than on the straight before it. The two ends
+ * still meet — no time is no distance, a whole lap is the whole circuit — so
+ * the rule above holds unchanged.
  */
 
 import { useRef, type RefObject } from 'react';
@@ -22,6 +29,7 @@ import { useRef, type RefObject } from 'react';
 import { useRafLoop } from '@/hooks';
 
 import { formatLapTime, parseLapTime } from '../lib/formatLapTime';
+import { distanceAtTime, speedProfileFor } from '../lib/speedProfile';
 import { getProgressDash, getSectorFill, getTrailDash } from '../lib/svgPath';
 import { usePathPoint } from './usePathPoint';
 import {
@@ -139,8 +147,13 @@ export function useLapAnimation({
       const lapSoFar = fraction.current >= 1 ? fraction.current - 1 : fraction.current;
       fraction.current = lapSoFar + (delta * speed) / LAP_DURATION_MS;
     }
+    // How far through the lap the clock is, and so how far round the car is.
+    // Without a profile (an outline too small to drive) the car keeps an even
+    // pace, as it used to.
     const progress = Math.min(1, fraction.current);
-    const distance = progress * totalLength;
+    const profile = speedProfileFor(track.path, track.length);
+    const lapDistance = profile ? distanceAtTime(profile, progress) : progress;
+    const distance = lapDistance * totalLength;
 
     // Lap traced so far.
     if (n.progressPath) {
@@ -163,8 +176,10 @@ export function useLapAnimation({
       n.chrono.textContent = formatLapTime(progress * lapMs);
     }
 
+    // Sectors are thirds of the circuit's length, so they fill with the car's
+    // position, not the clock: a sector of slow corners fills slowly.
     n.sectors.forEach((sector, i) => {
-      if (sector) sector.style.width = `${getSectorFill(progress, i as SectorIndex) * 100}%`;
+      if (sector) sector.style.width = `${getSectorFill(lapDistance, i as SectorIndex) * 100}%`;
     });
 
     // Driver plate tracks the dot in panel pixels, flipping before it would

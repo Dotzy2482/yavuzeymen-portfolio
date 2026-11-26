@@ -133,6 +133,12 @@
 - The transport buttons are named by the words they show (WCAG 2.5.3), and a
   running lap stops if reduced motion is switched on mid-visit.
 - Vitest 4, with the coverage plugin moved alongside it.
+- The Track Records marker brakes for corners. Each circuit gets a speed
+  profile from its own outline (corner speed from curvature, then braking and
+  acceleration passes), so the car slows into a hairpin and accelerates down
+  the straight, while the chronometer still lands on the personal best at the
+  line. Modelled against plausible GT3 laps, all twelve come within 6%. See
+  [TRACK_RECORDS.md](TRACK_RECORDS.md#the-marker-brakes-for-corners).
 
 **Critique fixes** — [workstream 05](plans/05-critique-fixes.md)
 
