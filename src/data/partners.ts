@@ -4,7 +4,7 @@
  * Two renderings share this data:
  * - the hero marquee (logos in their own colourways, `marqueeClass` handles
  *   per-logo inversion and sizing),
- * - the Partners grid (every logo forced pure white via CSS filter).
+ * - the Partners grid (every logo white, via a CSS filter — see `gridClass`).
  *
  * `emptySlots` is the number of dashed "YOUR BRAND HERE" cells — the section
  * doubles as a sponsorship pitch.
@@ -44,6 +44,12 @@ export interface Partner {
   gridHeight: number;
   /** Extra classes in the marquee (inversion, opacity). */
   marqueeClass?: string;
+  /**
+   * The filter that makes the logo white in the Partners grid. Defaults to
+   * `brightness-0 invert`, which flattens every opaque pixel to white — right
+   * for a one-colour wordmark, wrong for a logo with a cut-out in it.
+   */
+  gridClass?: string;
 }
 
 export const partners: Partner[] = [
@@ -79,6 +85,11 @@ export const partners: Partner[] = [
     marqueeHeight: 23,
     gridHeight: 32,
     marqueeClass: 'opacity-85',
+    // The icon is a green tile with black bars in it, and the default filter
+    // turned both white: a blank square. Greyscale then brightness pushes the
+    // green (luminance ~0.65) and the white wordmark to white and leaves the
+    // bars black, so they still read as a chart knocked out of the tile.
+    gridClass: 'grayscale brightness-[1.6]',
   },
   {
     id: 'tch',

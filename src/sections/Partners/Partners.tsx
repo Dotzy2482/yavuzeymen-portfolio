@@ -38,7 +38,7 @@ function GridCells({ progress }: { progress: MotionValue<number> | null }) {
             width={partner.intrinsicWidth}
             height={partner.intrinsicHeight}
             style={{ height: partner.gridHeight }}
-            className="w-auto opacity-[0.92] brightness-0 invert"
+            className={cn('w-auto opacity-[0.92]', partner.gridClass ?? 'brightness-0 invert')}
           />
         </div>
       ))}
