@@ -88,7 +88,7 @@ and the AVIF, which is what a current browser actually downloads.
 | ----------------------------- | ----------- | -------- | ------ | ----------------------------- | --------------------------------------------------------------------- |
 | `hero/portrait-cutout.png`    | 1323 × 1189 | 1.16 MB  | 75 KB  | Hero                          | Background removed. Must stay the same crop as `portrait-helmet.png`  |
 | `hero/portrait-helmet.png`    | 1323 × 1189 | 1.13 MB  | 78 KB  | Hero                          | The same frame with the helmet on — the layer the cursor reveals      |
-| `portraits/studio-seated.jpg` | 1023 × 1537 | 99 KB    | 57 KB  | About, reel card              | Adequate                                                              |
+| `portraits/studio-seated.jpg` | 1682 × 2528 | 230 KB   | —      | About, reel card              | Upscaled with Gemini (Nov 2026) from the 1023 × 1537 original         |
 | `simtoreal/paddock.jpg`       | 1600 × 2000 | 230 KB   | —      | Sim to Real, reel card        | Yavuz in the TOSFED paddock, cut from pro shot `rv__9891`             |
 | `simtoreal/pit-pass.jpg`      | 1500 × 2000 | —        | —      | Sim to Real, reel card        | Full frame of phone photo `IMG_7297` (was a 1200 × 1600 crop)         |
 | `simtoreal/fiat-egea.jpg`     | 2400 × 1601 | 367 KB   | —      | Sim to Real                   | Pro shot `rv__0183`, re-exported at 2400 wide                         |
