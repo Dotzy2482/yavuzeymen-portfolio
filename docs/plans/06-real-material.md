@@ -73,12 +73,13 @@ not how they did. The view figures live on in the counters only.
 
 Past the hero the page was a flat #0a0b0d. `app/PageAmbient` is one fixed
 layer in the hero's language (red and blue fields, racing lines with cyan
-runners, a dot grid) that the hero's opaque stage covers. Its first cut read
-as a filter over the page — fields that barely moved, lines across the
-heading band — and a per-section glow behind each heading, tried next, looked
-like slides. The kept version is the first, corrected: fainter fields that
-travel far over the scroll, so the light is somewhere else on every screen,
-and two lines held to the viewport's top and bottom edges.
+runners, a dot grid) behind the sections; the hero's opaque stage covers it.
+What looked wrong in the first cut was the junction: shown from the top of
+the page, the layer's red field sat right under the hero bar beside the
+hero's own red light and read as a stain. The fix that stuck is to keep the
+first look and fade the layer in as the hero scrolls away. A fainter,
+far-travelling variant and a per-section glow behind each heading were both
+tried in between and rejected — the second "like slides".
 
 ### Photos: originals first, AI only where it adds pixels
 

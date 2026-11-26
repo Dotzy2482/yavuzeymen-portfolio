@@ -8,12 +8,10 @@
  * covers this layer completely and the two ambients never stack; everything
  * after the hero is transparent and shows it.
  *
- * The first version read as a filter laid over the page: its colour fields
- * barely moved, so the same red wash sat in the same corner on every screen,
- * and its racing lines crossed the middle of the viewport, straight behind
- * the section headings. So the fields are fainter and travel a long way over
- * the scroll — the light changes as the reader goes down the page — and the
- * two lines keep to the top and bottom edges, clear of the text band.
+ * It stays out of sight while the hero fills the screen and fades in as the
+ * hero scrolls away. Shown from the top of the page, its red field sat right
+ * under the hero bar beside the hero's own red light, and the junction read
+ * as a stain.
  *
  * Motion is tied to the scroll, not to a clock: the fields drift and the cyan
  * runners travel their lines as the page moves. Only transforms and a dash
@@ -25,17 +23,22 @@ import { motion, useMotionValue, useScroll, useTransform, type MotionValue } fro
 
 import { usePrefersReducedMotion } from '@/hooks';
 
-/** Two racing lines across a 1600 × 900 box: one near the top, one near the foot. */
+/** Racing lines across a 1600 × 900 box, sliced to the viewport. */
 const LINES = [
   {
-    d: 'M-80 120 C300 170 540 70 880 110 C1160 145 1320 80 1680 105',
-    stroke: 'var(--ambient-line-3)',
-    runner: { dash: 120, opacity: 0.16, travel: 2600 },
+    d: 'M-80 640 C260 560 420 760 760 690 C1060 628 1180 470 1680 540',
+    stroke: 'var(--ambient-line-1)',
+    runner: { dash: 140, opacity: 0.22, travel: 2400 },
   },
   {
-    d: 'M-80 820 C260 770 480 860 820 810 C1120 768 1300 840 1680 800',
-    stroke: 'var(--ambient-line-4)',
-    runner: { dash: 150, opacity: 0.2, travel: -2400 },
+    d: 'M-80 210 C300 280 520 140 860 200 C1140 250 1300 150 1680 190',
+    stroke: 'var(--ambient-line-2)',
+    runner: { dash: 100, opacity: 0.14, travel: -2000 },
+  },
+  {
+    d: 'M-80 820 C380 760 700 900 1040 820 C1300 760 1460 800 1680 760',
+    stroke: 'var(--ambient-line-3)',
+    runner: null,
   },
 ] as const;
 
@@ -67,24 +70,28 @@ function Runner({ d, dash, opacity, offset }: RunnerProps) {
 interface LayerProps {
   /** Page scroll progress, 0 → 1; null under reduced motion. */
   progress: MotionValue<number> | null;
+  /** The layer's own opacity: it fades in as the hero leaves. */
+  presence: MotionValue<number> | number;
 }
 
-function Layer({ progress }: LayerProps) {
+function Layer({ progress, presence }: LayerProps) {
   // Hooks cannot be skipped, so the still layer feeds them a parked value.
   const parked = useMotionValue(0);
   const p = progress ?? parked;
   // The fields cross a good part of the screen over the page, so the light is
   // somewhere else on every screen rather than a fixed wash.
-  const redX = useTransform(p, [0, 1], ['0%', '55%']);
-  const redY = useTransform(p, [0, 1], ['10%', '-45%']);
-  const blueX = useTransform(p, [0, 1], ['0%', '-50%']);
-  const blueY = useTransform(p, [0, 1], ['-10%', '55%']);
+  const redY = useTransform(p, [0, 1], ['0%', '-18%']);
+  const blueY = useTransform(p, [0, 1], ['0%', '14%']);
   const runnerA = useTransform(p, [0, 1], [0, -LINES[0].runner.travel]);
   const runnerB = useTransform(p, [0, 1], [0, -LINES[1].runner.travel]);
   const moving = progress !== null;
 
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <motion.div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+      style={{ opacity: presence }}
+    >
       {/* Telemetry paper: a fine dot grid, fading out towards the edges. */}
       <div
         className="absolute inset-0"
@@ -98,12 +105,11 @@ function Layer({ progress }: LayerProps) {
       <motion.div
         className="absolute"
         style={{
-          left: '-25%',
-          top: '20%',
-          width: '60%',
-          height: '80%',
-          opacity: 0.55,
-          x: moving ? redX : 0,
+          left: '-22%',
+          top: '35%',
+          width: '65%',
+          height: '85%',
+          opacity: 0.75,
           y: moving ? redY : 0,
           background: 'radial-gradient(ellipse at center, var(--ambient-red), transparent 62%)',
         }}
@@ -111,12 +117,11 @@ function Layer({ progress }: LayerProps) {
       <motion.div
         className="absolute"
         style={{
-          right: '-25%',
-          top: '-10%',
-          width: '60%',
-          height: '80%',
-          opacity: 0.55,
-          x: moving ? blueX : 0,
+          right: '-22%',
+          top: '-20%',
+          width: '65%',
+          height: '85%',
+          opacity: 0.75,
           y: moving ? blueY : 0,
           background: 'radial-gradient(ellipse at center, var(--ambient-blue), transparent 62%)',
         }}
@@ -129,23 +134,34 @@ function Layer({ progress }: LayerProps) {
         {LINES.map((line) => (
           <path key={line.d} d={line.d} fill="none" stroke={line.stroke} strokeWidth="1.5" />
         ))}
-        {LINES.map((line, i) => (
-          <Runner
-            key={`runner-${line.d}`}
-            d={line.d}
-            dash={line.runner.dash}
-            opacity={line.runner.opacity}
-            offset={moving ? (i === 0 ? runnerA : runnerB) : null}
-          />
-        ))}
+        <Runner
+          d={LINES[0].d}
+          dash={LINES[0].runner.dash}
+          opacity={LINES[0].runner.opacity}
+          offset={moving ? runnerA : null}
+        />
+        <Runner
+          d={LINES[1].d}
+          dash={LINES[1].runner.dash}
+          opacity={LINES[1].runner.opacity}
+          offset={moving ? runnerB : null}
+        />
       </svg>
-    </div>
+    </motion.div>
   );
 }
 
 function ScrolledLayer() {
-  const { scrollYProgress } = useScroll();
-  return <Layer progress={scrollYProgress} />;
+  const { scrollY, scrollYProgress } = useScroll();
+  // Hidden while the hero fills the screen, in by the time it has scrolled
+  // most of the way off: shown from the top of the page, the layer's red
+  // field sat right under the hero bar, beside the hero's own red light, and
+  // the junction read as a stain.
+  const presence = useTransform(() => {
+    const vh = window.innerHeight;
+    return Math.min(1, Math.max(0, (scrollY.get() - vh * 0.45) / (vh * 0.6)));
+  });
+  return <Layer progress={scrollYProgress} presence={presence} />;
 }
 
 /**
@@ -154,5 +170,5 @@ function ScrolledLayer() {
  */
 export function PageAmbient() {
   const prefersReducedMotion = usePrefersReducedMotion();
-  return prefersReducedMotion ? <Layer progress={null} /> : <ScrolledLayer />;
+  return prefersReducedMotion ? <Layer progress={null} presence={1} /> : <ScrolledLayer />;
 }
