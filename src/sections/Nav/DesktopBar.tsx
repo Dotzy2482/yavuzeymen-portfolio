@@ -95,13 +95,10 @@ export function DesktopBar({
       style={{ height: DESKTOP_BAR_HEIGHT }}
       className="border-hairline bg-bg/85 fixed inset-x-0 top-0 z-30 hidden items-center border-b px-10 backdrop-blur-md md:flex"
     >
-      <a
-        href="#hero"
-        lang="en"
-        className="tracking-wordmark stretch-display flex items-center gap-3 text-[15px] font-black uppercase"
-      >
-        <LogoMark className="w-[40px]" />
-        Yavuz Eymen
+      {/* The mark alone: by the time this bar shows, the hero has already
+          introduced the name in full (see Nav). */}
+      <a href="#hero" aria-label="Yavuz Eymen">
+        <LogoMark className="w-[42px]" />
       </a>
 
       <div className="border-hairline-strong ml-8 hidden items-center gap-7 border-l pl-8 lg:flex">

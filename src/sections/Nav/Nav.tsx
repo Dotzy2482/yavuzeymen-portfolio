@@ -88,14 +88,21 @@ export function Nav({ className }: NavProps) {
             animate={{ opacity: scrolled ? 1 : 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : DURATION.base }}
           />
-          <a
-            href="#hero"
-            lang="en"
-            className="tracking-wordmark stretch-display flex items-center gap-2.5 text-[15px] font-black uppercase md:gap-3 md:text-[17px]"
-          >
-            <LogoMark className="w-[34px] md:w-[42px]" />
-            Yavuz Eymen
+          {/* The logo and the name are never set side by side as a lockup —
+              the YE monogram beside the words it abbreviates read as a
+              stutter. The bar carries the mark; on a phone the name sits
+              centred in the bar like an app title, and on desktop it is the
+              large line in the hero's bottom-right corner. */}
+          <a href="#hero" aria-label="Yavuz Eymen">
+            <LogoMark className="w-[38px] md:w-[46px]" />
           </a>
+          <span
+            aria-hidden="true"
+            lang="en"
+            className="tracking-wordmark stretch-display pointer-events-none absolute left-1/2 -translate-x-1/2 text-[14px] font-black uppercase md:hidden"
+          >
+            Yavuz Eymen
+          </span>
           {/* -3px: the 44px box is wider than the old 38px one, and this keeps
               the lines' right end exactly where it was. */}
           <MenuButton open={menuOpen} onToggle={toggleMenu} className="-mr-[3px]" />

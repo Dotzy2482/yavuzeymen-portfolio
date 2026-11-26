@@ -150,22 +150,32 @@ function HeroStage({ progress }: HeroStageProps) {
         </MonoLabel>
       </div>
 
-      {/* Bottom-right: role tagline. Desktop only — a phone shows it under the
-          headline instead. */}
-      <MonoLabel
-        as="div"
-        size="md"
-        tracking="sub"
-        lang="en"
-        className="absolute right-10 bottom-[110px] z-[5] hidden max-w-[340px] text-right leading-loose md:block"
-      >
-        {profile.tagline.map((line, i) => (
-          <Fragment key={line}>
-            {i > 0 && <br />}
-            {line}
-          </Fragment>
-        ))}
-      </MonoLabel>
+      {/* Bottom-right: the name, over the role tagline. Desktop only — a
+          phone shows the tagline under the headline and the name in the top
+          bar. The nav carries only the YE mark, so this is where the name
+          introduces itself, mirroring the team card on the left. */}
+      <div className="absolute right-10 bottom-[110px] z-[5] hidden text-right md:block">
+        <p
+          lang="en"
+          className="tracking-ui stretch-display m-0 text-[26px] leading-none font-black uppercase lg:text-[32px]"
+        >
+          {profile.name}
+        </p>
+        <MonoLabel
+          as="div"
+          size="md"
+          tracking="sub"
+          lang="en"
+          className="mt-3 max-w-[340px] leading-loose"
+        >
+          {profile.tagline.map((line, i) => (
+            <Fragment key={line}>
+              {i > 0 && <br />}
+              {line}
+            </Fragment>
+          ))}
+        </MonoLabel>
+      </div>
 
       <HeroBar />
     </div>
