@@ -69,13 +69,19 @@ export interface ReelCard {
    * cards loop, so four of them cost about what one full clip does to decode.
    */
   preview?: string;
-  /** Cyan view-count shown on the emphasised card. */
+  /** Cyan figure on the card — an Instagram reel's real view count. */
   stat?: string;
+  /** The post this card is, when it is one: the card links to it. */
+  href?: string;
 }
 
 /**
- * Desktop fan order, outer-left → outer-right; `FAN_CENTER_INDEX` is the flat
- * emphasised card. The mobile carousel leads with the centre card.
+ * The playlist, in order. Five of Yavuz's most-watched Instagram reels (from
+ * 797K views down; the 247K one is age-restricted and cannot be fetched, so
+ * the 152K Monza reel stands in) alternate with five clips of his own
+ * footage. Each reel card is a ~9 s cut of the reel and links to it; the
+ * footage cards link nowhere. `FAN_CENTER_INDEX` is the card the fan opens
+ * on, in the centre slot; the mobile carousel leads with it too.
  */
 export const reelCards: ReelCard[] = [
   {
@@ -86,11 +92,38 @@ export const reelCards: ReelCard[] = [
     preview: '/videos/reels/preview/paddock.mp4',
   },
   {
+    id: 'ig-hayat-bitti',
+    caption: 'HAYAT BİTTİ',
+    src: '/images/reels/ig-hayat-bitti.jpg',
+    video: '/videos/reels/ig-hayat-bitti.mp4',
+    preview: '/videos/reels/preview/ig-hayat-bitti.mp4',
+    stat: '482K',
+    href: 'https://www.instagram.com/reel/C3AQQy2Nstg/',
+  },
+  {
+    id: 'ig-takip-hocam',
+    caption: 'TAKİP HOCAM',
+    src: '/images/reels/ig-takip-hocam.jpg',
+    video: '/videos/reels/ig-takip-hocam.mp4',
+    preview: '/videos/reels/preview/ig-takip-hocam.mp4',
+    stat: '797K',
+    href: 'https://www.instagram.com/reel/DAG2tZJN-7F/',
+  },
+  {
     id: 'rig',
     caption: 'SIM RIG',
     src: '/images/reels/rig.jpg',
     video: '/videos/reels/rig.mp4',
     preview: '/videos/reels/preview/rig.mp4',
+  },
+  {
+    id: 'ig-takip-etsenize',
+    caption: 'TAKİP ETSENİZE',
+    src: '/images/reels/ig-takip-etsenize.jpg',
+    video: '/videos/reels/ig-takip-etsenize.mp4',
+    preview: '/videos/reels/preview/ig-takip-etsenize.mp4',
+    stat: '378K',
+    href: 'https://www.instagram.com/reel/C3w6-ZqtD7W/',
   },
   {
     id: 'fiat',
@@ -100,11 +133,29 @@ export const reelCards: ReelCard[] = [
     preview: '/videos/reels/preview/fiat.mp4',
   },
   {
+    id: 'ig-eau-rouge',
+    caption: 'EAU ROUGE',
+    src: '/images/reels/ig-eau-rouge.jpg',
+    video: '/videos/reels/ig-eau-rouge.mp4',
+    preview: '/videos/reels/preview/ig-eau-rouge.mp4',
+    stat: '177K',
+    href: 'https://www.instagram.com/reel/C4XWnqmNQM9/',
+  },
+  {
     id: 'bts',
     caption: 'BEHIND THE SCENES',
     src: '/images/reels/bts.jpg',
     video: '/videos/reels/bts.mp4',
     preview: '/videos/reels/preview/bts.mp4',
+  },
+  {
+    id: 'ig-monza',
+    caption: 'MONZA',
+    src: '/images/reels/ig-monza.jpg',
+    video: '/videos/reels/ig-monza.mp4',
+    preview: '/videos/reels/preview/ig-monza.mp4',
+    stat: '152K',
+    href: 'https://www.instagram.com/reel/C3ouh14NwdR/',
   },
   {
     id: 'race-day',

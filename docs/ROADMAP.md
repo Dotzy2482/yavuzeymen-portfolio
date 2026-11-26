@@ -172,13 +172,13 @@
   the Egea through the cones, the TOSFED sim rig, the paddock, his home rig
   and telemetry, and a kart onboard. Each loads nothing until its card is on
   screen and pauses when it leaves; under reduced motion it is its poster.
-- The Content fan is a playlist: the centre card plays its clip once at full
-  size, then every card travels one slot left and the next clip takes the
-  centre (the left-end card fades round to the right; a click brings any card
-  to the centre). Side cards loop 270 × 480 previews, so one full clip and
-  four small ones decode at a time. The "REEL" labels and the handoff's
-  invented figures (a 797K reel) are gone; the counters are a dated snapshot
-  of his Instagram, his main platform.
+- The Content fan is a playlist of ten cards in five slots: five of Yavuz's
+  most-watched Instagram reels (797K down), each linking to the reel, between
+  five clips of his own footage. The centre plays once at full size, then
+  every card travels one slot left; ← → buttons step it by hand. Side cards
+  loop 270 × 480 previews. The counters are the signed-in reading of all 346
+  reels: 5M+ views, 797,000 on the best, nine past 100K. See
+  [plans/06](plans/06-real-material.md).
 - Setup shows his own rig at home with numbered markers on the wheel,
   pedals, displays and PC, matching the numbers on the rows; the list grew to
   his displays, PC parts and sim.

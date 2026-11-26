@@ -164,7 +164,7 @@ renders "NOGRIPSIMRACING'İN" and not "NOGRİPSİMRACİNG'İN".
 ## Multi-session work
 
 Workstreams are planned out in [docs/plans/](docs/plans/), numbered in the
-order they must land. All five (`01`–`05`) have landed; their files stay for
+order they must land. All six (`01`–`06`) have landed; their files stay for
 the **Reasoning** they record, which the code does not — read the relevant one
 before changing the part of the site it built. **Starting a new one:** give it
 the next number and the same shape (Reasoning, Steps, Done when, Progress).

@@ -15,14 +15,17 @@
  *
  * ## The fan is a playlist
  *
- * The centre card plays its clip once, at full size. When it ends, every
- * card's content slides one place to the left and the next clip arrives in
- * the centre; clicking a side card brings it to the centre at once. The side
- * cards keep moving too, but on each clip's preview: 270 × 480 at 24 fps, a
- * quarter of the pixels. Five full 540 × 960 clips decoding at once inside a
- * fan that rotates and scrolls made the section stutter; one full clip and
- * four previews do not. The playlist waits while the fan is off screen, and under
- * reduced motion the fan is five stills that never move.
+ * Ten cards take turns in five slots: five of Yavuz's most-watched Instagram
+ * reels, each a link to the reel, alternating with five clips of his own
+ * footage, which link nowhere. The centre card plays its clip once at full
+ * size; when it ends every card travels one slot left — position, size and
+ * tilt together — the outer-left card glides offstage and the next one in the
+ * playlist glides in at the right. The ← → buttons at the top right step it by
+ * hand. Side cards loop 270 × 480 previews and offstage cards hold a poster,
+ * so one full clip and four small ones decode at a time: five full clips in a
+ * fan that rotates and scrolls made the section stutter. The playlist waits
+ * while the fan is off screen; under reduced motion the cards jump instead of
+ * travelling and nothing plays.
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -76,11 +79,7 @@ const FAN_SPRING = { stiffness: 140, damping: 28, mass: 0.5 } as const;
 
 /** How the cards travel when the playlist moves on: one slot, all together. */
 const SHIFT = { duration: 0.8, ease: [0.65, 0, 0.35, 1] } as const;
-/**
- * A click steps the fan one slot at a time, quicker, until the picked card is
- * in the centre. Jumping two slots at once sent two cards round the end
- * together and swung the rest across each other.
- */
+/** An arrow press moves the fan one slot, quicker than the playlist does. */
 const PICK_SHIFT = { duration: 0.42, ease: [0.33, 0, 0.2, 1] } as const;
 const PICK_STEP_MS = 440;
 
@@ -115,68 +114,105 @@ function fanSlot(index: number): FanSlot {
   };
 }
 
+/** How many cards the fan shows at once: the centre and two rings each side. */
+const VISIBLE = FAN_RINGS.length * 2 - 1;
+/** How far past the outer slot a card travels as it leaves or arrives, px. */
+const OFFSTAGE = 220;
+
 interface FanCardProps {
   card: ReelCard;
-  /** The slot the card is in now (0 = outer left). */
-  slotIndex: number;
-  /** True when this move took the card round from one end of the fan to the other. */
-  wrapped: boolean;
-  /** This move is one step of a click, not the playlist: travel quicker. */
+  /** Place in the playlist relative to the fan: 0–4 are the slots, 5+ wait offstage. */
+  position: number;
+  previousPosition: number;
+  /** +1: the playlist moved on (cards travel left); -1: it went back. */
+  direction: 1 | -1;
+  /** Travel quicker: an arrow press rather than the playlist moving on. */
   quick: boolean;
+  /** Jump rather than travel: the static, reduced-motion fan. */
+  instant: boolean;
   /** Scrub progress, 0 gathered → 1 dealt out; null under reduced motion. */
   spread: MotionValue<number> | null;
   /** The centre card's playback, when the playlist runs; null elsewhere. */
   centre: { playing: boolean; onEnded: () => void } | null;
-  /** Bring this card to the centre; undefined for the centre card itself. */
-  onPick?: () => void;
 }
 
 /**
  * One card of the fan. It owns its place: when the playlist moves on, the card
- * itself travels to the slot on its left — position, size and tilt together —
- * and the card leaving the left end fades out and comes back in at the right.
+ * itself travels to the slot beside it — position, size and tilt together. A
+ * card leaving the outer slot glides offstage and fades; the next one in the
+ * playlist glides in from the other side.
  *
  * Two layers, so the scrub and the hover never fight over the same transform:
  * the outer one is placed by the slot and the scrub, the inner one lifts under
- * the pointer and turns the card square to the reader.
+ * the pointer and turns the card square to the reader. A card that is one of
+ * Yavuz's Instagram reels is a link to it; his own footage links nowhere and
+ * is not clickable.
  */
-function FanCard({ card, slotIndex, wrapped, quick, spread, centre, onPick }: FanCardProps) {
-  const slot = fanSlot(slotIndex);
-  const emphasis = slotIndex === FAN_CENTER_INDEX;
+function FanCard({
+  card,
+  position,
+  previousPosition,
+  direction,
+  quick,
+  instant,
+  spread,
+  centre,
+}: FanCardProps) {
+  const visible = position < VISIBLE;
+  const wasVisible = previousPosition < VISIBLE;
+  // Offstage cards wait at the outer slot of the side they will enter from.
+  const slot = fanSlot(visible ? position : direction > 0 ? VISIBLE - 1 : 0);
+  const emphasis = position === FAN_CENTER_INDEX;
 
   // The slot, as motion values that glide to each new slot.
-  const slotX = useMotionValue(slot.x);
+  const slotX = useMotionValue(visible ? slot.x : 0);
   const slotY = useMotionValue(slot.y);
   const slotRotate = useMotionValue(slot.rotate);
   const slotScale = useMotionValue(slot.scale);
-  const opacity = useMotionValue(1);
+  const opacity = useMotionValue(visible ? 1 : 0);
 
   useEffect(() => {
-    if (wrapped) {
-      // Across the whole fan behind the other cards would read as a glitch:
-      // jump while invisible, then fade in at the far end.
-      slotX.set(slot.x);
+    const transition = instant ? { duration: 0 } : quick ? PICK_SHIFT : SHIFT;
+    if (!visible && !wasVisible) {
+      opacity.set(0);
+      return;
+    }
+    if (!visible) {
+      // Leaving: on past the outer slot it last held, fading as it goes.
+      const exitX = fanSlot(previousPosition).x - direction * OFFSTAGE;
+      const moves = [
+        animate(slotX, exitX, transition),
+        animate(opacity, 0, { ...transition, duration: instant ? 0 : transition.duration * 0.7 }),
+      ];
+      return () => moves.forEach((move) => move.stop());
+    }
+    if (!wasVisible) {
+      // Arriving: start just offstage on the side it comes from.
+      slotX.set(slot.x + direction * OFFSTAGE);
       slotY.set(slot.y);
       slotRotate.set(slot.rotate);
       slotScale.set(slot.scale);
-      const fade = animate(opacity, [0, 1], { duration: quick ? 0.35 : 0.6, ease: 'easeOut' });
-      return () => fade.stop();
+      opacity.set(0);
     }
-    const transition = quick ? PICK_SHIFT : SHIFT;
     const moves = [
       animate(slotX, slot.x, transition),
       animate(slotY, slot.y, transition),
       animate(slotRotate, slot.rotate, transition),
       animate(slotScale, slot.scale, transition),
+      animate(opacity, 1, transition),
     ];
     return () => moves.forEach((move) => move.stop());
   }, [
+    visible,
+    wasVisible,
+    previousPosition,
+    direction,
+    quick,
+    instant,
     slot.x,
     slot.y,
     slot.rotate,
     slot.scale,
-    wrapped,
-    quick,
     slotX,
     slotY,
     slotRotate,
@@ -195,7 +231,8 @@ function FanCard({ card, slotIndex, wrapped, quick, spread, centre, onPick }: Fa
   const photo = (
     <PhotoCard
       src={card.src}
-      video={centre ? card.video : card.preview}
+      // Offstage cards hold their poster: nothing to decode until they arrive.
+      video={!visible ? undefined : centre ? card.video : card.preview}
       play={centre ? 'manual' : 'view'}
       playing={centre?.playing ?? false}
       onEnded={centre?.onEnded}
@@ -205,12 +242,23 @@ function FanCard({ card, slotIndex, wrapped, quick, spread, centre, onPick }: Fa
       className={emphasis ? 'shadow-fan' : 'shadow-card'}
     />
   );
+  const lifted = spread ? (
+    <motion.div
+      whileHover={{ y: -16, rotate: -slot.rotate, scale: 1.04 }}
+      transition={HOVER_SPRING}
+    >
+      {photo}
+    </motion.div>
+  ) : (
+    photo
+  );
 
   return (
     <motion.div
+      aria-hidden={visible ? undefined : true}
       className={cn(
         'absolute bottom-0 left-1/2 origin-bottom hover:z-10',
-        onPick && 'cursor-pointer',
+        !visible && 'pointer-events-none',
       )}
       style={{
         width: CARD_WIDTH,
@@ -220,19 +268,22 @@ function FanCard({ card, slotIndex, wrapped, quick, spread, centre, onPick }: Fa
         rotate,
         scale: slotScale,
         opacity,
-        zIndex: slot.z,
+        zIndex: visible ? slot.z : 0,
       }}
-      onClick={onPick}
     >
-      {spread ? (
-        <motion.div
-          whileHover={{ y: -16, rotate: -slot.rotate, scale: 1.04 }}
-          transition={HOVER_SPRING}
+      {card.href ? (
+        <a
+          href={card.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          tabIndex={visible ? undefined : -1}
+          aria-label={`${card.caption} — Instagram reel, ${card.stat ?? ''} izlenme`}
+          className="block"
         >
-          {photo}
-        </motion.div>
+          {lifted}
+        </a>
       ) : (
-        photo
+        lifted
       )}
     </motion.div>
   );
@@ -254,39 +305,42 @@ const FAN_CLASSES = cn(
   'lg:-mb-[45px] lg:scale-[0.8] xl:mb-16 xl:scale-100',
 );
 
+const ARROW_CLASSES =
+  'border-hairline-strong text-text hover:border-accent-primary hover:text-accent-primary duration-base flex size-11 items-center justify-center border font-mono text-[15px] transition-colors disabled:opacity-40';
+
 interface FanBodyProps {
   spread: MotionValue<number> | null;
   /** Whether the fan is on screen; the playlist waits while it is not. */
   active: boolean;
 }
 
-function slotOf(cardIndex: number, offset: number, count: number): number {
+function positionOf(cardIndex: number, offset: number, count: number): number {
+  // The card at playlist index `offset` sits in slot 0 (outer left).
   return (((cardIndex - offset) % count) + count) % count;
 }
 
 interface FanStep {
+  /** Playlist index of the card in slot 0. */
   offset: number;
   previous: number;
-  /** +1: every card moved one slot left; -1: one slot right. */
   direction: 1 | -1;
-  /** A step of a click rather than of the playlist. */
   quick: boolean;
 }
 
 function FanBody({ spread, active }: FanBodyProps) {
-  // The playlist: card i sits in slot (i - offset) mod n, so the centre slot
-  // starts on the centre card and each step moves every card one slot left.
   const count = reelCards.length;
+  // Offset 0 puts playlist card i in slot i, so the fan opens on card
+  // FAN_CENTER_INDEX in the centre slot (both are 2).
   const [step, setStep] = useState<FanStep>({
     offset: 0,
     previous: 0,
     direction: 1,
     quick: false,
   });
-  const timers = useRef<number[]>([]);
   const [busy, setBusy] = useState(false);
+  const timer = useRef<number | undefined>(undefined);
 
-  useEffect(() => () => timers.current.forEach((t) => window.clearTimeout(t)), []);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
 
   const stepBy = (direction: 1 | -1, quick: boolean) =>
     setStep((s) => ({
@@ -296,43 +350,60 @@ function FanBody({ spread, active }: FanBodyProps) {
       quick,
     }));
 
-  // A click: walk the fan one slot at a time towards the picked card.
-  const pick = (slotsAway: number) => {
-    if (busy || slotsAway === 0) return;
-    const direction = slotsAway > 0 ? 1 : -1;
-    const steps = Math.abs(slotsAway);
+  // The arrows: one quick step, then a pause so a held click cannot pile up.
+  const press = (direction: 1 | -1) => {
+    if (busy) return;
     setBusy(true);
-    for (let i = 0; i < steps; i++) {
-      timers.current.push(window.setTimeout(() => stepBy(direction, true), i * PICK_STEP_MS));
-    }
-    timers.current.push(window.setTimeout(() => setBusy(false), steps * PICK_STEP_MS));
+    stepBy(direction, true);
+    timer.current = window.setTimeout(() => setBusy(false), PICK_STEP_MS);
   };
 
   return (
     <>
       {reelCards.map((card, i) => {
-        const slotIndex = slotOf(i, step.offset, count);
-        const previousSlot = slotOf(i, step.previous, count);
-        const isCentre = slotIndex === FAN_CENTER_INDEX;
+        const position = positionOf(i, step.offset, count);
+        const isCentre = position === FAN_CENTER_INDEX;
         return (
           <FanCard
             key={card.id}
             card={card}
-            slotIndex={slotIndex}
-            // Every card moved one way; one that ended up the other way came
-            // round from the far end.
-            wrapped={step.direction > 0 ? slotIndex > previousSlot : slotIndex < previousSlot}
+            position={position}
+            previousPosition={positionOf(i, step.previous, count)}
+            direction={step.direction}
             quick={step.quick}
+            instant={!spread}
             spread={spread}
             centre={
               spread && isCentre
                 ? { playing: active && !busy, onEnded: () => stepBy(1, false) }
                 : null
             }
-            onPick={spread && !isCentre ? () => pick(slotIndex - FAN_CENTER_INDEX) : undefined}
           />
         );
       })}
+      {/* The playlist's own controls, top right where the outer card leaves room. */}
+      <div className="absolute top-0 right-0 z-20 flex gap-2">
+        <button
+          type="button"
+          lang="en"
+          aria-label="Previous"
+          className={ARROW_CLASSES}
+          disabled={busy}
+          onClick={() => press(-1)}
+        >
+          ←
+        </button>
+        <button
+          type="button"
+          lang="en"
+          aria-label="Next"
+          className={ARROW_CLASSES}
+          disabled={busy}
+          onClick={() => press(1)}
+        >
+          →
+        </button>
+      </div>
     </>
   );
 }
@@ -417,18 +488,35 @@ export function Content({ id = 'content', className }: SectionProps) {
 
       {/* Mobile carousel */}
       <div className="-mx-[var(--gutter)] mt-11 flex snap-x snap-mandatory gap-4 overflow-x-auto px-[var(--gutter)] pb-3 lg:hidden">
-        {carouselOrder.map((card, i) => (
-          <PhotoCard
-            key={card.id}
-            src={card.src}
-            video={card.video}
-            caption={card.caption}
-            stat={card.stat}
-            emphasis={i === 0}
-            playThreshold={0.75}
-            className="w-[240px] shrink-0 snap-center"
-          />
-        ))}
+        {carouselOrder.map((card, i) => {
+          const photo = (
+            <PhotoCard
+              src={card.src}
+              video={card.preview}
+              caption={card.caption}
+              stat={card.stat}
+              emphasis={i === 0}
+              playThreshold={0.75}
+              className="w-[240px] shrink-0"
+            />
+          );
+          return card.href ? (
+            <a
+              key={card.id}
+              href={card.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${card.caption} — Instagram reel, ${card.stat ?? ''} izlenme`}
+              className="shrink-0 snap-center"
+            >
+              {photo}
+            </a>
+          ) : (
+            <div key={card.id} className="shrink-0 snap-center">
+              {photo}
+            </div>
+          );
+        })}
       </div>
     </section>
   );

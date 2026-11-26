@@ -23,14 +23,16 @@ the last one stopped.
 | [03](03-weight-and-wiring.md)          | Weight and wiring          | —          | **Landed.** Kept for the reasoning it records. |
 | [04](04-real-circuit-geometry.md)      | Real circuit geometry      | `03`       | **Landed.** Kept for the reasoning it records. |
 | [05](05-critique-fixes.md)             | Critique fixes             | —          | **Landed.** Kept for the reasoning it records. |
+| [06](06-real-material.md)              | Yavuz's real material      | —          | **Landed.** A record written after the fact.   |
 
-All five have landed. Their files stay because the **Reasoning** sections are
+All six have landed. Their files stay because the **Reasoning** sections are
 the only record of why the scrub was built the way it was, why the scroll-spy
 highlights on an exact match only, why the image encodes, the lazy chunk and the
 `APAC` tab went the way they did, why the start line is solved by rotating
 geometry rather than by adding a field, and what the design critique measured
-before 05 changed anything. A new workstream gets the next number, `06`, and
-the same shape.
+before 05 changed anything, and — in 06 — where every real number, photo and
+logo came from. A new workstream gets the next number, `07`, and the same
+shape.
 
 ## Why the reasoning sections are long
 
