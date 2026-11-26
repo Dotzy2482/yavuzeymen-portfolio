@@ -2,13 +2,14 @@
  * The Content section's data: three headline counters and the five reel
  * cards of the fan/carousel.
  *
- * The counters are a snapshot of Yavuz's public profiles, read on 27 November
- * 2026: @yavuzeymen_12 on Instagram (1,344 followers; best reel 7,810 views)
- * and on TikTok (7,224 likes; best video 8,920 views). They replaced the
- * handoff's illustrative figures (146.848 views, a 797K reel), which were
- * never his. There is no live fetch: both platforms need an approved app and
- * a server-side token for that, which this static site does not have — so
- * refresh them by hand, and keep the date above honest.
+ * The counters are Instagram, his main platform: a snapshot of @yavuzeymen_12
+ * read on 27 November 2026 — 1,344 followers, 507 posts, and 7,810 views on
+ * the most-watched of the reels Instagram shows a logged-out visitor (the
+ * latest twelve; an older reel may have done better, which only his Insights
+ * can say). They replaced the handoff's illustrative figures (146.848 views,
+ * a 797K reel), which were never his. There is no live fetch: that needs an
+ * approved Meta app and a server-side token, which this static site does not
+ * have — so refresh them by hand, and keep the date above honest.
  */
 
 export interface ContentCounter {
@@ -30,17 +31,17 @@ export const contentCounters: ContentCounter[] = [
     accent: false,
   },
   {
-    id: 'top-video',
-    value: 8_920,
+    id: 'top-reel',
+    value: 7_810,
     decimals: 0,
-    label: 'EN ÇOK İZLENEN VİDEO',
+    label: 'EN ÇOK İZLENEN REEL',
     accent: true,
   },
   {
-    id: 'tiktok-likes',
-    value: 7_224,
+    id: 'instagram-posts',
+    value: 507,
     decimals: 0,
-    label: 'TIKTOK BEĞENİ',
+    label: 'INSTAGRAM GÖNDERİ',
     accent: false,
   },
 ];
