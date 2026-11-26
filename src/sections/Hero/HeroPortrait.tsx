@@ -115,10 +115,19 @@ export function HeroPortrait({ mode, progress, stageRef }: HeroPortraitProps) {
    * overhang. Left to the preflight, the image is clamped to the viewport width
    * while keeping its height, which does not crop it: it squashes it, by 24% at
    * 390px wide.
+   *
+   * A portrait-orientation tablet is `static` too, but 106vh of photo there is
+   * wider than the screen and puts his forehead under the headline. There the
+   * photo stands on the bottom edge instead, as on a phone, and is as tall as
+   * the room under the headline allows: the headline starts at
+   * `max(68px, 9vh)` and is one line of at most ~66px (see Hero), so
+   * `91vh - 90px` leaves the crown about 24px clear of it.
    */
   const layer = cn(
     'absolute left-1/2 w-auto max-w-none origin-[50%_20%]',
-    mode === 'scroll' ? 'bottom-0 h-[min(78vh,118vw)]' : 'top-[55px] h-[106vh]',
+    mode === 'scroll'
+      ? 'bottom-0 h-[min(78vh,118vw)]'
+      : 'top-[55px] h-[106vh] portrait:top-auto portrait:bottom-0 portrait:h-[calc(91vh_-_90px)]',
   );
 
   return (

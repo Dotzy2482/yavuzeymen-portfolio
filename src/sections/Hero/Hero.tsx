@@ -42,6 +42,17 @@
  *   Both numbers belong to other files: the portrait's height to HeroPortrait,
  *   the 7.63em to the headline copy in data/profile.ts. Change either and this
  *   term has to follow.
+ *
+ * ## The desktop headline is one line
+ *
+ * From `md` up the headline is a single line, "ALWAYS ON THE LIMIT.", which
+ * is 13.06em wide in Archivo at the display width axis. Its size used to be
+ * `min(8.5vw, 12.5vh)`, and at 8.5vw that line is 111% of the viewport, so it
+ * wrapped on every screen narrower than about 3:2 — a 1440×900 laptop, any
+ * tablet — and "LIMIT." fell onto his face. The width term is now the size
+ * at which the line fits with 48px either side (`/ 13.3` keeps a sliver of
+ * slack). On 16:9 screens 12.5vh still binds, so they are unchanged. Like the
+ * mobile term, the 13.06em belongs to the copy in data/profile.ts.
  */
 
 import { Fragment, useRef } from 'react';
@@ -120,7 +131,7 @@ function HeroStage({ progress }: HeroStageProps) {
       >
         <h1
           lang="en"
-          className="tracking-title stretch-display md:tracking-display m-0 text-[length:min(13vw,8.5vh,max(32px,calc(var(--hero-room)/2.85),min(calc(var(--hero-room)/1.9),calc((100vw_-_16px)/7.9))))] leading-[0.95] font-black uppercase [--hero-room:calc(100vh_-_min(78vh,118vw)_-_max(11vh,72px)_-_52px)] [text-shadow:var(--hero-headline-shadow)] md:text-[max(52px,min(8.5vw,12.5vh))] md:leading-[0.94]"
+          className="tracking-title stretch-display md:tracking-display m-0 text-[length:min(13vw,8.5vh,max(32px,calc(var(--hero-room)/2.85),min(calc(var(--hero-room)/1.9),calc((100vw_-_16px)/7.9))))] leading-[0.95] font-black uppercase [--hero-room:calc(100vh_-_min(78vh,118vw)_-_max(11vh,72px)_-_52px)] [text-shadow:var(--hero-headline-shadow)] md:text-[max(52px,min(calc((100vw_-_96px)/13.3),12.5vh))] md:leading-[0.94]"
         >
           {words.join(' ')}{' '}
           <em className="font-serif font-normal tracking-normal normal-case italic">{accent}</em>
@@ -142,7 +153,7 @@ function HeroStage({ progress }: HeroStageProps) {
       </motion.div>
 
       {/* Bottom-left: current team card. */}
-      <div className="border-accent-primary absolute bottom-[86px] left-5 z-[6] flex flex-col gap-1 border-l-2 pl-3 md:bottom-[110px] md:left-10 md:gap-1.5 md:pl-4">
+      <div className="border-accent-primary absolute bottom-[86px] left-5 z-[6] flex flex-col gap-1 border-l-2 pl-3 [text-shadow:var(--hero-headline-shadow)] md:bottom-[110px] md:left-10 md:gap-1.5 md:pl-4">
         <MonoLabel size="md" tracking="xl">
           {profile.currentTeam.label}
         </MonoLabel>
@@ -161,7 +172,7 @@ function HeroStage({ progress }: HeroStageProps) {
         size="md"
         tracking="sub"
         lang="en"
-        className="absolute right-10 bottom-[110px] z-[5] hidden max-w-[340px] text-right leading-loose md:block"
+        className="absolute right-10 bottom-[110px] z-[5] hidden max-w-[340px] text-right leading-loose [text-shadow:var(--hero-headline-shadow)] md:block"
       >
         {profile.tagline.map((line, i) => (
           <Fragment key={line}>
