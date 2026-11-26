@@ -1,14 +1,14 @@
 /**
  * 07 — SETUP: the technical-document equipment list next to the rig photo.
  *
- * Rows are mono component labels with bold values: Yavuz's wheel and base and
- * his pedals, the two rows he asked for. A row whose value is still unknown
- * renders as the dashed reserved slot the site uses in Partners and Sim to
- * Real (see SpecRow); none is, today.
+ * Rows are mono component labels with bold values: Yavuz's wheel, pedals,
+ * displays, PC and sim. Beside them is a photo of his own rig at home
+ * (RigPhoto), with numbered markers on the hardware; each row leads with the
+ * number of the marker it belongs to. A row whose value is still unknown
+ * renders as a dashed reserved slot (see SpecRow); none is, today.
  *
- * Two rows run far shorter than the rig photo beside them, so from `md` the
- * list sits on the photo's vertical centre instead of hanging off its top
- * edge over an empty column.
+ * From `md` the list sits on the photo's vertical centre, so a list shorter
+ * than the photo never hangs off its top edge over an empty column.
  *
  * One `useScroll` on the rows container drives every row: each carves its
  * own 0–1 window out of that progress and fills a cyan overlay on its hairline,
@@ -21,20 +21,21 @@
  * which is the same shape `StretchScrub` uses. The static branch hands the rows
  * a null progress and registers no scroll or resize listener at all.
  *
- * The rig photo is deliberately left alone: any scrubbed crop or parallax on it
- * would re-introduce the deleted ParallaxLayer in spirit.
+ * The rig photo itself never moves: any scrubbed crop or parallax on it would
+ * re-introduce the deleted ParallaxLayer in spirit. Only its markers animate.
  */
 
 import { useRef } from 'react';
 import { useScroll, type MotionValue } from 'motion/react';
 
 import { cn } from '@/lib/cn';
-import { Picture, SectionHeading } from '@/components/ui';
+import { SectionHeading } from '@/components/ui';
 import { StretchScrub } from '@/components/motion';
 import { setupItems } from '@/data';
 import { usePrefersReducedMotion } from '@/hooks';
 import type { SectionProps } from '@/types';
 
+import { RigPhoto } from './RigPhoto';
 import { SpecRow } from './SpecRow';
 
 const ROWS_CLASSES = 'flex flex-col';
@@ -90,14 +91,7 @@ export function Setup({ id = 'setup', className }: SectionProps) {
       </StretchScrub>
       <div className="mt-7 grid items-start gap-7 md:mt-[72px] md:grid-cols-[1.2fr_1fr] md:items-center md:gap-10 lg:gap-20">
         <SpecList />
-        <Picture
-          src="/images/simtoreal/rig.jpg"
-          alt="Yavuz Eymen, FIAT standındaki simülatörde"
-          loading="lazy"
-          width={1600}
-          height={2000}
-          className="border-hairline block h-auto w-full border"
-        />
+        <RigPhoto />
       </div>
     </section>
   );

@@ -20,9 +20,9 @@ layout or a crash.
 | `data/career.ts`            | Six timeline entries, 2019–2025                      | **Real**            | Design handoff, final copy                                           |
 | `data/achievements.ts`      | Six result cards                                     | **Real**            | Design handoff, final copy                                           |
 | `data/partners.ts`          | Team Curve Hunters, the one partner                  | **Real**            | gelbura, SPARDOX, DriveHunter sponsor the team, not Yavuz — removed  |
-| `data/contentStats.ts`      | 146.848 views / 797.000 top reel / %82,3 reels       | **Placeholder**     | Instagram insights export                                            |
-| `data/contentStats.ts`      | Five reel cards: muted loops of Yavuz's own footage  | **Real**            | `public/videos/reels/`, posters in `public/images/reels/`            |
-| `data/setup.ts`             | Logitech G29, Moza SRP load-cell pedals              | **Real**            | Yavuz, November 2026 — the two rows he asked for                     |
+| `data/contentStats.ts`      | 1.344 IG followers / 8.920 top video / 7.224 likes   | **Real** (snapshot) | @yavuzeymen_12 on Instagram and TikTok, read 27 Nov 2026             |
+| `data/contentStats.ts`      | Five cards: muted loops of Yavuz's own footage       | **Real**            | `public/videos/reels/` (+ `preview/`), posters in `images/reels/`    |
+| `data/setup.ts`             | Wheel, pedals, displays, PC, sim + photo markers     | **Real**            | Yavuz, Nov 2026; displays read off his rig photo (`images/setup/`)   |
 | `data/simToReal.ts`         | Six photos, karting included                         | **Real**            | Originals supplied November 2026; see assets below                   |
 | `features/…/data/tracks.ts` | 14 circuit names + regions                           | **Real**            | Every circuit he has an iRacing lap at                               |
 | `features/…/data/tracks.ts` | Lengths, corner counts                               | **Real**            | Published figures; every length agrees with the OSM geometry to 2.6% |
