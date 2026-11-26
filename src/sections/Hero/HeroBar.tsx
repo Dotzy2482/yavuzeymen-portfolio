@@ -63,7 +63,9 @@ function KickStatus() {
         {!prefersReducedMotion && (
           <motion.span
             className="bg-accent-secondary absolute inset-0 rounded-full"
-            animate={{ scale: [1, 2.6], opacity: [0.6, 0] }}
+            // A whole `transform`, not `scale`: that way motion hands the
+            // pulse to the compositor instead of running it on the main thread.
+            animate={{ transform: ['scale(1)', 'scale(2.6)'], opacity: [0.6, 0] }}
             transition={{ duration: 1.6, repeat: Infinity, ease: 'easeOut' }}
           />
         )}
@@ -78,6 +80,10 @@ function KickStatus() {
   );
 }
 
+/** The scroll cue's sweep, and the sweep plus its pause, in seconds. */
+const CUE_TRAVEL = 2.2;
+const CUE_LOOP = CUE_TRAVEL + 0.4;
+
 function ScrollCue() {
   const prefersReducedMotion = usePrefersReducedMotion();
   return (
@@ -89,8 +95,19 @@ function ScrollCue() {
         ) : (
           <motion.span
             className="bg-accent-primary absolute inset-y-0 left-0 w-1/3"
-            animate={{ x: ['-100%', '300%'] }}
-            transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut', repeatDelay: 0.4 }}
+            // 2.2s across, then 0.4s parked past the end of the track, where
+            // the clip hides it. Written as one 2.6s loop with a held last
+            // keyframe rather than as `x` with a `repeatDelay`, because either
+            // of those keeps motion from handing the loop to the compositor.
+            animate={{
+              transform: ['translateX(-100%)', 'translateX(300%)', 'translateX(300%)'],
+            }}
+            transition={{
+              duration: CUE_LOOP,
+              times: [0, CUE_TRAVEL / CUE_LOOP, 1],
+              ease: ['easeInOut', 'linear'],
+              repeat: Infinity,
+            }}
           />
         )}
       </span>

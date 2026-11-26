@@ -125,6 +125,13 @@ export function useLapAnimation({
     }
     if (!n) return;
 
+    // The panel's size, read before this frame writes anything. Read after
+    // the chronometer's text and the sector widths had changed, as it used to
+    // be, it forced the browser to lay the page out again in the middle of
+    // every frame of the lap.
+    const panelWidth = n.mapWrap?.clientWidth ?? 0;
+    const panelHeight = n.mapWrap?.clientHeight ?? 0;
+
     // A new circuit: reset to the start line and re-measure.
     if (lastPath.current !== track.path) {
       lastPath.current = track.path;
@@ -187,8 +194,8 @@ export function useLapAnimation({
     // Driver plate tracks the dot in panel pixels, flipping before it would
     // run off the right edge. It never rotates and never leaves the panel.
     if (n.label && n.mapWrap) {
-      const width = n.mapWrap.clientWidth;
-      const height = n.mapWrap.clientHeight;
+      const width = panelWidth;
+      const height = panelHeight;
       const scale = Math.min(width / TRACK_VIEW_WIDTH, height / TRACK_VIEW_HEIGHT);
       const originX = (width - TRACK_VIEW_WIDTH * scale) / 2;
       const originY = (height - TRACK_VIEW_HEIGHT * scale) / 2;

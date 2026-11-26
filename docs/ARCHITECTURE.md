@@ -24,7 +24,7 @@ src/
     track-records/     Self-contained module behind a single index.ts.
                        See docs/TRACK_RECORDS.md.
   hooks/               App-wide hooks: useInView, useMediaQuery, useRafLoop,
-                       usePrefersReducedMotion, useActiveSection
+                       useLoop, usePrefersReducedMotion, useActiveSection
   lib/                 cn (class joiner), format (tr-TR number formatting),
                        constants (section order, breakpoints, timing)
   data/                Hand-maintained static content, one file per section
@@ -37,7 +37,8 @@ src/
 docs/
   assets/              Source assets for generated code, and the generators
                        that consume them — including encode-images.mjs, which
-                       writes the AVIF/WebP beside every raster in public/.
+                       writes the AVIF/WebP beside every raster in public/,
+                       and measure-frames.mjs, the frame-time harness.
                        Nothing here is imported by the app or shipped in the
                        bundle.
 ```
@@ -193,7 +194,9 @@ rather than re-deriving them:
 | `CountUp`      | Animates a number and writes it straight to the DOM node                                                      |
 | `StretchScrub` | Publishes a scroll-linked `--axis-wdth`, which `.stretch-scrub` reads — widening Archivo as a heading arrives |
 
-Two performance rules run through all of it:
+Five performance rules run through all of it. The last three came out of
+[plan 07](plans/07-performance.md), which measured them; `docs/assets/measure-frames.mjs`
+is the harness.
 
 1. **Scroll-linked values stay as `MotionValue`s.** `Pinned` hands out a
    `MotionValue`, consumers pipe it through `useTransform`, and nothing
@@ -202,11 +205,32 @@ Two performance rules run through all of it:
 2. **Per-frame DOM work bypasses React entirely.** `useRafLoop` runs the
    callback; the callback mutates `style` and attributes directly. This is what
    drives the hero helmet reveal and the whole lap animation.
+3. **A loop that never ends belongs on the compositor.** Motion hands an
+   animation to the browser — which runs it off the main thread — only for
+   `transform`, `opacity`, `filter`, `clipPath` and `backgroundColor`, and only
+   without `repeatDelay` or `repeatType: 'mirror'`. So an ambient loop is
+   written as whole `transform` keyframes (`'translateX(-4%) scale(1)'`, not
+   `x` and `scale`), mirrors with `'reverse'` (the same curve for a symmetric
+   ease) and folds a pause into `times` with a held last keyframe. It must not
+   target an `<svg>` element, which Chrome will not composite: wrap it in a
+   `div` and move that.
+4. **What cannot be composited holds while it cannot be seen.** A dash offset
+   is main-thread work on every frame. The cyan runners take their offset from
+   `useLoop`, which can stop and pick up again where it left off, and stop
+   whenever their layer is off screen or transparent. Every `useRafLoop` takes
+   an `active` flag for the same reason — the hero's stops with the hero.
+5. **In a frame loop, read layout before writing anything.** A
+   `getBoundingClientRect` or `offsetWidth` after a style write in the same
+   frame forces the browser to recalculate style (and maybe layout) there and
+   then. A size that only changes on resize is read by a `ResizeObserver`
+   instead.
 
 The hero's helmet reveal is worth one note. `useHelmetReveal` deliberately owns
 no `useRafLoop` of its own: it returns an `update(delta, amount)` that
 `HeroPortrait` calls from the loop it already runs, so the layer's transform and
-its mask are written on the same frame. Tuning lives in
+its mask are written on the same frame. `amount` is a function rather than a
+number, so a frame with the cursor off the page and the helmet shut reads no
+layout at all. Tuning lives in
 `sections/Hero/helmetReveal.ts`.
 
 The reveal itself is two photographs of the same frame — Yavuz bare-headed, and

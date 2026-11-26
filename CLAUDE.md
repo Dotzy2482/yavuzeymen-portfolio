@@ -164,7 +164,7 @@ renders "NOGRIPSIMRACING'İN" and not "NOGRİPSİMRACİNG'İN".
 ## Multi-session work
 
 Workstreams are planned out in [docs/plans/](docs/plans/), numbered in the
-order they must land. All six (`01`–`06`) have landed; their files stay for
+order they must land. All seven (`01`–`07`) have landed; their files stay for
 the **Reasoning** they record, which the code does not — read the relevant one
 before changing the part of the site it built. **Starting a new one:** give it
 the next number and the same shape (Reasoning, Steps, Done when, Progress).
@@ -177,5 +177,5 @@ one plan per session.
 - [docs/TRACK_RECORDS.md](docs/TRACK_RECORDS.md) — the animated circuit module
 - [docs/CONTENT.md](docs/CONTENT.md) — what is real, what is placeholder
 - [docs/ROADMAP.md](docs/ROADMAP.md) — what is done, and what is blocked
-- [docs/plans/](docs/plans/) — the five landed workstreams and why they went
+- [docs/plans/](docs/plans/) — the landed workstreams and why they went
   the way they did
