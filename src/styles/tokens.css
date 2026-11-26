@@ -54,11 +54,10 @@
 
   /* --- Brand mark --------------------------------------------------------- */
   /* Yavuz's YE monogram (components/ui/LogoMark, public/favicon.svg): a navy
-     body with the shared Y/E stroke and the E's middle bar in purple, as in
-     the supplied artwork. Logo colours only — the UI keeps working in cyan
-     and red. */
-  --brand-navy: #121a49;
-  --brand-purple: #7d36fe;
+     body with the shared Y/E stroke and the E's middle bar in purple. Logo
+     colours only — the UI keeps working in cyan and red. */
+  --brand-navy: #1b2175;
+  --brand-purple: #952cff;
 
   /* --- Track map ---------------------------------------------------------- */
   --track-base: rgba(255, 255, 255, 0.22); /* circuit outline */
