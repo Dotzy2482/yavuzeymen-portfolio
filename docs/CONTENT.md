@@ -20,7 +20,7 @@ layout or a crash.
 | `data/career.ts`            | Six timeline entries, 2019–2025                      | **Real**            | Design handoff, final copy                                           |
 | `data/achievements.ts`      | Six result cards                                     | **Real**            | Design handoff, final copy                                           |
 | `data/partners.ts`          | Team Curve Hunters, the one partner                  | **Real**            | gelbura, SPARDOX, DriveHunter sponsor the team, not Yavuz — removed  |
-| `data/contentStats.ts`      | 1.344 followers / 7.810 top reel / 507 posts         | **Real** (snapshot) | Instagram @yavuzeymen_12, read 27 Nov 2026; Insights would be exact  |
+| `data/contentStats.ts`      | 5M+ reel views / 797.000 top reel / 9 reels ≥ 100K   | **Real** (snapshot) | All 346 reels of @yavuzeymen_12, read signed in, 27 Nov 2026         |
 | `data/contentStats.ts`      | Five cards: muted loops of Yavuz's own footage       | **Real**            | `public/videos/reels/` (+ `preview/`), posters in `images/reels/`    |
 | `data/setup.ts`             | Wheel, pedals, displays, PC, sim + photo markers     | **Real**            | Yavuz, Nov 2026; displays read off his rig photo (`images/setup/`)   |
 | `data/simToReal.ts`         | Six photos, karting included                         | **Real**            | Originals supplied November 2026; see assets below                   |

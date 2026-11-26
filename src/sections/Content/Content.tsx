@@ -401,6 +401,7 @@ export function Content({ id = 'content', className }: SectionProps) {
                 to={counter.value}
                 decimals={counter.decimals}
                 prefix={counter.prefix}
+                suffix={counter.suffix}
                 duration={1.6}
               />
             </div>
