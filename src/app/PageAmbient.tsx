@@ -13,8 +13,8 @@
  * under the hero bar beside the hero's own red light, and the junction read
  * as a stain.
  *
- * Motion is tied to the scroll, not to a clock: the fields drift and the cyan
- * runners travel their lines as the page moves. Only transforms and a dash
+ * The colour fields drift with the scroll; the cyan runners travel their
+ * lines on their own clock, like the hero's. Only transforms and a dash
  * offset change — no layout, no blur filter. Under reduced motion it is the
  * same picture, still.
  */
@@ -28,12 +28,12 @@ const LINES = [
   {
     d: 'M-80 640 C260 560 420 760 760 690 C1060 628 1180 470 1680 540',
     stroke: 'var(--ambient-line-1)',
-    runner: { dash: 140, opacity: 0.22, travel: 2400 },
+    runner: { dash: 140, opacity: 0.22, duration: 28, reverse: false },
   },
   {
     d: 'M-80 210 C300 280 520 140 860 200 C1140 250 1300 150 1680 190',
     stroke: 'var(--ambient-line-2)',
-    runner: { dash: 100, opacity: 0.14, travel: -2000 },
+    runner: { dash: 100, opacity: 0.14, duration: 36, reverse: true },
   },
   {
     d: 'M-80 820 C380 760 700 900 1040 820 C1300 760 1460 800 1680 760',
@@ -49,10 +49,20 @@ interface RunnerProps {
   d: string;
   dash: number;
   opacity: number;
-  offset: MotionValue<number> | null;
+  /** Seconds per lap of the dash pattern. */
+  duration: number;
+  reverse: boolean;
+  /** False holds the runner still (reduced motion). */
+  running: boolean;
 }
 
-function Runner({ d, dash, opacity, offset }: RunnerProps) {
+/**
+ * A cyan dash running along a racing line on its own clock, the way the
+ * hero's do. It was tied to the scroll at first; the owner preferred it
+ * running by itself, which also keeps the background alive while the page
+ * is still.
+ */
+function Runner({ d, dash, opacity, duration, reverse, running }: RunnerProps) {
   return (
     <motion.path
       d={d}
@@ -62,7 +72,9 @@ function Runner({ d, dash, opacity, offset }: RunnerProps) {
       strokeWidth="2"
       strokeLinecap="round"
       strokeDasharray={`${dash} ${DASH_LOOP - dash}`}
-      style={offset ? { strokeDashoffset: offset } : { strokeDashoffset: -600 }}
+      initial={{ strokeDashoffset: 0 }}
+      animate={running ? { strokeDashoffset: reverse ? DASH_LOOP : -DASH_LOOP } : undefined}
+      transition={{ duration, ease: 'linear', repeat: Infinity }}
     />
   );
 }
@@ -82,8 +94,6 @@ function Layer({ progress, presence }: LayerProps) {
   // somewhere else on every screen rather than a fixed wash.
   const redY = useTransform(p, [0, 1], ['0%', '-18%']);
   const blueY = useTransform(p, [0, 1], ['0%', '14%']);
-  const runnerA = useTransform(p, [0, 1], [0, -LINES[0].runner.travel]);
-  const runnerB = useTransform(p, [0, 1], [0, -LINES[1].runner.travel]);
   const moving = progress !== null;
 
   return (
@@ -134,18 +144,8 @@ function Layer({ progress, presence }: LayerProps) {
         {LINES.map((line) => (
           <path key={line.d} d={line.d} fill="none" stroke={line.stroke} strokeWidth="1.5" />
         ))}
-        <Runner
-          d={LINES[0].d}
-          dash={LINES[0].runner.dash}
-          opacity={LINES[0].runner.opacity}
-          offset={moving ? runnerA : null}
-        />
-        <Runner
-          d={LINES[1].d}
-          dash={LINES[1].runner.dash}
-          opacity={LINES[1].runner.opacity}
-          offset={moving ? runnerB : null}
-        />
+        <Runner d={LINES[0].d} {...LINES[0].runner} running={moving} />
+        <Runner d={LINES[1].d} {...LINES[1].runner} running={moving} />
       </svg>
     </motion.div>
   );

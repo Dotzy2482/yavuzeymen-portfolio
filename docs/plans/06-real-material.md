@@ -77,7 +77,9 @@ runners, a dot grid) behind the sections; the hero's opaque stage covers it.
 What looked wrong in the first cut was the junction: shown from the top of
 the page, the layer's red field sat right under the hero bar beside the
 hero's own red light and read as a stain. The fix that stuck is to keep the
-first look and fade the layer in as the hero scrolls away. A fainter,
+first look and fade the layer in as the hero scrolls away. The cyan runners
+run on their own clock, like the hero's, rather than with the scroll — the
+owner's call, and it keeps the background alive while the page is still. A fainter,
 far-travelling variant and a per-section glow behind each heading were both
 tried in between and rejected — the second "like slides".
 
