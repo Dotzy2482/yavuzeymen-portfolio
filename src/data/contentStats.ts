@@ -45,7 +45,16 @@ export const contentCounters: ContentCounter[] = [
 export interface ReelCard {
   id: string;
   caption: string;
+  /**
+   * The card's still: the poster frame of its clip, and all a visitor sees
+   * under reduced motion or before the clip has loaded.
+   */
   src: string;
+  /**
+   * A short muted loop (540 × 960 H.264, about 7 s) cut from Yavuz's own
+   * footage; it plays only while the card is on screen. See PhotoCard.
+   */
+  video?: string;
   /** Cyan view-count shown on the emphasised card. */
   stat?: string;
 }
@@ -55,16 +64,37 @@ export interface ReelCard {
  * emphasised card. The mobile carousel leads with the centre card.
  */
 export const reelCards: ReelCard[] = [
-  { id: 'paddock', caption: 'REEL — PADDOCK', src: '/images/simtoreal/paddock.jpg' },
-  { id: 'rig', caption: 'REEL — RIG SETUP', src: '/images/simtoreal/rig.jpg' },
+  {
+    id: 'paddock',
+    caption: 'REEL — PADDOCK',
+    src: '/images/reels/paddock.jpg',
+    video: '/videos/reels/paddock.mp4',
+  },
+  {
+    id: 'rig',
+    caption: 'REEL — SIM RIG',
+    src: '/images/reels/rig.jpg',
+    video: '/videos/reels/rig.mp4',
+  },
   {
     id: 'fiat',
     caption: 'REEL — FIAT EGEA',
-    src: '/images/simtoreal/fiat-race.jpg',
+    src: '/images/reels/fiat.jpg',
+    video: '/videos/reels/fiat.mp4',
     stat: '797K',
   },
-  { id: 'bts', caption: 'REEL — BEHIND THE SCENES', src: '/images/portraits/studio-seated.jpg' },
-  { id: 'race-day', caption: 'REEL — RACE DAY', src: '/images/simtoreal/pit-pass.jpg' },
+  {
+    id: 'bts',
+    caption: 'REEL — BEHIND THE SCENES',
+    src: '/images/reels/bts.jpg',
+    video: '/videos/reels/bts.mp4',
+  },
+  {
+    id: 'race-day',
+    caption: 'REEL — ONBOARD',
+    src: '/images/reels/race-day.jpg',
+    video: '/videos/reels/race-day.mp4',
+  },
 ];
 
 export const FAN_CENTER_INDEX = 2;
