@@ -100,7 +100,7 @@ export function DesktopBar({
         lang="en"
         className="tracking-wordmark stretch-display flex items-center gap-3 text-[15px] font-black uppercase"
       >
-        <LogoMark className="w-[34px]" />
+        <LogoMark className="w-[40px]" />
         Yavuz Eymen
       </a>
 

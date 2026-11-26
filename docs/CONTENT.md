@@ -138,10 +138,10 @@ a visitor anything: the file is fetched by crawlers and never by the page.
 taking one day — [03](plans/03-weight-and-wiring.md) left it alone because its
 job was what the page costs, and this file is not on the page.
 
-Both carry Yavuz's YE monogram: traced into SVG from the italic artwork he
-supplied in November 2026, then set upright in a more vivid purple at his
-request (`components/ui/LogoMark.tsx` draws the same polygons in the nav).
-Change the favicon, the component and the touch icon together.
+Both carry Yavuz's YE monogram: a slashed italic Y and E, traced into SVG from
+the Gemini concept he picked in November 2026 and recoloured to his choice
+(purple Y, navy E). `components/ui/LogoMark.tsx` draws the same paths in the
+nav. Change the favicon, the component and the touch icon together.
 
 ### Resolution notes
 

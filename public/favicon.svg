@@ -1,19 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="108 200 1600 1600" role="img" aria-label="Yavuz Eymen">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-158 -674 3000 3000" role="img" aria-label="Yavuz Eymen">
   <!--
-    Yavuz's YE monogram on the page ground — the same three polygons as
+    Yavuz's YE monogram on the page ground: the same two paths as
     src/components/ui/LogoMark.tsx. Change both together.
 
     The colours are literals because a favicon is a standalone document: it
-    cannot see the page's CSS. They mirror the bg (#0a0b0d), brand-navy
-    (#1b2175) and brand-purple (#952cff) tokens in styles/tokens.css. (No
+    cannot see the page's CSS. They mirror the bg (#0a0b0d), brand-purple
+    (#952cff) and brand-navy (#2c3596) tokens in styles/tokens.css. (No
     double hyphens in this comment: XML forbids them, and a favicon is parsed
     as XML, so one would break the icon.)
 
     public/apple-touch-icon.png is rasterised from this file by
     docs/assets/generate-og-images.mjs.
   -->
-  <rect x="108" y="200" width="1600" height="1600" rx="290" fill="#0a0b0d" />
-  <polygon fill="#1b2175" points="1055,578 1600,721 1600,767 1176,767 1176,1232 1600,1232 1600,1421 545,1421 545,1104 216,578 458,578 649,887 808,578" />
-  <polygon fill="#952cff" points="1055,578 1600,578 1600,721 1113,721 924,1080 924,1421 776,1421 776,1101" />
-  <polygon fill="#952cff" points="1068,908 1545,908 1545,1080 977,1080" />
+  <rect x="-158" y="-674" width="3000" height="3000" rx="540" fill="#0a0b0d" />
+  <path fill="#952cff" d="M835 0L842 4L808 47L664 197L651 220L688 601L692 626L697 631L719 615L821 496L1124 131L1144 126L1479 125L1509 128L1507 141L906 831L318 1231L278 1254L276 1249L292 1204L375 1013L388 971L298 402L294 393L285 393L235 415L315 352L535 206L742 58ZM256 125L498 126L525 128L523 137L66 457L1 493L19 465L146 324L220 229L227 210L228 135L235 127ZM980 854L984 856L979 865L960 883L775 1048L741 1124L660 1345L597 1500L588 1504L299 1504L233 1500L236 1475L265 1399L293 1331L306 1312L531 1155L668 1068Z" />
+  <path fill="#2c3596" d="M2681 12L2684 13L2681 20L2591 127L2495 369L2484 386L2454 390L2178 393L1800 657L1802 665L1806 655L1804 662L1815 664L1806 666L1828 668L2277 669L2273 697L2186 920L1653 922L1639 925L1628 940L1524 1215L1523 1230L1529 1237L2048 1237L2061 1240L2051 1253L1528 1613L1464 1651L1485 1620L1578 1521L1584 1507L1580 1502L1080 1501L1061 1496L1206 1111L1213 1078L1208 1073L1191 1076L1064 1122L1037 1136L1006 1145L1003 1144L1006 1139L1595 738ZM1606 128L2352 128L2372 135L2274 207L2004 388L1850 393L1799 515L1786 533L1338 835L1320 843L1317 832L1325 807L1564 185L1587 134ZM2202 1231L2210 1234L2207 1245L2118 1488L2108 1501L1867 1504L1736 1552L1790 1509L2069 1322L2170 1248Z" />
 </svg>

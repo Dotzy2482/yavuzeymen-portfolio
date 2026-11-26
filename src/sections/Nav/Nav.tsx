@@ -93,7 +93,7 @@ export function Nav({ className }: NavProps) {
             lang="en"
             className="tracking-wordmark stretch-display flex items-center gap-2.5 text-[15px] font-black uppercase md:gap-3 md:text-[17px]"
           >
-            <LogoMark className="w-[30px] md:w-[36px]" />
+            <LogoMark className="w-[34px] md:w-[42px]" />
             Yavuz Eymen
           </a>
           {/* -3px: the 44px box is wider than the old 38px one, and this keeps
