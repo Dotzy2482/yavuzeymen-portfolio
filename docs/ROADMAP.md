@@ -178,7 +178,7 @@
   to the centre). Side cards loop 270 × 480 previews, so one full clip and
   four small ones decode at a time. The "REEL" labels and the handoff's
   invented figures (a 797K reel) are gone; the counters are a dated snapshot
-  of his real profiles.
+  of his Instagram, his main platform.
 - Setup shows his own rig at home with numbered markers on the wheel,
   pedals, displays and PC, matching the numbers on the rows; the list grew to
   his displays, PC parts and sim.
