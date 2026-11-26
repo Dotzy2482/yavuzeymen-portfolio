@@ -25,7 +25,11 @@
  *
  * Cost control: once the circle has closed, the update writes the resting state
  * once and then returns early. A visitor whose cursor never goes near the head
- * pays for a distance check per frame and nothing else.
+ * pays for a distance check per frame and nothing else — and with the cursor
+ * off the page and the circle shut, not even that: the update returns before
+ * it reads any layout, which is why `amount` is a function rather than a
+ * number. Reading a rect after motion has written styles in the same frame
+ * forces a style recalculation, so a read nobody needs is not free.
  */
 
 import { useEffect, useRef, type RefObject } from 'react';
@@ -62,6 +66,9 @@ interface RevealState {
   open: number;
   /** False until the first frame has seeded x/y, which must not lerp from 0,0. */
   seeded: boolean;
+  /** Where the head was on the last frame that measured it, in box pixels. */
+  headX: number;
+  headY: number;
 }
 
 function clamp01(value: number): number {
@@ -97,7 +104,8 @@ export interface UseHelmetRevealOptions {
 /**
  * @returns `update(delta, amount)` — call once per frame.
  *   `delta` is milliseconds since the previous frame, for the smoothing.
- *   `amount` means what the mode says it means: in `pointer` mode it damps the
+ *   `amount` returns a number, and is only called when it is needed. It
+ *   means what the mode says it means: in `pointer` mode it damps the
  *   cursor-driven reveal from 1 (full) to 0 (off) so the effect can fade out as
  *   the hero scrolls away; in `scrub` mode it *is* the opening, 1 being the
  *   helmet fully on.
@@ -106,12 +114,38 @@ export function useHelmetReveal({
   targetRef,
   mode,
   active,
-}: UseHelmetRevealOptions): (delta: number, amount: number) => void {
+}: UseHelmetRevealOptions): (delta: number, amount: () => number) => void {
   const pointer = useRef<PointerState>({ x: 0, y: 0, inside: false });
-  const state = useRef<RevealState>({ x: 0, y: 0, open: 0, seeded: false });
+  const state = useRef<RevealState>({
+    x: 0,
+    y: 0,
+    open: 0,
+    seeded: false,
+    headX: 0,
+    headY: 0,
+  });
   const resting = useRef(false);
 
   const tracking = active && mode === 'pointer';
+
+  // The layer's untransformed box, read when it resizes rather than every
+  // frame: the host writes the scrub's transform just before it calls the
+  // update, and an offsetWidth read straight after a style write is a forced
+  // style recalculation, sixty times a second, for a number that only changes
+  // when the window does. Zero until the first observation, which the update
+  // treats as "not laid out yet", as it always has.
+  const box = useRef({ w: 0, h: 0 });
+  useEffect(() => {
+    const el = targetRef.current;
+    if (!el || !active) return;
+    const read = () => {
+      box.current = { w: el.offsetWidth, h: el.offsetHeight };
+    };
+    read();
+    const observer = new ResizeObserver(read);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [targetRef, active]);
 
   useEffect(() => {
     if (!tracking) return;
@@ -136,14 +170,24 @@ export function useHelmetReveal({
     };
   }, [tracking]);
 
-  return (delta: number, amount: number) => {
+  return (delta: number, amount: () => number) => {
     const el = targetRef.current;
     if (!el) return;
 
+    // Shut, and the cursor is off the page: nothing can open it this frame.
+    // The circle's centre still drifts home to the head, as it would with
+    // the full update, from where the head was when it was last measured.
+    if (mode === 'pointer' && resting.current && !pointer.current.inside) {
+      const s = state.current;
+      const kFollow = 1 - Math.exp(-delta / HELMET_REVEAL.followTau);
+      s.x += (s.headX - s.x) * kFollow;
+      s.y += (s.headY - s.y) * kFollow;
+      return;
+    }
+
     // The mask lives in the layer's own untransformed box, so measure that and
     // not the rect — the rect carries the scroll-scrub's scale.
-    const boxW = el.offsetWidth;
-    const boxH = el.offsetHeight;
+    const { w: boxW, h: boxH } = box.current;
     if (!boxW || !boxH) return;
 
     const { head, radius, core, near, far, followTau, openTau, scrubRadius } = HELMET_REVEAL;
@@ -152,7 +196,7 @@ export function useHelmetReveal({
 
     let targetX = headX;
     let targetY = headY;
-    let targetOpen = amount;
+    let targetOpen = mode === 'pointer' ? 0 : amount();
 
     if (mode === 'pointer') {
       const p = pointer.current;
@@ -164,11 +208,13 @@ export function useHelmetReveal({
         targetX = (p.x - rect.left) / scale;
         targetY = (p.y - rect.top) / scale;
         const distance = Math.hypot(targetX - headX, targetY - headY) / boxH;
-        targetOpen = clamp01((far - distance) / (far - near)) * amount;
+        targetOpen = clamp01((far - distance) / (far - near)) * amount();
       }
     }
 
     const s = state.current;
+    s.headX = headX;
+    s.headY = headY;
     if (!s.seeded) {
       s.seeded = true;
       s.x = targetX;

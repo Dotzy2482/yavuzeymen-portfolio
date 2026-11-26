@@ -5,6 +5,8 @@ export { useActiveSection } from './useActiveSection';
 export { useInView } from './useInView';
 export type { UseInViewOptions, UseInViewResult } from './useInView';
 
+export { useLoop } from './useLoop';
+
 export { useMediaQuery } from './useMediaQuery';
 
 export { useRafLoop } from './useRafLoop';

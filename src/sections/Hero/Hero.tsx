@@ -61,12 +61,12 @@
  * mobile term, the 13.06em belongs to the copy in data/profile.ts.
  */
 
-import { Fragment, useRef } from 'react';
+import { Fragment } from 'react';
 import { motion, useMotionValue, useTransform, type MotionValue } from 'motion/react';
 
 import { cn } from '@/lib/cn';
 import { BREAKPOINTS } from '@/lib/constants';
-import { useMediaQuery, usePrefersReducedMotion } from '@/hooks';
+import { useInView, useMediaQuery, usePrefersReducedMotion } from '@/hooks';
 import { Pinned } from '@/components/motion';
 import { MonoLabel } from '@/components/ui';
 import { profile } from '@/data';
@@ -82,7 +82,17 @@ interface HeroStageProps {
 }
 
 function HeroStage({ progress }: HeroStageProps) {
-  const stageRef = useRef<HTMLDivElement>(null);
+  // Whether any of the stage is on screen. Everything in the hero that runs
+  // per frame on the main thread — the helmet loop, the runners — stops while
+  // it is not; before, it ran under every other section of the page. The
+  // pixel off each end is for a stage that only touches the viewport's edge,
+  // which an observer counts as intersecting: that is exactly where the nav's
+  // "About" link leaves it, and it would keep the loop running under About.
+  const { ref: stageRef, inView: onScreen } = useInView<HTMLDivElement>({
+    threshold: 0,
+    rootMargin: '-1px 0px',
+    once: false,
+  });
   const isDesktop = useMediaQuery(BREAKPOINTS.md);
   const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -100,12 +110,13 @@ function HeroStage({ progress }: HeroStageProps) {
 
   return (
     <div ref={stageRef} className="bg-bg relative h-full overflow-hidden">
-      <HeroAmbient mobile={!isDesktop} />
+      <HeroAmbient mobile={!isDesktop} visible={onScreen} />
 
       <HeroPortrait
         mode={isDesktop ? 'static' : 'scroll'}
         progress={progress ?? undefined}
         stageRef={stageRef}
+        visible={onScreen}
       />
 
       {/* Headline — in front of the portrait, behind the helmet. On mobile the

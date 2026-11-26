@@ -54,7 +54,9 @@ export function RigPhoto() {
               <motion.span
                 aria-hidden="true"
                 className="border-accent-primary absolute inset-0 rounded-full border"
-                animate={{ scale: [1, 1.9], opacity: [0.6, 0] }}
+                // A whole `transform`, not `scale`, so the compositor runs
+                // the ping and the main thread never sees it.
+                animate={{ transform: ['scale(1)', 'scale(1.9)'], opacity: [0.6, 0] }}
                 transition={{ duration: 2.2, repeat: Infinity, ease: 'easeOut', delay: i * 0.4 }}
               />
             </motion.span>

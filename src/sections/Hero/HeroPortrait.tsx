@@ -68,9 +68,11 @@ export interface HeroPortraitProps {
   progress?: MotionValue<number>;
   /** The stage element, for coordinate space. */
   stageRef: React.RefObject<HTMLDivElement | null>;
+  /** Whether the stage is on screen; the loop stops while it is not. */
+  visible: boolean;
 }
 
-export function HeroPortrait({ mode, progress, stageRef }: HeroPortraitProps) {
+export function HeroPortrait({ mode, progress, stageRef, visible }: HeroPortraitProps) {
   const faceRef = useRef<HTMLImageElement>(null);
   const helmetRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -81,13 +83,14 @@ export function HeroPortrait({ mode, progress, stageRef }: HeroPortraitProps) {
     active: !prefersReducedMotion,
   });
 
+  // Only while the stage is on screen: off it there is nothing to draw, and
+  // the loop's layout reads were a forced style recalculation on every frame
+  // of every other section.
   useRafLoop((delta) => {
     const face = faceRef.current;
     const helmet = helmetRef.current;
     const stage = stageRef.current;
     if (!face || !helmet || !stage) return;
-
-    let amount: number;
 
     if (mode === 'scroll') {
       // Both layers take the same transform, or the bodies stop lining up and
@@ -96,14 +99,16 @@ export function HeroPortrait({ mode, progress, stageRef }: HeroPortraitProps) {
       const transform = `${CENTRED} scale(${1 + p * 0.05})`;
       face.style.transform = transform;
       helmet.style.transform = transform;
-      amount = clamp01(1 - p / HELMET_REVEAL.scrubEnd);
+      reveal(delta, () => clamp01(1 - p / HELMET_REVEAL.scrubEnd));
     } else {
-      const rect = stage.getBoundingClientRect();
-      amount = clamp01(1 + rect.top / (rect.height * HELMET_REVEAL.fadeViewport));
+      // Read lazily: with the cursor away from the hero and the helmet shut,
+      // the reveal never asks, and the frame reads no layout at all.
+      reveal(delta, () => {
+        const rect = stage.getBoundingClientRect();
+        return clamp01(1 + rect.top / (rect.height * HELMET_REVEAL.fadeViewport));
+      });
     }
-
-    reveal(delta, amount);
-  }, !prefersReducedMotion);
+  }, !prefersReducedMotion && visible);
 
   /**
    * Both layers, so they cannot drift apart. `origin-[50%_20%]` puts the

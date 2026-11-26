@@ -17,11 +17,30 @@
  * lines on their own clock, like the hero's. Only transforms and a dash
  * offset change — no layout, no blur filter. Under reduced motion it is the
  * same picture, still.
+ *
+ * ## What it costs
+ *
+ * The two fields and the lines each sit on their own compositor layer
+ * (`will-change-transform`). Before, all of it was painted into the one fixed
+ * layer, so every scroll frame that moved a field, and every frame a runner
+ * moved, repainted the masked dot grid and both screen-sized gradients with
+ * it. Now a scroll frame only moves layers, and a runner repaints the lines
+ * alone. The runners hold while the layer is fully transparent — at the top
+ * of the page, behind the hero — since a dash offset is never compositor
+ * work (see `useLoop`).
  */
 
-import { motion, useMotionValue, useScroll, useTransform, type MotionValue } from 'motion/react';
+import { useState } from 'react';
+import {
+  motion,
+  useMotionValue,
+  useMotionValueEvent,
+  useScroll,
+  useTransform,
+  type MotionValue,
+} from 'motion/react';
 
-import { usePrefersReducedMotion } from '@/hooks';
+import { useLoop, usePrefersReducedMotion } from '@/hooks';
 
 /** Racing lines across a 1600 × 900 box, sliced to the viewport. */
 const LINES = [
@@ -63,6 +82,7 @@ interface RunnerProps {
  * is still.
  */
 function Runner({ d, dash, opacity, duration, reverse, running }: RunnerProps) {
+  const offset = useLoop(reverse ? DASH_LOOP : -DASH_LOOP, duration, running);
   return (
     <motion.path
       d={d}
@@ -72,9 +92,7 @@ function Runner({ d, dash, opacity, duration, reverse, running }: RunnerProps) {
       strokeWidth="2"
       strokeLinecap="round"
       strokeDasharray={`${dash} ${DASH_LOOP - dash}`}
-      initial={{ strokeDashoffset: 0 }}
-      animate={running ? { strokeDashoffset: reverse ? DASH_LOOP : -DASH_LOOP } : undefined}
-      transition={{ duration, ease: 'linear', repeat: Infinity }}
+      style={{ strokeDashoffset: offset }}
     />
   );
 }
@@ -84,9 +102,11 @@ interface LayerProps {
   progress: MotionValue<number> | null;
   /** The layer's own opacity: it fades in as the hero leaves. */
   presence: MotionValue<number> | number;
+  /** Whether the layer can be seen at all; the runners hold while it cannot. */
+  shown: boolean;
 }
 
-function Layer({ progress, presence }: LayerProps) {
+function Layer({ progress, presence, shown }: LayerProps) {
   // Hooks cannot be skipped, so the still layer feeds them a parked value.
   const parked = useMotionValue(0);
   const p = progress ?? parked;
@@ -95,6 +115,7 @@ function Layer({ progress, presence }: LayerProps) {
   const redY = useTransform(p, [0, 1], ['0%', '-18%']);
   const blueY = useTransform(p, [0, 1], ['0%', '14%']);
   const moving = progress !== null;
+  const running = moving && shown;
 
   return (
     <motion.div
@@ -113,7 +134,7 @@ function Layer({ progress, presence }: LayerProps) {
         }}
       />
       <motion.div
-        className="absolute"
+        className="absolute will-change-transform"
         style={{
           left: '-22%',
           top: '35%',
@@ -125,7 +146,7 @@ function Layer({ progress, presence }: LayerProps) {
         }}
       />
       <motion.div
-        className="absolute"
+        className="absolute will-change-transform"
         style={{
           right: '-22%',
           top: '-20%',
@@ -139,13 +160,13 @@ function Layer({ progress, presence }: LayerProps) {
       <svg
         viewBox="0 0 1600 900"
         preserveAspectRatio="xMidYMid slice"
-        className="absolute inset-0 h-full w-full"
+        className="absolute inset-0 h-full w-full will-change-transform"
       >
         {LINES.map((line) => (
           <path key={line.d} d={line.d} fill="none" stroke={line.stroke} strokeWidth="1.5" />
         ))}
-        <Runner d={LINES[0].d} {...LINES[0].runner} running={moving} />
-        <Runner d={LINES[1].d} {...LINES[1].runner} running={moving} />
+        <Runner d={LINES[0].d} {...LINES[0].runner} running={running} />
+        <Runner d={LINES[1].d} {...LINES[1].runner} running={running} />
       </svg>
     </motion.div>
   );
@@ -161,7 +182,10 @@ function ScrolledLayer() {
     const vh = window.innerHeight;
     return Math.min(1, Math.max(0, (scrollY.get() - vh * 0.45) / (vh * 0.6)));
   });
-  return <Layer progress={scrollYProgress} presence={presence} />;
+  // Re-renders only when the layer crosses between invisible and not.
+  const [shown, setShown] = useState(() => presence.get() > 0);
+  useMotionValueEvent(presence, 'change', (v) => setShown(v > 0));
+  return <Layer progress={scrollYProgress} presence={presence} shown={shown} />;
 }
 
 /**
@@ -170,5 +194,5 @@ function ScrolledLayer() {
  */
 export function PageAmbient() {
   const prefersReducedMotion = usePrefersReducedMotion();
-  return prefersReducedMotion ? <Layer progress={null} presence={1} /> : <ScrolledLayer />;
+  return prefersReducedMotion ? <Layer progress={null} presence={1} shown /> : <ScrolledLayer />;
 }
