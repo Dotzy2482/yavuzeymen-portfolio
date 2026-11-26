@@ -2,16 +2,16 @@
  * The Sim to Real gallery, ordered sim → real: rig, TOSFED paddock, pit pass,
  * FIAT Egea, race crop, and the empty karting slot (photo to come).
  *
- * Desktop heights come straight from the design's varied-height photo row;
- * `mobileHidden` drops an item from the stacked mobile list (the mobile
- * design omits the pit-pass shot).
+ * From `md` up the photos sit in a grid that reads left to right, top to
+ * bottom (see SimToReal): two columns on a tablet, then twelve tracks from
+ * `lg`, three portraits over a wide shot and two tall ones. `cell` places an
+ * item on that grid and `frame` shapes its photo, which is cropped to fill it.
+ * `focus` is the crop's anchor where the centre would cut the subject.
+ * `mobileHidden` drops an item from the stacked mobile list (the mobile design
+ * omits the pit-pass shot).
  *
- * The intrinsic sizes matter more than they look. On desktop each photo is
- * given a height and left to work its own width out, and the pinned gallery
- * measures the row to decide how far to scrub it. Without intrinsic dimensions
- * that measurement happens against zero-width images and the row scrubs the
- * wrong distance, so the gallery never lands flush. They also stop the row
- * reflowing as the photos decode.
+ * The intrinsic sizes give each photo its aspect ratio before it decodes, so
+ * the phone stack does not reflow as the images land.
  */
 
 export interface SimToRealItem {
@@ -26,10 +26,12 @@ export interface SimToRealItem {
   /** The file's own pixel size. Null only for the empty slot, which has no file. */
   intrinsicWidth: number | null;
   intrinsicHeight: number | null;
-  /** Desktop CSS height, e.g. 'min(48vh, 440px)'. */
-  height: string;
-  /** Width for the empty slot (images size themselves). */
-  width?: string;
+  /** Grid placement from `md` up (column span on the `lg` grid). */
+  cell: string;
+  /** The photo frame's shape from `md` up. */
+  frame: string;
+  /** `object-position` for the crop, when the centre is the wrong anchor. */
+  focus?: string;
   mobileHidden?: boolean;
 }
 
@@ -42,7 +44,8 @@ export const simToRealItems: SimToRealItem[] = [
     intrinsicWidth: 433,
     intrinsicHeight: 545,
     alt: 'Sim rig',
-    height: 'min(48vh, 440px)',
+    cell: 'lg:col-span-4',
+    frame: 'aspect-[4/5] lg:aspect-auto lg:h-[clamp(340px,30vw,480px)]',
   },
   {
     id: 'paddock',
@@ -52,7 +55,8 @@ export const simToRealItems: SimToRealItem[] = [
     intrinsicWidth: 348,
     intrinsicHeight: 407,
     alt: 'TOSFED paddock',
-    height: 'min(42vh, 390px)',
+    cell: 'lg:col-span-4',
+    frame: 'aspect-[4/5] lg:aspect-auto lg:h-[clamp(340px,30vw,480px)]',
   },
   {
     id: 'pit-pass',
@@ -62,7 +66,8 @@ export const simToRealItems: SimToRealItem[] = [
     intrinsicWidth: 1200,
     intrinsicHeight: 1600,
     alt: 'TOSFED pit pass',
-    height: 'min(52vh, 470px)',
+    cell: 'lg:col-span-4',
+    frame: 'aspect-[4/5] lg:aspect-auto lg:h-[clamp(340px,30vw,480px)]',
     mobileHidden: true,
   },
   {
@@ -73,7 +78,9 @@ export const simToRealItems: SimToRealItem[] = [
     intrinsicWidth: 1600,
     intrinsicHeight: 1066,
     alt: 'FIAT Egea',
-    height: 'min(44vh, 400px)',
+    cell: 'lg:col-span-6',
+    frame: 'aspect-[4/5] lg:aspect-auto lg:h-[clamp(280px,24vw,400px)]',
+    focus: '60% 55%',
   },
   {
     id: 'fiat-race',
@@ -83,7 +90,8 @@ export const simToRealItems: SimToRealItem[] = [
     intrinsicWidth: 828,
     intrinsicHeight: 788,
     alt: 'FIAT Egea yarış',
-    height: 'min(48vh, 440px)',
+    cell: 'lg:col-span-3',
+    frame: 'aspect-[4/5] lg:aspect-auto lg:h-[clamp(280px,24vw,400px)]',
   },
   {
     id: 'karting',
@@ -93,7 +101,7 @@ export const simToRealItems: SimToRealItem[] = [
     intrinsicWidth: null,
     intrinsicHeight: null,
     alt: 'Karting fotoğrafı yakında',
-    height: 'min(44vh, 400px)',
-    width: 'min(34vh, 320px)',
+    cell: 'lg:col-span-3',
+    frame: 'aspect-[4/5] lg:aspect-auto lg:h-[clamp(280px,24vw,400px)]',
   },
 ];

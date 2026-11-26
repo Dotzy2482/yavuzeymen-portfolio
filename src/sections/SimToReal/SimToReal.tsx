@@ -1,28 +1,30 @@
 /**
- * 05 — SIM TO REAL: the pinned horizontal gallery.
+ * 05 — SIM TO REAL: the sim → real photo story.
  *
- * Desktop: a 240vh wrapper pins a 100vh stage; scroll progress translates the
- * varied-height photo row left by exactly its overflow
- * (`x = −p × (rowWidth − viewportWidth)`), so the row lands flush at the end
- * of the pin. Photos are bottom-aligned, sim → real, ending on the empty
- * karting slot.
+ * From `md` up: a grid that reads left to right, top to bottom — rig, TOSFED
+ * paddock, pit pass across the top; the FIAT Egea wide, the race crop and the
+ * empty karting slot below. Two columns on a tablet, twelve tracks from `lg`.
  *
- * Desktop under reduced motion: no pin and no scrub. The row keeps its
- * left-to-right reading but becomes a plainly scrollable strip — pinning it
- * without the scrub would leave most of the gallery clipped inside an
- * overflow-hidden stage with no way to reach it.
+ * It used to be a pinned horizontal gallery: a 240vh wrapper held the page
+ * still for more than two screens of scrolling while the row slid sideways.
+ * That read as the page seizing up rather than as motion, so the page now
+ * never stops here. The movement is parallax inside each frame instead: every
+ * photo is drawn a little larger than its frame and drifts upward against the
+ * scroll, each column at its own pace, so the grid gains depth while the
+ * reader keeps full control of the scroll. Only `transform` changes, so it
+ * costs the compositor and not layout.
  *
- * Mobile: a plain vertical stack, no pinning (and no pit-pass shot, per the
- * mobile design).
+ * Under reduced motion the grid is the same, still, and never subscribes to
+ * scroll — the same split Partners and the Content fan use. Phones keep the
+ * plain stacked list (no pit-pass shot, per the mobile design).
  */
 
-import { useEffect, useRef, useState } from 'react';
-import { motion, useTransform, type MotionValue } from 'motion/react';
+import { useRef } from 'react';
+import { motion, useMotionValue, useScroll, useTransform, type MotionValue } from 'motion/react';
 
 import { cn } from '@/lib/cn';
 import { BREAKPOINTS } from '@/lib/constants';
 import { useMediaQuery, usePrefersReducedMotion } from '@/hooks';
-import { Pinned } from '@/components/motion';
 import { MonoLabel, Picture, SectionHeading } from '@/components/ui';
 import { simToRealItems, type SimToRealItem } from '@/data';
 import type { SectionProps } from '@/types';
@@ -30,100 +32,122 @@ import type { SectionProps } from '@/types';
 const LEAD =
   "Simülatörde öğrendi, gerçek pistte kanıtladı. Soldan sağa: rig'den TOSFED padoklarına, FIAT Egea direksiyonuna.";
 
-interface GalleryPhotoProps {
-  item: SimToRealItem;
-  mobile: boolean;
+/**
+ * How far a photo drifts inside its frame over the grid's pass through the
+ * viewport, as a share of the frame's height either side of centre. The photo
+ * is scaled up by enough to cover that travel, so no edge ever shows.
+ */
+const DRIFT = [0.05, 0.08, 0.06] as const;
+/** Scale that covers the largest drift both ways, with a hair to spare. */
+const DRIFT_SCALE = 1 + 2 * Math.max(...DRIFT) + 0.02;
+
+function EmptySlot() {
+  // The empty karting slot — photo to come. Its line is placeholder copy and
+  // keeps the small size (see MonoLabel).
+  return (
+    <div className="border-border-dashed flex h-full w-full items-center justify-center border border-dashed">
+      <MonoLabel size="xs" tracking="mono" tone="faint">
+        Karting fotoğrafı yakında
+      </MonoLabel>
+    </div>
+  );
 }
 
-function GalleryPhoto({ item, mobile }: GalleryPhotoProps) {
+interface GridPhotoProps {
+  item: SimToRealItem;
+  index: number;
+  /** The grid's scroll progress, 0 entering → 1 leaving; null when still. */
+  progress: MotionValue<number> | null;
+}
+
+function GridPhoto({ item, index, progress }: GridPhotoProps) {
+  const drift = DRIFT[index % DRIFT.length];
+  // Hooks cannot be skipped, so the still grid feeds the transform a parked
+  // value; its output is never applied (see the style below).
+  const fallback = useMotionValue(0);
+  const y = useTransform(progress ?? fallback, [0, 1], [`${drift * 100}%`, `${-drift * 100}%`]);
+
   return (
-    <figure className={cn('flex flex-col', mobile ? 'gap-2.5' : 'gap-3.5')}>
+    <figure className={cn('flex flex-col gap-3.5', item.cell)}>
       <MonoLabel size="md" tracking="xl" tone={item.accent ? 'accent' : 'secondary'}>
         {item.label}
       </MonoLabel>
-      {item.src ? (
-        <Picture
-          src={item.src}
-          alt={item.alt}
-          loading="lazy"
-          // Intrinsic size, so the photo occupies its final width before it
-          // decodes. The pinned row is measured to work out the scrub distance.
-          width={item.intrinsicWidth ?? undefined}
-          height={item.intrinsicHeight ?? undefined}
-          style={mobile ? undefined : { height: item.height }}
-          className={cn('block saturate-[0.92]', mobile ? 'h-auto w-full' : 'w-auto')}
-        />
-      ) : (
-        // The empty karting slot — photo to come. Its line is placeholder copy
-        // and keeps the small size (see MonoLabel).
-        <div
-          style={mobile ? { height: 280 } : { height: item.height, width: item.width }}
-          className={cn(
-            'border-border-dashed flex items-center justify-center border border-dashed',
-            mobile && 'w-full',
-          )}
-        >
-          <MonoLabel size="xs" tracking="mono" tone="faint">
-            Karting fotoğrafı yakında
-          </MonoLabel>
-        </div>
-      )}
+      <div className={cn('bg-surface relative overflow-hidden', item.frame)}>
+        {item.src ? (
+          <motion.div
+            className="absolute inset-0"
+            style={progress ? { y, scale: DRIFT_SCALE } : undefined}
+          >
+            <Picture
+              src={item.src}
+              alt={item.alt}
+              loading="lazy"
+              width={item.intrinsicWidth ?? undefined}
+              height={item.intrinsicHeight ?? undefined}
+              style={item.focus ? { objectPosition: item.focus } : undefined}
+              className="block h-full w-full object-cover saturate-[0.92]"
+            />
+          </motion.div>
+        ) : (
+          <EmptySlot />
+        )}
+      </div>
     </figure>
   );
 }
 
-/** The desktop photo row, shared by the pinned stage and the reduced-motion strip. */
-function GalleryRow() {
+const GRID_CLASSES = 'mt-14 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-12 lg:gap-y-14';
+
+interface GridProps {
+  progress: MotionValue<number> | null;
+}
+
+function Grid({ progress }: GridProps) {
   return (
     <>
-      {simToRealItems.map((item) => (
-        <GalleryPhoto key={item.id} item={item} mobile={false} />
+      {simToRealItems.map((item, i) => (
+        <GridPhoto key={item.id} item={item} index={i} progress={progress} />
       ))}
     </>
   );
 }
 
-interface DesktopStageProps {
-  progress: MotionValue<number>;
+function DriftingGrid() {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: gridRef, offset: ['start end', 'end start'] });
+  return (
+    <div ref={gridRef} className={GRID_CLASSES}>
+      <Grid progress={scrollYProgress} />
+    </div>
+  );
 }
 
-function DesktopStage({ progress }: DesktopStageProps) {
-  const rowRef = useRef<HTMLDivElement>(null);
-  const [overflow, setOverflow] = useState(0);
-
-  // How far the row overflows the viewport, which is exactly how far the scrub
-  // has to travel. Re-measured on viewport resize *and* whenever the row's own
-  // size changes — a window listener alone misses the photos finishing decode.
-  useEffect(() => {
-    const row = rowRef.current;
-    if (!row) return;
-
-    const measure = () => setOverflow(Math.max(0, row.scrollWidth - window.innerWidth));
-    measure();
-
-    const observer = new ResizeObserver(measure);
-    observer.observe(row);
-    window.addEventListener('resize', measure);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', measure);
-    };
-  }, []);
-
-  const x = useTransform(progress, (v) => -v * overflow);
-
+function PhoneList() {
   return (
-    <div className="flex h-full flex-col">
-      <div className="mx-auto w-full max-w-[1360px] px-[72px] pt-[110px]">
-        <SectionHeading index="05" title="Sim to" accent="Real" lead={LEAD} />
-      </div>
-      <motion.div
-        ref={rowRef}
-        className="mt-auto flex w-max items-end gap-10 px-[72px] pt-8 pb-[9vh] will-change-transform"
-        style={{ x }}
-      >
-        <GalleryRow />
-      </motion.div>
+    <div className="mt-9 flex flex-col gap-8">
+      {simToRealItems
+        .filter((item) => !item.mobileHidden)
+        .map((item) => (
+          <figure key={item.id} className="flex flex-col gap-2.5">
+            <MonoLabel size="md" tracking="xl" tone={item.accent ? 'accent' : 'secondary'}>
+              {item.label}
+            </MonoLabel>
+            {item.src ? (
+              <Picture
+                src={item.src}
+                alt={item.alt}
+                loading="lazy"
+                width={item.intrinsicWidth ?? undefined}
+                height={item.intrinsicHeight ?? undefined}
+                className="block h-auto w-full saturate-[0.92]"
+              />
+            ) : (
+              <div className="h-[280px]">
+                <EmptySlot />
+              </div>
+            )}
+          </figure>
+        ))}
     </div>
   );
 }
@@ -132,37 +156,18 @@ export function SimToReal({ id = 'sim-to-real', className }: SectionProps) {
   const isDesktop = useMediaQuery(BREAKPOINTS.md);
   const prefersReducedMotion = usePrefersReducedMotion();
 
-  if (isDesktop && !prefersReducedMotion) {
-    return (
-      <section id={id} className={className}>
-        <Pinned heightVh={240}>{(progress) => <DesktopStage progress={progress} />}</Pinned>
-      </section>
-    );
-  }
-
-  if (isDesktop) {
-    return (
-      <section id={id} className={cn('container-section container-wide', className)}>
-        <SectionHeading index="05" title="Sim to" accent="Real" lead={LEAD} />
-        <div className="-mx-[var(--gutter)] mt-11 overflow-x-auto px-[var(--gutter)] pb-4">
-          <div className="flex w-max items-end gap-10">
-            <GalleryRow />
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   return (
-    <section id={id} className={cn('container-section', className)}>
+    <section id={id} className={cn('container-section container-wide', className)}>
       <SectionHeading index="05" title="Sim to" accent="Real" lead={LEAD} />
-      <div className="mt-9 flex flex-col gap-8">
-        {simToRealItems
-          .filter((item) => !item.mobileHidden)
-          .map((item) => (
-            <GalleryPhoto key={item.id} item={item} mobile />
-          ))}
-      </div>
+      {!isDesktop ? (
+        <PhoneList />
+      ) : prefersReducedMotion ? (
+        <div className={GRID_CLASSES}>
+          <Grid progress={null} />
+        </div>
+      ) : (
+        <DriftingGrid />
+      )}
     </section>
   );
 }
