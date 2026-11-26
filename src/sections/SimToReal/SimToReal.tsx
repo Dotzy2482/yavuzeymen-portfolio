@@ -3,7 +3,7 @@
  *
  * From `md` up: a grid that reads left to right, top to bottom — rig, TOSFED
  * paddock, pit pass across the top; the FIAT Egea wide, the race crop and the
- * empty karting slot below. Two columns on a tablet, twelve tracks from `lg`.
+ * karting shot below. Two columns on a tablet, twelve tracks from `lg`.
  *
  * It used to be a pinned horizontal gallery: a 240vh wrapper held the page
  * still for more than two screens of scrolling while the row slid sideways.
@@ -42,8 +42,9 @@ const DRIFT = [0.05, 0.08, 0.06] as const;
 const DRIFT_SCALE = 1 + 2 * Math.max(...DRIFT) + 0.02;
 
 function EmptySlot() {
-  // The empty karting slot — photo to come. Its line is placeholder copy and
-  // keeps the small size (see MonoLabel).
+  // An item with no photo yet (`src: null`); none today — karting, the last
+  // one, was filled in November 2026. Its line is placeholder copy and keeps
+  // the small size (see MonoLabel).
   return (
     <div className="border-border-dashed flex h-full w-full items-center justify-center border border-dashed">
       <MonoLabel size="xs" tracking="mono" tone="faint">

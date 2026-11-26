@@ -143,7 +143,6 @@ these by inventing values.
 | Where                  | Placeholder                                        | Waiting on          |
 | ---------------------- | -------------------------------------------------- | ------------------- |
 | `data/profile.ts`      | Empty phone (and e-mail/socials when env is unset) | `.env.local` values |
-| `data/simToReal.ts`    | `karting` item has `src: null` (dashed slot)       | Karting photo       |
 | `data/contentStats.ts` | Hand-entered counters and reel captions            | Instagram insights  |
 | Footer links           | `Gizlilik` / `Şartlar` point at `#`                | Legal pages         |
 | `index.html`           | No `og:url`, no canonical link                     | A final domain      |

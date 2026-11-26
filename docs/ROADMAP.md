@@ -203,10 +203,10 @@ No plan unblocks these — each is waiting on a person or a file.
 - **A phone number**, if one is ever wanted on the page: `VITE_CONTACT_PHONE`
   is the one contact value still empty. (Real lap times, the Setup list, the
   e-mail and the four social URLs all arrived in November 2026.)
-- **Hi-res photography**, same crops and filenames, followed by `pnpm images`.
-  `rig.png`, `paddock.jpg` and `fiat-front.png` are the three that visibly need
-  it. See [CONTENT.md](CONTENT.md).
-- **Karting photo** for the empty Sim to Real slot.
+- **Upscaled phone photos**, optional: the rig, karting and pit-pass shots and
+  the About portrait could be sharper. (The low-res gallery files and the
+  empty karting slot were resolved in November 2026; see
+  [CONTENT.md](CONTENT.md).)
 - **Instagram figures** refreshed from the account with a visible "as of" date,
   since they are hand-entered snapshots.
 - **Legal page copy.** `Gizlilik` and `Şartlar` link to `#`.
