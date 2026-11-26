@@ -1,5 +1,5 @@
 {
-  "about": "Hand-authored inputs for generate-track-paths.mjs: what the algorithm cannot infer. osm pins the OSM ids to fetch; members of a relation with role \"\" or \"outer\" are tag-filtered, ways pinned directly are taken as authored. excludeWays removes ways the walk must never use, each with its reason. startLine is the timing line (where OSM maps start and finish separately, the finish, which is the line a lap is measured across) and the compass heading of travel across it, in degrees clockwise from north, read off the start edge and cross-checked against oneway tagging wherever the way carries it. simplify overrides the defaults per circuit. view.turn (optional: 0, 90 or -90, degrees clockwise) overrides the generator's choice between north up and the quarter turn that draws a tall circuit landscape.",
+  "about": "Hand-authored inputs for generate-track-paths.mjs: what the algorithm cannot infer. osm pins the OSM ids to fetch; members of a relation with role \"\" or \"outer\" are tag-filtered, ways pinned directly are taken as authored. excludeWays removes ways the walk must never use, each with its reason. startLine is the timing line (where OSM maps start and finish separately, the finish, which is the line a lap is measured across) and the compass heading of travel across it, in degrees clockwise from north, read off the start edge and cross-checked against oneway tagging wherever the way carries it. simplify overrides the defaults per circuit. view.turn (optional: 0, 90 or -90, degrees clockwise) overrides the generator's choice between north up and the quarter turn that draws a tall circuit landscape. sectorLines (two points, or null with a sectorsNote) are the S1/S2 and S2/S3 timing lines, each with its source; the generator projects them onto the ring like the start line and emits their distance fractions.",
   "defaults": {
     "toleranceM": 1,
     "maxPoints": 350,
@@ -21,6 +21,18 @@
         "heading": 330,
         "source": "Authored: OSM's raceway=start-finish node (1404684961) sits on the kart track. On the pit straight midway between the Bus Stop chicane and La Source."
       },
+      "sectorLines": [
+        {
+          "lat": 50.432596,
+          "lon": 5.9770816,
+          "source": "FIA WEC Al Kamel timekeeping circuit map, https://files.alkamelcloud.com/wec/results/14_2025/03_SPA%20FRANCORCHAMPS/00_Circuit%20Info/Circuit%20Map.pdf: centerline 7003.9 m, i1 at 2243.5 m from the finish line, placed that fraction of the way round the OSM ring. i => ['End of the Kemmel straight, just before Les Combes (T5), where the map draws i1.', 'Between Stavelot (T14) and T15, where the map draws i2.'][i]"
+        },
+        {
+          "lat": 50.4297114,
+          "lon": 5.9597741,
+          "source": "FIA WEC Al Kamel timekeeping circuit map, https://files.alkamelcloud.com/wec/results/14_2025/03_SPA%20FRANCORCHAMPS/00_Circuit%20Info/Circuit%20Map.pdf: centerline 7003.9 m, i2 at 5112.7 m from the finish line, placed that fraction of the way round the OSM ring. i => ['End of the Kemmel straight, just before Les Combes (T5), where the map draws i1.', 'Between Stavelot (T14) and T15, where the map draws i2.'][i]"
+        }
+      ],
       "simplify": {}
     },
     {
@@ -37,6 +49,8 @@
         "heading": 305,
         "source": "OSM node 344795876, name=Start-Ziel T13, projected onto w41395670"
       },
+      "sectorLines": null,
+      "sectorsNote": "No published S1/S2/S3 split for the Nordschleife on its own: NLS and the 24h time the combined GP + Nordschleife lap in many short sectors, and the Industriefahrten layout, starting at T13, is not raced. Sectors stay even thirds of the lap.",
       "simplify": {}
     },
     {
@@ -57,6 +71,18 @@
         "heading": 5,
         "source": "Authored: no start/finish node in OSM. Midway along the Rettifilo di partenza, in front of the pits."
       },
+      "sectorLines": [
+        {
+          "lat": 45.630104,
+          "lon": 9.2896807,
+          "source": "FIA WEC Al Kamel timekeeping circuit map, https://files.alkamelcloud.com/wec/results/15_2026/08_AUTODROMO%20NAZIONALE%20DI%20MONZA/00_Event%20Info/Circuit%20Map%20v2.pdf: centerline 5793 m, i1 at 2055 m from the finish line, placed that fraction of the way round the OSM ring. i => 'The finish line is 500 m before this ring\\'s start line (it sits just after the Parabolica, 309 m before the grid; the ring starts in front of the pits), so the distance is counted from there. ' +\n        ['Lands on the straight between Curva Grande and the Roggia, where the map draws i1.', 'Lands on the run from Lesmo 2 to Ascari, 80% of the way down, where the map draws i2.'][i]"
+        },
+        {
+          "lat": 45.6242854,
+          "lon": 9.2884585,
+          "source": "FIA WEC Al Kamel timekeeping circuit map, https://files.alkamelcloud.com/wec/results/15_2026/08_AUTODROMO%20NAZIONALE%20DI%20MONZA/00_Event%20Info/Circuit%20Map%20v2.pdf: centerline 5793 m, i2 at 3727 m from the finish line, placed that fraction of the way round the OSM ring. i => 'The finish line is 500 m before this ring\\'s start line (it sits just after the Parabolica, 309 m before the grid; the ring starts in front of the pits), so the distance is counted from there. ' +\n        ['Lands on the straight between Curva Grande and the Roggia, where the map draws i1.', 'Lands on the run from Lesmo 2 to Ascari, 80% of the way down, where the map draws i2.'][i]"
+        }
+      ],
       "simplify": {}
     },
     {
@@ -73,6 +99,18 @@
         "heading": 212,
         "source": "Authored: no start/finish node in OSM. On the main straight opposite the middle of the pit lane."
       },
+      "sectorLines": [
+        {
+          "lat": 41.5678222,
+          "lon": 2.2536969,
+          "source": "FIA WEC Al Kamel timekeeping circuit map, https://files.alkamelcloud.com/wec/results/15_2026/07_BARCELONA-CATALUNYA/00_Event%20Info/Circuit%20Map%20v1.pdf: centerline 4657 m, i1 at 1627 m from the finish line, placed that fraction of the way round the OSM ring. i => 'The finish line is 100 m before this ring\\'s start line (77 m after pit entry, at the head of the straight), so the distance is counted from there. ' +\n        ['Lands on the run from T3 to T4, where the map draws i1.', 'Lands at the end of the back straight before T10, where the map draws i2.'][i]"
+        },
+        {
+          "lat": 41.5723757,
+          "lon": 2.2610032,
+          "source": "FIA WEC Al Kamel timekeeping circuit map, https://files.alkamelcloud.com/wec/results/15_2026/07_BARCELONA-CATALUNYA/00_Event%20Info/Circuit%20Map%20v1.pdf: centerline 4657 m, i2 at 3395 m from the finish line, placed that fraction of the way round the OSM ring. i => 'The finish line is 100 m before this ring\\'s start line (77 m after pit entry, at the head of the straight), so the distance is counted from there. ' +\n        ['Lands on the run from T3 to T4, where the map draws i1.', 'Lands at the end of the back straight before T10, where the map draws i2.'][i]"
+        }
+      ],
       "simplify": {}
     },
     {
@@ -89,6 +127,18 @@
         "heading": 2,
         "source": "OSM node 3599294865, raceway=start-finish"
       },
+      "sectorLines": [
+        {
+          "lat": 47.9618565,
+          "lon": 0.2212482,
+          "source": "FIA WEC Al Kamel timekeeping circuit map, https://files.alkamelcloud.com/wec/results/15_2026/03_LE%20MANS/00_Event%20Info/Circuit%20Map%20v3.pdf: centerline 13625.70 m, i1 at 1900.70 m from the finish line, placed that fraction of the way round the OSM ring. i => ['Between the Esses and Tertre Rouge.', 'At the Mulsanne corner.'][i] + ' The start line is the OSM start-finish node, which the map puts 145 m after the finish line: 1% of a lap, left as is.'"
+        },
+        {
+          "lat": 47.9140322,
+          "lon": 0.2436084,
+          "source": "FIA WEC Al Kamel timekeeping circuit map, https://files.alkamelcloud.com/wec/results/15_2026/03_LE%20MANS/00_Event%20Info/Circuit%20Map%20v3.pdf: centerline 13625.70 m, i2 at 7672.13 m from the finish line, placed that fraction of the way round the OSM ring. i => ['Between the Esses and Tertre Rouge.', 'At the Mulsanne corner.'][i] + ' The start line is the OSM start-finish node, which the map puts 145 m after the finish line: 1% of a lap, left as is.'"
+        }
+      ],
       "simplify": {}
     },
     {
@@ -105,6 +155,18 @@
         "heading": 179,
         "source": "Authored: no start/finish node in OSM. On the front straight opposite the middle of the pit lane."
       },
+      "sectorLines": [
+        {
+          "lat": 43.791723,
+          "lon": -87.9910493,
+          "source": "IMSA 2025 timing 3-sector map (Al Kamel), https://imsa.results.alkamelcloud.com/Results_NoticeBoard/25_2025/16_Road%20America/03_Timing%203%20Sector%20Map.pdf: S1 31512, S2 154200, S3 70776 in. Intermediate 1 (2626') is S1 from the finish line; placed that fraction of the way round the OSM ring from the start line. The map puts the finish line mid-way down the front straight, where this ring starts."
+        },
+        {
+          "lat": 43.801237,
+          "lon": -87.9997586,
+          "source": "IMSA 2025 timing 3-sector map (Al Kamel), https://imsa.results.alkamelcloud.com/Results_NoticeBoard/25_2025/16_Road%20America/03_Timing%203%20Sector%20Map.pdf: S1 31512, S2 154200, S3 70776 in. Intermediate 2 (15476') is S1 + S2 from the finish line; placed that fraction of the way round the OSM ring from the start line. The map puts the finish line mid-way down the front straight, where this ring starts."
+        }
+      ],
       "simplify": {}
     },
     {
@@ -121,6 +183,18 @@
         "heading": 90,
         "source": "Authored: no start/finish node in OSM. On the front straight opposite the middle of the pit lane."
       },
+      "sectorLines": [
+        {
+          "lat": 27.4522578,
+          "lon": -81.3486489,
+          "source": "IMSA 2025 timing 3-sector map (Al Kamel), https://imsa.results.alkamelcloud.com/Results_NoticeBoard/25_2025/06_Sebring%20International%20Raceway/03_Timing%203%20Sector%20Map.pdf: S1 27269, S2 135977, S3 71217 in. Intermediate 1 (2272' 5\") is S1 from the finish line; placed that fraction of the way round the OSM ring from the start line. The finish line is about 80 m before this ring's start line (the map draws it short of mid-straight), so the distance is counted from there; i1 then lands on the exit of T3 and i2 at T4/T5, as drawn."
+        },
+        {
+          "lat": 27.4501115,
+          "lon": -81.3461665,
+          "source": "IMSA 2025 timing 3-sector map (Al Kamel), https://imsa.results.alkamelcloud.com/Results_NoticeBoard/25_2025/06_Sebring%20International%20Raceway/03_Timing%203%20Sector%20Map.pdf: S1 27269, S2 135977, S3 71217 in. Intermediate 2 (13603' 10\") is S1 + S2 from the finish line; placed that fraction of the way round the OSM ring from the start line. The finish line is about 80 m before this ring's start line (the map draws it short of mid-straight), so the distance is counted from there; i1 then lands on the exit of T3 and i2 at T4/T5, as drawn."
+        }
+      ],
       "simplify": {}
     },
     {
@@ -142,6 +216,18 @@
         "heading": 63,
         "source": "Authored: no start/finish node in OSM. On the front straight opposite the middle of the pit lane."
       },
+      "sectorLines": [
+        {
+          "lat": 36.5681973,
+          "lon": -79.2055397,
+          "source": "IMSA 2025 timing 3-sector map (Al Kamel), https://imsa.results.alkamelcloud.com/Results_NoticeBoard/25_2025/17_VIRginia%20International%20Raceway/03_Timing%203%20Sector%20Map.pdf: S1 38229, S2 83612, S3 85348 in. Intermediate 1 (3185' 9\") is S1 from the finish line; placed that fraction of the way round the OSM ring from the start line. Lands after the T1 loop and just past the bottom hairpin respectively, as the map draws them."
+        },
+        {
+          "lat": 36.5523682,
+          "lon": -79.2054659,
+          "source": "IMSA 2025 timing 3-sector map (Al Kamel), https://imsa.results.alkamelcloud.com/Results_NoticeBoard/25_2025/17_VIRginia%20International%20Raceway/03_Timing%203%20Sector%20Map.pdf: S1 38229, S2 83612, S3 85348 in. Intermediate 2 (10153' 5\") is S1 + S2 from the finish line; placed that fraction of the way round the OSM ring from the start line. Lands after the T1 loop and just past the bottom hairpin respectively, as the map draws them."
+        }
+      ],
       "simplify": {}
     },
     {
@@ -158,6 +244,18 @@
         "heading": 0,
         "source": "OSM node 9166624174, where the road course meets the IMS Start-Finish Line way (the Yard of Bricks)"
       },
+      "sectorLines": [
+        {
+          "lat": 39.7988598,
+          "lon": -86.2350102,
+          "source": "IMSA 2025 timing 3-sector map (Al Kamel), https://imsa.results.alkamelcloud.com/Results_NoticeBoard/25_2025/19_Indianapolis%20Motor%20Speedway/02_Timing%203%20Sector.pdf: S1 53712, S2 53304, S3 47520 in. Intermediate 1 (4476') is S1 from the finish line; placed that fraction of the way round the OSM ring from the start line. The finish line is the Yard of Bricks, where this ring starts."
+        },
+        {
+          "lat": 39.7892363,
+          "lon": -86.2313099,
+          "source": "IMSA 2025 timing 3-sector map (Al Kamel), https://imsa.results.alkamelcloud.com/Results_NoticeBoard/25_2025/19_Indianapolis%20Motor%20Speedway/02_Timing%203%20Sector.pdf: S1 53712, S2 53304, S3 47520 in. Intermediate 2 (8918') is S1 + S2 from the finish line; placed that fraction of the way round the OSM ring from the start line. The finish line is the Yard of Bricks, where this ring starts."
+        }
+      ],
       "simplify": {}
     },
     {
@@ -174,6 +272,18 @@
         "heading": 123,
         "source": "Authored: no start/finish node in OSM. Midway down the front straight between Turn 12 and Turn 1, beside the pit lane."
       },
+      "sectorLines": [
+        {
+          "lat": 34.1460852,
+          "lon": -83.8115885,
+          "source": "IMSA 2025 timing 3-sector map (Al Kamel), https://imsa.results.alkamelcloud.com/Results_NoticeBoard/25_2025/21_Michelin%20Raceway%20Road%20Atlanta/03_Timing%203%20Sector%20Map.pdf: S1 22023, S2 77961, S3 60950 in. Intermediate 1 (1835' 3\") is S1 from the finish line; placed that fraction of the way round the OSM ring from the start line. Lands after T1 and partway up the back straight respectively, as the map draws them."
+        },
+        {
+          "lat": 34.1409081,
+          "lon": -83.8183285,
+          "source": "IMSA 2025 timing 3-sector map (Al Kamel), https://imsa.results.alkamelcloud.com/Results_NoticeBoard/25_2025/21_Michelin%20Raceway%20Road%20Atlanta/03_Timing%203%20Sector%20Map.pdf: S1 22023, S2 77961, S3 60950 in. Intermediate 2 (8332') is S1 + S2 from the finish line; placed that fraction of the way round the OSM ring from the start line. Lands after T1 and partway up the back straight respectively, as the map draws them."
+        }
+      ],
       "simplify": {}
     },
     {
@@ -190,6 +300,18 @@
         "heading": 214,
         "source": "OSM node 8866453726, description=Start/Finish"
       },
+      "sectorLines": [
+        {
+          "lat": 36.5815898,
+          "lon": -121.7539893,
+          "source": "IMSA 2025 timing 3-sector map (Al Kamel), https://imsa.results.alkamelcloud.com/Results_NoticeBoard/25_2025/10_WeatherTech%20Raceway%20Laguna%20Seca/03_Timing%203-Sector%20Map.pdf: S1 54178, S2 57519, S3 30103 in. Intermediate 1 (4514' 10\") is S1 from the finish line; placed that fraction of the way round the OSM ring from the start line. The finish line is the OSM start/finish node, where this ring starts."
+        },
+        {
+          "lat": 36.5868261,
+          "lon": -121.7511299,
+          "source": "IMSA 2025 timing 3-sector map (Al Kamel), https://imsa.results.alkamelcloud.com/Results_NoticeBoard/25_2025/10_WeatherTech%20Raceway%20Laguna%20Seca/03_Timing%203-Sector%20Map.pdf: S1 54178, S2 57519, S3 30103 in. Intermediate 2 (9308' 1\") is S1 + S2 from the finish line; placed that fraction of the way round the OSM ring from the start line. The finish line is the OSM start/finish node, where this ring starts."
+        }
+      ],
       "simplify": {}
     },
     {
@@ -210,6 +332,18 @@
         "heading": 279,
         "source": "OSM node 4438410439, name=Finish Line"
       },
+      "sectorLines": [
+        {
+          "lat": -33.4511397,
+          "lon": 149.548407,
+          "source": "Motorsport Australia circuit diagram 2023.1, https://motorsport.hyundai.com/wp-content/uploads/2023/11/2023.1-Mount-Panorama-Circuit-Diagram-1.pdf (404 since; read from its indexed text): circuit 6213 m, sector 1 loop at 2414 m from the control line, placed that fraction of the way round the OSM ring from the Finish Line node. Between Reid Park and McPhillamy Park. Cross-checked against the 2025 Bathurst 12 Hour three-sector timing (Supercars/NATSOFT, https://www.endurance-info.com/sites/default/files/2025-02/Course.pdf): best sectors 50.2 / 31.0 / 40.6 s fit those splits."
+        },
+        {
+          "lat": -33.4582622,
+          "lon": 149.5569591,
+          "source": "Motorsport Australia circuit diagram 2023.1, https://motorsport.hyundai.com/wp-content/uploads/2023/11/2023.1-Mount-Panorama-Circuit-Diagram-1.pdf (404 since; read from its indexed text): circuit 6213 m, sector 2 loop at 3939 m from the control line, placed that fraction of the way round the OSM ring from the Finish Line node. Just before Forrest's Elbow. Cross-checked against the 2025 Bathurst 12 Hour three-sector timing (Supercars/NATSOFT, https://www.endurance-info.com/sites/default/files/2025-02/Course.pdf): best sectors 50.2 / 31.0 / 40.6 s fit those splits."
+        }
+      ],
       "simplify": {}
     },
     {
@@ -226,6 +360,18 @@
         "heading": 51,
         "source": "Authored: no start/finish node in OSM. On the main straight opposite the middle of the pit lane."
       },
+      "sectorLines": [
+        {
+          "lat": 35.3724501,
+          "lon": 138.9311804,
+          "source": "FIA WEC Al Kamel timekeeping circuit map, https://files.alkamelcloud.com/wec/results/15_2026/06_FUJI%20SPEEDWAY/00_Event%20Info/Circuit%20Map.pdf: centerline 4563 m, i1 at 1305 m from the finish line, placed that fraction of the way round the OSM ring. i => 'The finish line is about 80 m before this ring\\'s start line (the map draws it short of mid-straight, 37 m after pit entry), so the distance is counted from there. ' +\n        ['Lands at the entry to T3, where the map draws i1.', 'Lands on the approach to T10, where the map draws i2.'][i]"
+        },
+        {
+          "lat": 35.3648844,
+          "lon": 138.9243435,
+          "source": "FIA WEC Al Kamel timekeeping circuit map, https://files.alkamelcloud.com/wec/results/15_2026/06_FUJI%20SPEEDWAY/00_Event%20Info/Circuit%20Map.pdf: centerline 4563 m, i2 at 2828 m from the finish line, placed that fraction of the way round the OSM ring. i => 'The finish line is about 80 m before this ring\\'s start line (the map draws it short of mid-straight, 37 m after pit entry), so the distance is counted from there. ' +\n        ['Lands at the entry to T3, where the map draws i1.', 'Lands on the approach to T10, where the map draws i2.'][i]"
+        }
+      ],
       "simplify": {}
     },
     {
@@ -242,6 +388,18 @@
         "heading": 356,
         "source": "Authored: no start/finish node in OSM. On the main straight opposite the middle of the pit lane."
       },
+      "sectorLines": [
+        {
+          "lat": 34.9189341,
+          "lon": 134.2228649,
+          "source": "GT World Challenge Asia track map v1.1 (TSL Timing, 2022), https://www.gt-world-challenge-asia.com/documents/notice/96/Okayama+Track+Map+v1_1.pdf: length 3703 m, I1 at 962 m from the finish line. The finish line is at the pit exit, about 185 m after this ring's start line (mid pit lane), so the distance is counted from there. Lands between T4 and T5, where the map draws I1."
+        },
+        {
+          "lat": 34.9141549,
+          "lon": 134.2200967,
+          "source": "GT World Challenge Asia track map v1.1 (TSL Timing, 2022), https://www.gt-world-challenge-asia.com/documents/notice/96/Okayama+Track+Map+v1_1.pdf: length 3703 m, I2 at 2520 m from the finish line. The finish line is at the pit exit, about 185 m after this ring's start line (mid pit lane), so the distance is counted from there. Lands on the short straight between T9 and T10, where the map draws I2."
+        }
+      ],
       "simplify": {}
     }
   ]

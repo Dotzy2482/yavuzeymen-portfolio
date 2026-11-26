@@ -9,7 +9,7 @@
  * to a zero value rather than throwing in tests.
  */
 
-import type { PathPoint, SectorIndex } from '../data/types';
+import type { PathPoint, SectorIndex, SectorSplits } from '../data/types';
 
 const ORIGIN: PathPoint = { x: 0, y: 0, angle: 0 };
 
@@ -71,9 +71,24 @@ export function getTrailDash(
   return { dasharray: `${segment} ${totalLength}`, dashoffset: segment - distance };
 }
 
-/** Fill ratio (0–1) of one sector bar at a given lap fraction. */
-export function getSectorFill(progress: number, sector: SectorIndex): number {
-  return Math.min(1, Math.max(0, (progress - sector / 3) * 3));
+/** Even thirds — what a circuit with no published timing split falls back to. */
+export const EVEN_SECTORS: SectorSplits = [1 / 3, 2 / 3];
+
+/**
+ * Fill ratio (0–1) of one sector bar at a fraction of the lap's distance.
+ * `splits` are where S2 and S3 begin (the circuit's real timing lines), so a
+ * long sector fills more slowly than a short one, as it would on a real lap.
+ */
+export function getSectorFill(
+  progress: number,
+  sector: SectorIndex,
+  splits: SectorSplits = EVEN_SECTORS,
+): number {
+  const bounds = [0, splits[0], splits[1], 1];
+  const start = bounds[sector];
+  const length = bounds[sector + 1] - start;
+  if (!(length > 0)) return progress >= start ? 1 : 0;
+  return Math.min(1, Math.max(0, (progress - start) / length));
 }
 
 /** Wraps a progress value into the 0–1 range (2.25 → 0.25, -0.1 → 0.9). */

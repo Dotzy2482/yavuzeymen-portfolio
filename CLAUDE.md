@@ -85,7 +85,7 @@ it. Either keep the ref in the component that renders the node, or use the
   circuit outlines are generated from OpenStreetMap by
   `docs/assets/generate-track-paths.mjs`, out of two committed inputs:
   `docs/assets/circuits.json` (hand-authored — pinned OSM ids, start lines,
-  exclusions) and `docs/assets/circuit-rings.json` (the pinned ways as fetched;
+  sector timing lines with their sources, exclusions) and `docs/assets/circuit-rings.json` (the pinned ways as fetched;
   never edit it). To fix a circuit, edit `circuits.json` and regenerate:
 
   ```bash

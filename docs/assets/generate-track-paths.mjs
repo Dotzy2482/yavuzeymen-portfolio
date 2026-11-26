@@ -103,10 +103,14 @@
  * so: the generated file's header, docs/TRACK_RECORDS.md and the Track Records
  * panel itself all carry the credit.
  *
- * Future sector splits are the same mechanism as the start line: add
- * `sectorLines: [{ lat, lon, source }, …]` beside `startLine` in circuits.json,
- * project each onto the ring the way step 6 projects the start line, and emit
- * the resulting fractions. Nothing here needs restructuring for it.
+ * SECTORS. The S1/S2 and S2/S3 timing lines are the start line's mechanism
+ * again: `sectorLines: [{ lat, lon, source }, …]` beside `startLine` in
+ * circuits.json. Each is projected onto the raw ring (and must lie within 30 m
+ * of it), then onto the emitted polyline near that position, and the fraction
+ * of the path's length is emitted as `sectors`. A circuit with no published
+ * split sets `sectorLines: null` and says why in `sectorsNote`; it gets even
+ * thirds. Sectors must run in order, none under 5% of the lap, and the S2/S3
+ * ticks and labels TrackMap draws must not be clipped.
  */
 
 import { readFile, writeFile } from 'node:fs/promises';
@@ -174,6 +178,91 @@ function startMarkerCorners([x0, y0], [x1, y1]) {
   corners.push([side.x, side.y], [side.x + dx, side.y], [side.x, side.y + dy]);
   corners.push([side.x + dx, side.y + dy]);
   return corners;
+}
+
+/**
+ * The sector ticks TrackMap draws where S2 and S3 begin — mirrors
+ * src/features/track-records/lib/sectorLines.ts, which places them at runtime.
+ * A 5×24 tick across the track and a mono label 18 to one side of it (22
+ * units below md, 16 above; the check uses the larger),
+ * growing away from the track. Of the two sides, the one that keeps the label
+ * on the canvas, then the one whose label sits further from any other part of
+ * the lap.
+ */
+const SECTOR_TICK = { halfWidth: 2.5, halfLength: 12 };
+const SECTOR_LABEL = { aside: 18, width: 2 * 0.7 * 22, height: 0.8 * 22 };
+const SECTOR_NAMES = ['S2', 'S3'];
+/** A sector line is matched to the path only within this fraction of the raw ring's. */
+const SECTOR_HINT_WINDOW = 0.03;
+/** No sector may be shorter than this fraction of the lap. */
+const MIN_SECTOR = 0.05;
+
+/** Point and direction of travel at a fraction of a closed polyline's length. */
+function pointAtFraction(points, fraction) {
+  const segments = points.map((p, i) => {
+    const q = points[(i + 1) % points.length];
+    return { p, q, length: Math.hypot(q[0] - p[0], q[1] - p[1]) };
+  });
+  const total = segments.reduce((sum, s) => sum + s.length, 0);
+  let remaining = fraction * total;
+  for (const s of segments) {
+    if (s.length === 0) continue;
+    if (remaining <= s.length || s === segments[segments.length - 1]) {
+      const t = Math.min(1, remaining / s.length);
+      return {
+        x: s.p[0] + t * (s.q[0] - s.p[0]),
+        y: s.p[1] + t * (s.q[1] - s.p[1]),
+        angle: Math.atan2(s.q[1] - s.p[1], s.q[0] - s.p[0]),
+      };
+    }
+    remaining -= s.length;
+  }
+  return { x: points[0][0], y: points[0][1], angle: 0 };
+}
+
+function distanceToPolyline(points, point) {
+  let best = Infinity;
+  points.forEach((p, i) => {
+    best = Math.min(best, projectOntoSegment(point, p, points[(i + 1) % points.length]).distance);
+  });
+  return best;
+}
+
+/** Placement of each sector tick and label, in absolute viewBox units. */
+function sectorMarkers(points, sectors) {
+  return sectors.map((fraction, i) => {
+    const { x, y, angle } = pointAtFraction(points, fraction);
+    const ahead = [Math.cos(angle), Math.sin(angle)];
+    const across = [ahead[1], -ahead[0]];
+    const tick = [];
+    for (const a of [-SECTOR_TICK.halfWidth, SECTOR_TICK.halfWidth]) {
+      for (const l of [-SECTOR_TICK.halfLength, SECTOR_TICK.halfLength]) {
+        tick.push([x + a * ahead[0] + l * across[0], y + a * ahead[1] + l * across[1]]);
+      }
+    }
+    const candidates = [across, [-across[0], -across[1]]].map((normal) => {
+      const ax = x + SECTOR_LABEL.aside * normal[0];
+      const ay = y + SECTOR_LABEL.aside * normal[1];
+      const dx = normal[0] >= -1e-9 ? SECTOR_LABEL.width : -SECTOR_LABEL.width;
+      const dy = normal[1] <= 1e-9 ? -SECTOR_LABEL.height : SECTOR_LABEL.height;
+      const box = [...tick, [ax, ay], [ax + dx, ay], [ax, ay + dy], [ax + dx, ay + dy]];
+      const clipped = box.some(
+        ([bx, by]) => bx < 0 || bx > VIEW.width || by < 0 || by > VIEW.height,
+      );
+      const clearance = distanceToPolyline(points, [ax + dx / 2, ay + dy / 2]);
+      return { box, clipped, clearance };
+    });
+    const [first, second] = candidates;
+    const side =
+      first.clipped !== second.clipped
+        ? first.clipped
+          ? second
+          : first
+        : second.clearance > first.clearance + 1e-6
+          ? second
+          : first;
+    return { label: SECTOR_NAMES[i], x, y, box: side.box };
+  });
 }
 
 /** The Web Mercator sphere (EPSG:3857 uses the WGS84 semi-major axis). */
@@ -616,6 +705,36 @@ export function generateCircuit(circuit, cached, defaults) {
 
   selfCheck(circuit.id, path, points);
 
+  // Sector lines: projected onto the raw ring first (true metres, which also
+  // catches a coordinate that is nowhere near the track), then onto the
+  // emitted polyline, so the fraction is of the very path getTotalLength()
+  // measures at runtime.
+  const toView = (lonlatPoint) => {
+    const [[x, y]] = turnPoints([mercator(...lonlatPoint).map((v) => v * scale)], turn);
+    return [offsetX + (x - minX) * fit, offsetY + (maxY - y) * fit];
+  };
+  const viewPoints = points.map((p) => p.map(Number));
+  const sectorLines = circuit.sectorLines ?? null;
+  if (sectorLines === null && typeof circuit.sectorsNote !== 'string') {
+    fail(`${circuit.id}: sectorLines is null, so sectorsNote must say why sectors stay thirds`);
+  }
+  const sectors =
+    sectorLines === null
+      ? [1 / 3, 2 / 3]
+      : sectorLines.map((line, i) => {
+          if (typeof line.source !== 'string' || line.source.length < 20) {
+            fail(`${circuit.id}: sector line ${i + 1} needs a source`);
+          }
+          const hint = projectOntoRing(
+            circuit,
+            rotated,
+            [line.lon, line.lat],
+            `sector line ${i + 1}`,
+          );
+          return projectOntoPolyline(viewPoints, toView([line.lon, line.lat]), hint / measured);
+        });
+  checkSectors(circuit.id, sectors, viewPoints);
+
   return {
     id: circuit.id,
     path,
@@ -629,7 +748,74 @@ export function generateCircuit(circuit, cached, defaults) {
     decisions,
     log,
     startOffset,
+    sectors: sectors.map((f) => Math.round(f * 1e4) / 1e4),
+    thirds: sectorLines === null,
+    ring: rotated,
   };
+}
+
+/** Distance in metres round the raw ring, from the start line, of `lonlat` projected onto it. */
+function projectOntoRing(circuit, ring, lonlat, what) {
+  const target = mercator(...lonlat);
+  let travelled = 0;
+  let best = null;
+  for (let i = 0; i < ring.length; i++) {
+    const a = ring[i];
+    const b = ring[(i + 1) % ring.length];
+    const hit = projectOntoSegment(target, mercator(...a), mercator(...b));
+    const length = haversine(a, b);
+    if (!best || hit.distance < best.distance) {
+      best = { distance: hit.distance, along: travelled + hit.t * length };
+    }
+    travelled += length;
+  }
+  const offset = best.distance * Math.cos((lonlat[1] * Math.PI) / 180);
+  if (offset > START_LINE_MAX_OFFSET_M) {
+    fail(`${circuit.id}: ${what} is ${offset.toFixed(0)} m from the ring — wrong coordinate`);
+  }
+  return best.along;
+}
+
+/**
+ * Fraction of the closed polyline's length at which `point` projects onto it,
+ * searching only near `hint` (the raw ring's fraction) so a parallel straight
+ * elsewhere on the lap cannot capture the line.
+ */
+function projectOntoPolyline(points, point, hint) {
+  const lengths = points.map((p, i) => {
+    const q = points[(i + 1) % points.length];
+    return Math.hypot(q[0] - p[0], q[1] - p[1]);
+  });
+  const total = lengths.reduce((sum, l) => sum + l, 0);
+  let travelled = 0;
+  let best = null;
+  points.forEach((p, i) => {
+    const start = travelled / total;
+    travelled += lengths[i];
+    if (travelled / total < hint - SECTOR_HINT_WINDOW || start > hint + SECTOR_HINT_WINDOW) return;
+    const hit = projectOntoSegment(point, p, points[(i + 1) % points.length]);
+    if (!best || hit.distance < best.distance) {
+      best = { distance: hit.distance, fraction: start + (hit.t * lengths[i]) / total };
+    }
+  });
+  return best.fraction;
+}
+
+/** Every sector at least MIN_SECTOR of the lap, in order, and every tick and label on the canvas. */
+function checkSectors(id, sectors, points) {
+  const [s1, s2] = sectors;
+  if (!(s1 >= MIN_SECTOR && s2 - s1 >= MIN_SECTOR && 1 - s2 >= MIN_SECTOR)) {
+    fail(
+      `${id}: sector fractions ${sectors.map((f) => f.toFixed(3)).join(', ')} are out of order or a sector is under ${MIN_SECTOR * 100}% of the lap`,
+    );
+  }
+  for (const marker of sectorMarkers(points, sectors)) {
+    if (marker.box.some(([x, y]) => x < 0 || x > VIEW.width || y < 0 || y > VIEW.height)) {
+      fail(
+        `${id}: the ${marker.label} tick or label at (${marker.x.toFixed(1)}, ${marker.y.toFixed(1)}) would be clipped`,
+      );
+    }
+  }
 }
 
 /**
@@ -705,9 +891,12 @@ async function render(results, cache) {
   const rows = results.map(
     (r) =>
       ` * | ${r.id}  | ${String(r.points).padStart(6)} | ${r.tolerance.toFixed(2).padStart(7)} m ` +
-      `| ${(r.measured / 1000).toFixed(3)} km | ${describeTurn(r.turn).padEnd(8)} |`,
+      `| ${(r.measured / 1000).toFixed(3)} km | ${describeTurn(r.turn).padEnd(8)} ` +
+      `| ${r.thirds ? 'thirds' : 'timing'} |`,
   );
-  const entries = results.map((r) => `  ${r.id}: { path: '${r.path}' },`);
+  const entries = results.map(
+    (r) => `  ${r.id}: { path: '${r.path}', sectors: [${r.sectors.join(', ')}] },`,
+  );
 
   const source = `/**
  * Circuit outlines — GENERATED, do not edit. Regenerate with:
@@ -727,11 +916,16 @@ async function render(results, cache) {
  * start/finish line — getPointAtLength(0) is the line itself. A circuit is
  * drawn north up unless a quarter turn lets it lie landscape (Turn column).
  *
+ * \`sectors\` are the fractions of the path's length at which S2 and S3 begin:
+ * the circuit's timing lines, pinned with their sources as sectorLines in
+ * circuits.json and projected onto the path. "thirds" in the Sectors column
+ * marks a circuit with no published split, which keeps even thirds.
+ *
  * Final RDP tolerance per circuit, in metres, so the output is reproducible
  * from the committed inputs alone:
  *
- * | Id   | Points | Tolerance | Measured | Turn     |
- * | ---- | ------ | --------- | -------- | -------- |
+ * | Id   | Points | Tolerance | Measured | Turn     | Sectors |
+ * | ---- | ------ | --------- | -------- | -------- | ------- |
 ${rows.join('\n')}
  */
 
@@ -986,7 +1180,8 @@ async function main() {
     console.log(
       ` ${r.id}  ${String(r.points).padStart(6)}  ${r.tolerance.toFixed(2).padStart(7)} m  ` +
         `${(r.measured / 1000).toFixed(3)} km  ${authored ? (authored / 1000).toFixed(3) : '    ?'} km  ` +
-        `${r.startOffset.toFixed(1).padStart(5)} m            ${describeTurn(r.turn)}`,
+        `${r.startOffset.toFixed(1).padStart(5)} m            ${describeTurn(r.turn).padEnd(9)} ` +
+        `${r.sectors.join(' ')}${r.thirds ? ' (thirds)' : ''}`,
     );
   }
   for (const warning of warnings) console.warn(`warning: ${warning}`);

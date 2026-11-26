@@ -249,10 +249,6 @@ No plan unblocks these — each is waiting on a person or a file.
   takes 12 s on screen, so a long lap reads no longer than a short one. It
   changes the timing invariant [TRACK_RECORDS.md](TRACK_RECORDS.md) is built
   around, so it is its own change with its own doc update.
-- **Real sector splits.** The bars are even thirds of path length. The
-  mechanism is the start line's — pin two more coordinates beside `startLine`
-  in `docs/assets/circuits.json` and emit their fractions — but it changes
-  `getSectorFill` and the unit tests that hardcode thirds.
 - **Analytics**, if it is ever wanted — privacy-preserving and cookieless, or
   not at all.
 - **A lighter social card.** `og-image.png` is ~280 KB straight out of headless

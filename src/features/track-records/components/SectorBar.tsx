@@ -1,9 +1,9 @@
 /**
  * S1 / S2 / S3 progress bars.
  *
- * The sectors are even thirds of the lap, not real timing-loop splits — the
- * handoff has no sector data, and the design draws them as thirds. Each
- * fill's width is written by the animation loop.
+ * Each bar spans one of the circuit's real timing sectors (`track.sectors`;
+ * even thirds only where no split is published), and fills as the marker
+ * drives through it. Each fill's width is written by the animation loop.
  */
 
 import { cn } from '@/lib/cn';
