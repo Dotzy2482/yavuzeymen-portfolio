@@ -121,17 +121,20 @@ Module-level constants, also in `types.ts`:
 The two are related by exactly one line, in `useLapAnimation`:
 
 ```ts
-// The marker advances on screen time… (wrapping one frame late — see below)
+// The lap clock advances on screen time… (wrapping one frame late — see below)
 const lapSoFar = fraction.current >= 1 ? fraction.current - 1 : fraction.current;
 fraction.current = lapSoFar + (delta * speed) / LAP_DURATION_MS;
 const progress = Math.min(1, fraction.current);
 
-// …while the chronometer scales the real lap time by the marker's position.
+// …the marker goes where the circuit's speed profile puts it at that time…
+const lapDistance = distanceAtTime(speedProfileFor(track.path, track.length), progress);
+
+// …and the chronometer scales the real lap time by the clock.
 chrono.textContent = formatLapTime(progress * parseLapTime(track.lap));
 ```
 
-So the displayed time is `progress × lapMs`. At `progress = 1` the marker is
-back on the line and the chronometer reads the personal best, to the
+So the displayed time is `progress × lapMs`. At `progress = 1` the profile puts
+the marker back on the line and the chronometer reads the personal best, to the
 millisecond — no matter how long the real lap actually is.
 
 **The wrap is one frame late on purpose.** It used to be a plain `% 1`, which
@@ -148,6 +151,38 @@ lap can run to eight minutes. Nobody watches a dot crawl for eight minutes. If
 the marker moved in real time the section would be unwatchable; if the
 chronometer ran at screen speed it would show a number that is simply false.
 Decoupling them keeps the animation watchable **and** the number true.
+
+### The marker brakes for corners
+
+The clock runs evenly, but the car does not. `lib/speedProfile.ts` gives each
+circuit a speed profile built from its own outline:
+
+1. It resamples the polyline every 4 m, scaled by the published length.
+2. It measures how hard the outline turns over a short window.
+3. It caps each corner at the speed its radius allows.
+4. It runs a forward pass for acceleration and a backward pass for braking,
+   twice round the closed lap so the start line is no seam.
+
+Integrating length over speed gives a time-to-distance map, and
+`distanceAtTime` reads it every frame.
+
+So the marker brakes into a hairpin, rolls through it and accelerates out.
+Because braking and traction limit how fast speed can change, it never jumps.
+Both ends of the map are pinned: no time means no distance, and a whole lap
+covers the whole circuit. So the critical rule above is untouched, and the
+chronometer still lands on `track.lap` at the line. In between, the clock and
+the marker now agree roughly as they would on a real lap, which they never did
+at an even pace.
+
+The constants are a loose GT3: about 1.7 g of cornering, 1.4 g of braking,
+power-limited acceleration, 275 km/h. They were tuned against the lap times in
+`tracks.ts`, which are placeholders but plausible. All twelve modelled laps
+come within 6% of them (the Nürburgring to a tenth), and the slowest corners
+come out at 65–96 km/h. `speedProfile.test.ts` holds every lap within 15%.
+That catches a typo in a constant but leaves room for real personal bests.
+
+The sector bars follow the marker, not the clock. They are thirds of the
+circuit's length, so a sector full of slow corners now fills slowly.
 
 **If you change this**, keep the invariant: _the chronometer must read exactly
 `track.lap` at the moment the marker crosses the line._ The round-trip test in
@@ -171,6 +206,7 @@ simply hardcoded one global value, so that is what shipped.
  <path data-lap="base">                     rendered once per selection
         │
         │ getTotalLength()                  measured once per path, cached
+        │ distanceAtTime(profile, fraction) speed profile, built once per path
         │ getPointAtLength(distance)        called once per frame
         ▼
  useRafLoop  ──►  direct DOM writes         never React state
@@ -179,7 +215,7 @@ simply hardcoded one global value, so that is what shipped.
         ├─ trail path      dasharray + dashoffset, pinned to the marker
         ├─ car marker      transform="translate(x,y)"
         ├─ replay clock    textContent = formatLapTime(fraction × lapMs)
-        ├─ sector bars ×3  style.width = fill%
+        ├─ sector bars ×3  style.width = fill% of distance, not time
         └─ driver plate    transform, in panel pixels, with edge flip
 ```
 
