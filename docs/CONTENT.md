@@ -23,8 +23,7 @@ layout or a crash.
 | `data/contentStats.ts`      | 146.848 views / 797.000 top reel / %82,3 reels       | **Placeholder**     | Instagram insights export                                            |
 | `data/contentStats.ts`      | Five reel cards (captions + covers)                  | **Placeholder**     | Real reel thumbnails + real captions                                 |
 | `data/setup.ts`             | Logitech G29, Moza SRP load-cell pedals              | **Real**            | Yavuz, November 2026 — the two rows he asked for                     |
-| `data/simToReal.ts`         | Five photos + labels                                 | **Real** (low-res)  | Photos supplied; see assets below                                    |
-| `data/simToReal.ts`         | `karting` — `src: null`                              | **Placeholder**     | Karting photo, renders as a dashed empty slot                        |
+| `data/simToReal.ts`         | Six photos, karting included                         | **Real**            | Originals supplied November 2026; see assets below                   |
 | `features/…/data/tracks.ts` | 14 circuit names + regions                           | **Real**            | Every circuit he has an iRacing lap at                               |
 | `features/…/data/tracks.ts` | Lengths, corner counts                               | **Real**            | Published figures; every length agrees with the OSM geometry to 2.6% |
 | `features/…/data/tracks.ts` | Lap times + car                                      | **Real** (snapshot) | iRacing profile, November 2026 — see TRACK_RECORDS.md                |
@@ -65,7 +64,7 @@ illustrative until refreshed from the account.
 **Photographer** — the Sim to Real gallery and the studio portraits. The
 supplied files are low-resolution working copies (see below); the brief is that
 hi-res versions replace them **at identical crops**, so no layout changes are
-needed. The karting slot is waiting on a shoot that has not happened.
+needed. The November 2026 delivery covered the gallery, karting included.
 
 **Yavuz directly** — the Setup list. Filled in November 2026 with the two rows
 he wanted (wheel and base, pedals); the rig, display and PC rows the handoff
@@ -85,17 +84,18 @@ the original's path, so a browser takes the AVIF, falls back to the WebP, and
 only fetches the original if it takes neither. The table lists the original
 and the AVIF, which is what a current browser actually downloads.
 
-| File                          | Dimensions    | Original | AVIF  | Used by                       | Note                                                                 |
-| ----------------------------- | ------------- | -------- | ----- | ----------------------------- | -------------------------------------------------------------------- |
-| `hero/portrait-cutout.png`    | 1323 × 1189   | 1.16 MB  | 75 KB | Hero                          | Background removed. Must stay the same crop as `portrait-helmet.png` |
-| `hero/portrait-helmet.png`    | 1323 × 1189   | 1.13 MB  | 78 KB | Hero                          | The same frame with the helmet on — the layer the cursor reveals     |
-| `portraits/studio-seated.jpg` | 1023 × 1537   | 99 KB    | 57 KB | About, reel card              | Adequate                                                             |
-| `simtoreal/paddock.jpg`       | **348 × 407** | 82 KB    | 19 KB | Sim to Real, reel card        | **Too low-res** — visibly soft at display size                       |
-| `simtoreal/pit-pass.jpg`      | 1200 × 1600   | 165 KB   | 67 KB | Sim to Real, reel card        | Adequate                                                             |
-| `simtoreal/fiat-egea.jpg`     | 1600 × 1066   | 224 KB   | 94 KB | Sim to Real                   | Adequate                                                             |
-| `simtoreal/fiat-front.png`    | **828 × 788** | 1.18 MB  | 48 KB | Sim to Real, centre reel card | Low-res, and a photograph stored as PNG                              |
-| `simtoreal/rig.png`           | **433 × 545** | 425 KB   | 23 KB | Sim to Real, Setup, reel card | **Too low-res** — shown large in Setup                               |
-| `partners/tch.png`            | 256 × 75      | 20 KB    | 6 KB  | Partners                      |                                                                      |
+| File                          | Dimensions  | Original | AVIF   | Used by                       | Note                                                                  |
+| ----------------------------- | ----------- | -------- | ------ | ----------------------------- | --------------------------------------------------------------------- |
+| `hero/portrait-cutout.png`    | 1323 × 1189 | 1.16 MB  | 75 KB  | Hero                          | Background removed. Must stay the same crop as `portrait-helmet.png`  |
+| `hero/portrait-helmet.png`    | 1323 × 1189 | 1.13 MB  | 78 KB  | Hero                          | The same frame with the helmet on — the layer the cursor reveals      |
+| `portraits/studio-seated.jpg` | 1023 × 1537 | 99 KB    | 57 KB  | About, reel card              | Adequate                                                              |
+| `simtoreal/paddock.jpg`       | 1600 × 2000 | 230 KB   | —      | Sim to Real, reel card        | Yavuz in the TOSFED paddock, cut from pro shot `rv__9891`             |
+| `simtoreal/pit-pass.jpg`      | 1500 × 2000 | —        | —      | Sim to Real, reel card        | Full frame of phone photo `IMG_7297` (was a 1200 × 1600 crop)         |
+| `simtoreal/fiat-egea.jpg`     | 2400 × 1601 | 367 KB   | —      | Sim to Real                   | Pro shot `rv__0183`, re-exported at 2400 wide                         |
+| `simtoreal/fiat-race.jpg`     | 2400 × 1601 | 395 KB   | —      | Sim to Real, centre reel card | Pro action shot `rv__0653`; replaced a broadcast screenshot           |
+| `simtoreal/rig.jpg`           | 1600 × 2000 | 284 KB   | 136 KB | Sim to Real, Setup, reel card | Phone photo `IMG_7245`, the frame the old 433 × 545 rig.png came from |
+| `simtoreal/karting.jpg`       | 1600 × 2000 | 312 KB   | —      | Sim to Real                   | Phone photo `IMG_9751` (HEIC), fills the old empty slot               |
+| `partners/tch.png`            | 256 × 75    | 20 KB    | 6 KB   | Partners                      |                                                                       |
 
 What a browser that takes AVIF downloads for the whole page went from 4.50 MB
 to 484 KB when the encodes landed in [03](plans/03-weight-and-wiring.md); the
@@ -145,19 +145,15 @@ nav. Change the favicon, the component and the touch icon together.
 
 ### Resolution notes
 
-Three files are below the resolution their display size needs — `rig.png`
-(433 × 545, shown up to 440px tall in the gallery and full column width in
-Setup), `paddock.jpg` (348 × 407), and `fiat-front.png` (828 × 788, and the
-centre card of the Content fan). They look soft on any reasonably dense display.
-The handoff flagged these as low-res placeholders with hi-res versions to
-follow.
-
-`fiat-front.png` and the two portraits are still the largest files in the
-repository at ~1.2 MB each, but no current browser fetches them: their AVIFs
-are 48–78 KB. The portraits are PNG legitimately, for their alpha. The FIAT
-shot is a photograph stored as PNG for no reason; its replacement can be a
-JPEG, which means updating the path in `data/simToReal.ts` and
-`data/contentStats.ts`.
+In November 2026 Yavuz supplied the originals, and the three files that were
+below the resolution their display size needs — `rig.png` (433 × 545),
+`paddock.jpg` (348 × 407) and `fiat-front.png` (828 × 788, a broadcast
+screenshot stored as PNG) — were replaced: the rig at full resolution from the
+phone photo it had been cut from, the paddock with Yavuz's own portrait from
+the professional set, the race crop with a professional action shot. The
+karting slot was filled from the same delivery. A few phone photos (rig,
+karting, pit pass) and the About portrait may still be upscaled; the prompts
+for that live with the originals, not in the repo.
 
 **When hi-res versions arrive:** keep the same filenames and the same crops,
 then run `pnpm images`. That step is not optional: the old encodes beside the

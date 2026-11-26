@@ -56,11 +56,11 @@ export interface ReelCard {
  */
 export const reelCards: ReelCard[] = [
   { id: 'paddock', caption: 'REEL — PADDOCK', src: '/images/simtoreal/paddock.jpg' },
-  { id: 'rig', caption: 'REEL — RIG SETUP', src: '/images/simtoreal/rig.png' },
+  { id: 'rig', caption: 'REEL — RIG SETUP', src: '/images/simtoreal/rig.jpg' },
   {
     id: 'fiat',
     caption: 'REEL — FIAT EGEA',
-    src: '/images/simtoreal/fiat-front.png',
+    src: '/images/simtoreal/fiat-race.jpg',
     stat: '797K',
   },
   { id: 'bts', caption: 'REEL — BEHIND THE SCENES', src: '/images/portraits/studio-seated.jpg' },

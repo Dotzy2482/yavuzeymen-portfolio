@@ -1,6 +1,12 @@
 /**
  * The Sim to Real gallery, ordered sim → real: rig, TOSFED paddock, pit pass,
- * FIAT Egea, race crop, and the empty karting slot (photo to come).
+ * FIAT Egea, the Egea racing, and karting.
+ *
+ * November 2026: the low-resolution working copies were replaced from the
+ * originals Yavuz supplied — the rig and the Egea at full resolution from the
+ * shots they had been cut from, the paddock as his own portrait in the TOSFED
+ * paddock, the race crop as a professional action shot instead of a phone
+ * screenshot of a broadcast, and the karting slot finally filled.
  *
  * From `md` up the photos sit in a grid that reads left to right, top to
  * bottom (see SimToReal): two columns on a tablet, then twelve tracks from
@@ -40,10 +46,10 @@ export const simToRealItems: SimToRealItem[] = [
     id: 'simulator',
     label: 'SIMULATOR',
     accent: true,
-    src: '/images/simtoreal/rig.png',
-    intrinsicWidth: 433,
-    intrinsicHeight: 545,
-    alt: 'Sim rig',
+    src: '/images/simtoreal/rig.jpg',
+    intrinsicWidth: 1600,
+    intrinsicHeight: 2000,
+    alt: 'Yavuz Eymen, FIAT standındaki simülatörde',
     cell: 'lg:col-span-4',
     frame: 'aspect-[4/5] lg:aspect-auto lg:h-[clamp(340px,30vw,480px)]',
   },
@@ -52,9 +58,9 @@ export const simToRealItems: SimToRealItem[] = [
     label: 'TOSFED — PADDOCK',
     accent: false,
     src: '/images/simtoreal/paddock.jpg',
-    intrinsicWidth: 348,
-    intrinsicHeight: 407,
-    alt: 'TOSFED paddock',
+    intrinsicWidth: 1600,
+    intrinsicHeight: 2000,
+    alt: 'Yavuz Eymen, TOSFED akreditasyonuyla padokta',
     cell: 'lg:col-span-4',
     frame: 'aspect-[4/5] lg:aspect-auto lg:h-[clamp(340px,30vw,480px)]',
   },
@@ -75,8 +81,8 @@ export const simToRealItems: SimToRealItem[] = [
     label: 'FIAT EGEA',
     accent: false,
     src: '/images/simtoreal/fiat-egea.jpg',
-    intrinsicWidth: 1600,
-    intrinsicHeight: 1066,
+    intrinsicWidth: 2400,
+    intrinsicHeight: 1601,
     alt: 'FIAT Egea',
     cell: 'lg:col-span-6',
     frame: 'aspect-[4/5] lg:aspect-auto lg:h-[clamp(280px,24vw,400px)]',
@@ -86,21 +92,22 @@ export const simToRealItems: SimToRealItem[] = [
     id: 'fiat-race',
     label: 'FIAT EGEA — RACE',
     accent: false,
-    src: '/images/simtoreal/fiat-front.png',
-    intrinsicWidth: 828,
-    intrinsicHeight: 788,
-    alt: 'FIAT Egea yarış',
+    src: '/images/simtoreal/fiat-race.jpg',
+    intrinsicWidth: 2400,
+    intrinsicHeight: 1601,
+    alt: 'FIAT Egea yarış aracı pistte, virajdan toz kaldırarak çıkıyor',
     cell: 'lg:col-span-3',
     frame: 'aspect-[4/5] lg:aspect-auto lg:h-[clamp(280px,24vw,400px)]',
+    focus: '56% 60%',
   },
   {
     id: 'karting',
     label: 'KARTING',
     accent: false,
-    src: null,
-    intrinsicWidth: null,
-    intrinsicHeight: null,
-    alt: 'Karting fotoğrafı yakında',
+    src: '/images/simtoreal/karting.jpg',
+    intrinsicWidth: 1600,
+    intrinsicHeight: 2000,
+    alt: 'Yavuz Eymen, yarış tulumuyla 37 numaralı kartının yanında',
     cell: 'lg:col-span-3',
     frame: 'aspect-[4/5] lg:aspect-auto lg:h-[clamp(280px,24vw,400px)]',
   },

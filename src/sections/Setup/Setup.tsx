@@ -91,11 +91,11 @@ export function Setup({ id = 'setup', className }: SectionProps) {
       <div className="mt-7 grid items-start gap-7 md:mt-[72px] md:grid-cols-[1.2fr_1fr] md:items-center md:gap-10 lg:gap-20">
         <SpecList />
         <Picture
-          src="/images/simtoreal/rig.png"
-          alt="Sim rig"
+          src="/images/simtoreal/rig.jpg"
+          alt="Yavuz Eymen, FIAT standındaki simülatörde"
           loading="lazy"
-          width={433}
-          height={545}
+          width={1600}
+          height={2000}
           className="border-hairline block h-auto w-full border"
         />
       </div>
