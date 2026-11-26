@@ -1,24 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="250 250 1500 1500" role="img" aria-label="Yavuz Eymen">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="108 200 1600 1600" role="img" aria-label="Yavuz Eymen">
   <!--
     Yavuz's YE monogram on the page ground — the same three polygons as
-    src/components/ui/LogoMark.tsx, in the supplied artwork's 2000 × 2000
-    coordinates. Change both together.
+    src/components/ui/LogoMark.tsx. Change both together.
 
     The colours are literals because a favicon is a standalone document: it
-    cannot see the page's CSS. They mirror --bg (#0a0b0d), --brand-navy
-    (#121a49) and --brand-purple (#7d36fe) in styles/tokens.css.
+    cannot see the page's CSS. They mirror the bg (#0a0b0d), brand-navy
+    (#1b2175) and brand-purple (#952cff) tokens in styles/tokens.css. (No
+    double hyphens in this comment: XML forbids them, and a favicon is parsed
+    as XML, so one would break the icon.)
 
     public/apple-touch-icon.png is rasterised from this file by
     docs/assets/generate-og-images.mjs.
   -->
-  <rect x="250" y="250" width="1500" height="1500" rx="270" fill="#0a0b0d" />
-  <polygon
-    fill="#121a49"
-    points="1158,578 1647,721 1635,767 1233,767 1117,1232 1557,1232 1510,1421 441,1421 520,1104 319,578 561,578 677,887 911,578"
-  />
-  <polygon
-    fill="#7d36fe"
-    points="1158,578 1680,578 1646,721 1181,721 905,1080 819,1421 673,1421 751,1101"
-  />
-  <polygon fill="#7d36fe" points="1091,908 1564,908 1523,1080 957,1080" />
+  <rect x="108" y="200" width="1600" height="1600" rx="290" fill="#0a0b0d" />
+  <polygon fill="#1b2175" points="1055,578 1600,721 1600,767 1176,767 1176,1232 1600,1232 1600,1421 545,1421 545,1104 216,578 458,578 649,887 808,578" />
+  <polygon fill="#952cff" points="1055,578 1600,578 1600,721 1113,721 924,1080 924,1421 776,1421 776,1101" />
+  <polygon fill="#952cff" points="1068,908 1545,908 1545,1080 977,1080" />
 </svg>
