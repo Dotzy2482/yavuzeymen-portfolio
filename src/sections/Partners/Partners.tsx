@@ -1,7 +1,8 @@
 /**
  * 08 — PARTNERS: hairline-bordered logo wall.
  *
- * Every logo is forced pure white (`brightness-0 invert`); the two dashed
+ * Every logo is forced white (`brightness-0 invert`, or the partner's own
+ * `gridClass` where that would flatten a cut-out); the two dashed
  * "YOUR BRAND HERE" cells double as a sponsorship pitch, crawl their dashes
  * with scroll and hover to cyan (see OpenSlot). 3 columns on desktop, 2 on
  * mobile.

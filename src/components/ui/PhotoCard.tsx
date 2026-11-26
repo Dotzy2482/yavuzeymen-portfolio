@@ -3,7 +3,9 @@
  * mono caption, optional cyan view count.
  *
  * Shared by the Content section's desktop card fan and its mobile carousel —
- * the fan owns the rotation/hover treatment, this card only draws itself.
+ * the fan owns the rotation/hover treatment, this card only draws itself, and
+ * eases its photo in a little under the pointer, which reads as the card being
+ * picked up. Rounded, unlike the rest of the site: these are phone screens.
  */
 
 import { cn } from '@/lib/cn';
@@ -32,7 +34,7 @@ export function PhotoCard({
   return (
     <div
       className={cn(
-        'bg-surface relative aspect-[9/16] overflow-hidden border',
+        'bg-surface group rounded-card relative aspect-[9/16] overflow-hidden border',
         emphasis ? 'border-border-emphasis' : 'border-hairline-strong',
         className,
       )}
@@ -41,7 +43,10 @@ export function PhotoCard({
         src={src}
         alt={alt}
         loading="lazy"
-        className={cn('absolute inset-0 h-full w-full object-cover', !emphasis && 'opacity-85')}
+        className={cn(
+          'duration-slow absolute inset-0 h-full w-full object-cover transition-transform ease-out motion-safe:group-hover:scale-[1.04]',
+          !emphasis && 'opacity-85',
+        )}
       />
       <div
         className={cn(
@@ -52,10 +57,13 @@ export function PhotoCard({
         {/* 11px so the caption can be read; tracking closed to `caps` to pay
             for it, which keeps "REEL — BEHIND THE SCENES" on one line in the
             fan's 230px card. Wrapped, its first line started under the centre
-            card that overlaps it and read "— BEHIND THE". */}
+            card that overlaps it and read "— BEHIND THE". It still wrapped at
+            some widths with a pixel to spare, so the caption is held to one
+            line too, with an ellipsis rather than a second line if it ever
+            runs out of room. */}
         <span
           className={cn(
-            'tracking-caps font-mono text-[11px]',
+            'tracking-caps min-w-0 truncate font-mono text-[11px]',
             emphasis ? 'text-text' : 'text-text-body',
           )}
         >

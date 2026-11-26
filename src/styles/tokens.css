@@ -117,14 +117,18 @@
   --space-32: 8rem;
 
   /* --- Radius ------------------------------------------------------------- */
-  /* The design has sharp corners everywhere; the single exception is the
-     1px-radius country-flag chip in the track list. */
+  /* The design has sharp corners everywhere, with two exceptions: the
+     1px-radius country-flag chip in the track list, and the Content section's
+     reel cards. Those are phone screens, and drawn square they read as cut
+     paper; the owner asked for them softer. */
   --radius-none: 0px;
   --radius-flag: 1px;
+  --radius-card: 14px; /* reel cards */
   --radius-full: 9999px; /* timeline dots */
 
   /* --- Shadows & glows ---------------------------------------------------- */
   --shadow-fan: 0 30px 80px rgba(0, 0, 0, 0.55); /* centre card of the fan */
+  --shadow-card: 0 18px 44px rgba(0, 0, 0, 0.45); /* the fan's other cards */
   --glow-line: 0 0 12px rgba(0, 224, 198, 0.5); /* career timeline fill */
   --glow-dot: 0 0 10px rgba(0, 224, 198, 0.6); /* active timeline node */
 

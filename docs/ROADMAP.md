@@ -139,6 +139,12 @@
   the straight, while the chronometer still lands on the personal best at the
   line. Modelled against plausible GT3 laps, all twelve come within 6%. See
   [TRACK_RECORDS.md](TRACK_RECORDS.md#the-marker-brakes-for-corners).
+- The Content reel fan was rebuilt. The cards are rounded (the one exception to
+  the site's square corners, since they are phone screens) and step down an
+  arc with only 10px of overlap. The fan deals itself out on a damped scroll
+  scrub, and a hovered card lifts on a spring and turns square to the reader,
+  without covering the centre card's view count any more. Below 1024px tablets
+  get the phone's carousel.
 
 **Critique fixes** — [workstream 05](plans/05-critique-fixes.md)
 
