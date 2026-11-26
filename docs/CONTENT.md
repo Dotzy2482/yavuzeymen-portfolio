@@ -21,7 +21,7 @@ layout or a crash.
 | `data/achievements.ts`      | Six result cards                                     | **Real**            | Design handoff, final copy                                           |
 | `data/partners.ts`          | Team Curve Hunters, the one partner                  | **Real**            | gelbura, SPARDOX, DriveHunter sponsor the team, not Yavuz — removed  |
 | `data/contentStats.ts`      | 146.848 views / 797.000 top reel / %82,3 reels       | **Placeholder**     | Instagram insights export                                            |
-| `data/contentStats.ts`      | Five reel cards (captions + covers)                  | **Placeholder**     | Real reel thumbnails + real captions                                 |
+| `data/contentStats.ts`      | Five reel cards: muted loops of Yavuz's own footage  | **Real**            | `public/videos/reels/`, posters in `public/images/reels/`            |
 | `data/setup.ts`             | Logitech G29, Moza SRP load-cell pedals              | **Real**            | Yavuz, November 2026 — the two rows he asked for                     |
 | `data/simToReal.ts`         | Six photos, karting included                         | **Real**            | Originals supplied November 2026; see assets below                   |
 | `features/…/data/tracks.ts` | 14 circuit names + regions                           | **Real**            | Every circuit he has an iRacing lap at                               |

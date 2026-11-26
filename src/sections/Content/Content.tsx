@@ -117,6 +117,7 @@ function FanCard({ card, index, spread }: FanCardProps) {
   const photo = (
     <PhotoCard
       src={card.src}
+      video={card.video}
       caption={card.caption}
       stat={card.stat}
       emphasis={emphasis}
@@ -238,6 +239,7 @@ export function Content({ id = 'content', className }: SectionProps) {
           <PhotoCard
             key={card.id}
             src={card.src}
+            video={card.video}
             caption={card.caption}
             stat={card.stat}
             emphasis={card.stat !== undefined}

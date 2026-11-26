@@ -19,6 +19,31 @@
     "profile": "jpeg",
     "settings": "f1ec3a8fb620"
   },
+  "reels/bts.jpg": {
+    "sha256": "4b58c392130b63cb669c44be7dbb4d886d1289a2444247aa24da8a3f6d0a1e9b",
+    "profile": "jpeg",
+    "settings": "f1ec3a8fb620"
+  },
+  "reels/fiat.jpg": {
+    "sha256": "ca6a719db9aa873fbf0ab6edc13bfee597a8c627f93395406f9ec7740a448289",
+    "profile": "jpeg",
+    "settings": "f1ec3a8fb620"
+  },
+  "reels/paddock.jpg": {
+    "sha256": "59b9c20a145db3809ab2891aa68691dc4409e788a939c9236dc4629a95be3dcf",
+    "profile": "jpeg",
+    "settings": "f1ec3a8fb620"
+  },
+  "reels/race-day.jpg": {
+    "sha256": "328239a8cc9fc2b48075d364259460e1c0c163b0c5e98dc188e530badbf0cba9",
+    "profile": "jpeg",
+    "settings": "f1ec3a8fb620"
+  },
+  "reels/rig.jpg": {
+    "sha256": "63c917c168e7608876782e167f0d44c3af55445c67ad8c57cfa1fc91d301106a",
+    "profile": "jpeg",
+    "settings": "f1ec3a8fb620"
+  },
   "simtoreal/fiat-egea.jpg": {
     "sha256": "106f81fa90f527b45da22493c0d3af6a5bed31b3b39feddf19c070b03b22caca",
     "profile": "jpeg",

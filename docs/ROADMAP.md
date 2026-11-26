@@ -167,6 +167,15 @@
   the browser every two minutes — the Business Enquiries button in the middle
   and a scroll cue on the right. The KICK social link gets a red dot while
   live. `Marquee` is no longer used anywhere.
+- The Content reel cards play Yavuz's own footage: five 7-second muted loops
+  (540 × 960 H.264, 0.6–1.5 MB each) cut from his phone videos with ffmpeg —
+  the Egea through the cones, the TOSFED sim rig, the paddock, his home rig
+  and telemetry, and a kart onboard. Each loads nothing until its card is on
+  screen and pauses when it leaves; under reduced motion it is its poster.
+- The Sim to Real gallery and Setup moved to Yavuz's full-resolution
+  originals, the karting slot is filled, and the About portrait is an upscale.
+- The YE monogram (a slashed italic Y and E, traced from the concept he
+  picked) is the favicon and the nav mark; the name moved to the hero.
 - Setup lists his real wheel and pedals, and the contact CTA and social row
   (Kick added) point at his accounts through `.env.local`.
 
