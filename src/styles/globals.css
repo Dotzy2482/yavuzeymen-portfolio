@@ -77,8 +77,10 @@
   --tracking-kicker: 0.3em;
 
   --radius-flag: var(--radius-flag);
+  --radius-card: var(--radius-card);
 
   --shadow-fan: var(--shadow-fan);
+  --shadow-card: var(--shadow-card);
   --shadow-glow-line: var(--glow-line);
   --shadow-glow-dot: var(--glow-dot);
 
