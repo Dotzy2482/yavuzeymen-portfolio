@@ -165,8 +165,8 @@ Code, comments and documentation are English.
 
 The document is `lang="tr"`, where CSS `uppercase` maps `i` to `İ`. English
 text that gets uppercased carries `lang="en"`; an English or brand name inside
-a Turkish title is a `MixedText` run (`src/types`), so "NoGripSimRacing'in"
-renders "NOGRIPSIMRACING'İN" and not "NOGRİPSİMRACİNG'İN".
+a Turkish title is a `MixedText` run (`src/types`), so "iRacing'in" renders
+"IRACING'İN" and not "İRACİNG'İN".
 
 ## Multi-session work
 

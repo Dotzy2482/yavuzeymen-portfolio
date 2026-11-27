@@ -16,9 +16,14 @@
  * the section fetches none of them. `play="hover"` waits for the pointer as
  * well: five 540 × 960 clips decoding at once inside a fan that rotates and
  * scrolls made the section stutter, so the fan autoplays its centre card only
- * and its side cards come alive under the pointer. `src` is the poster, shown until the first frame is ready. Under
- * reduced motion the card is the poster alone, as a picture: a looping video
- * is motion, and the still says the same thing.
+ * and its side cards come alive under the pointer.
+ *
+ * `src` is the cover picture, and it is always drawn: the video sits on top of
+ * it, transparent until it is actually playing, then fades in. A `poster`
+ * would not do — browsers drop it as soon as play() is called and paint black
+ * until the first frame decodes, which flashed every card black on a phone.
+ * Under reduced motion the card is the picture alone: a looping video is
+ * motion, and the still says the same thing.
  */
 
 import { useEffect, useState } from 'react';
@@ -29,7 +34,7 @@ import { useInView, usePrefersReducedMotion } from '@/hooks';
 import { Picture } from './Picture';
 
 export interface PhotoCardProps {
-  /** The cover photo; the poster frame when there is a video. */
+  /** The cover photo, drawn under the video until it has a frame. */
   src: string;
   /** Muted loop to play over the cover while the card is on screen. */
   video?: string;
@@ -59,7 +64,6 @@ const MEDIA_CLASSES =
 
 interface CardVideoProps {
   src: string;
-  poster: string;
   className: string;
   /** False holds the clip paused even while it is on screen. */
   active: boolean;
@@ -69,9 +73,15 @@ interface CardVideoProps {
   onEnded?: () => void;
 }
 
-function CardVideo({ src, poster, className, active, threshold, manual, onEnded }: CardVideoProps) {
+function CardVideo({ src, className, active, threshold, manual, onEnded }: CardVideoProps) {
   const { ref, inView } = useInView<HTMLVideoElement>({ threshold, once: false });
   const shouldPlay = active && (manual || inView);
+  // Hidden until it has a frame to show. With `preload="none"` a browser
+  // drops the poster the moment play() is called and paints black until the
+  // first frame decodes, which on a phone flashed every card black as it
+  // scrolled into view. The cover picture sits underneath instead, and the
+  // video fades in over it once it is actually playing.
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const video = ref.current;
@@ -92,14 +102,14 @@ function CardVideo({ src, poster, className, active, threshold, manual, onEnded 
     <video
       ref={ref}
       src={src}
-      poster={poster}
       muted
       loop={!manual}
       playsInline
       onEnded={onEnded}
+      onPlaying={() => setReady(true)}
       preload="none"
       aria-hidden="true"
-      className={className}
+      className={cn(className, 'transition-[transform,opacity]', !ready && 'opacity-0')}
     />
   );
 }
@@ -119,7 +129,9 @@ export function PhotoCard({
 }: PhotoCardProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const [hovered, setHovered] = useState(false);
-  const mediaClasses = cn(MEDIA_CLASSES, !emphasis && 'opacity-85');
+  // The dimming sits on a wrapper, not on each layer: with the video over the
+  // cover picture, two 85% layers would let the picture show through.
+  const mediaFrameClasses = cn('absolute inset-0', !emphasis && 'opacity-85');
 
   return (
     <div
@@ -131,19 +143,23 @@ export function PhotoCard({
         className,
       )}
     >
-      {video && !prefersReducedMotion ? (
-        <CardVideo
-          src={video}
-          poster={src}
-          className={mediaClasses}
-          active={play === 'manual' ? playing : play === 'view' || hovered}
-          threshold={playThreshold}
-          manual={play === 'manual'}
-          onEnded={onEnded}
-        />
-      ) : (
-        <Picture src={src} alt={alt} loading="lazy" className={mediaClasses} />
-      )}
+      <div className={mediaFrameClasses}>
+        <Picture src={src} alt={alt} loading="lazy" className={MEDIA_CLASSES} />
+        {video && !prefersReducedMotion && (
+          <CardVideo
+            // Keyed by clip: a card that reaches the fan's centre swaps its
+            // preview for the full clip, and the new one must stay hidden
+            // until it has a frame, like the first did.
+            key={video}
+            src={video}
+            className={MEDIA_CLASSES}
+            active={play === 'manual' ? playing : play === 'view' || hovered}
+            threshold={playThreshold}
+            manual={play === 'manual'}
+            onEnded={onEnded}
+          />
+        )}
+      </div>
       <div
         className={cn(
           'from-bg/90 absolute inset-x-0 bottom-0 flex items-baseline justify-between gap-2 bg-gradient-to-t to-transparent',

@@ -1,7 +1,7 @@
 # yavuzeymen-portfolio
 
 Personal portfolio site for **Yavuz Eymen** — sim racing driver, Team Curve
-Hunters main driver, founder of NoGripSimRacing.
+Hunters main driver, content creator as yavuzeymen_12.
 
 Single page, dark, scroll-driven. Its centrepiece is the **Track Records**
 section: pick a circuit and read its personal best while a lap plays back

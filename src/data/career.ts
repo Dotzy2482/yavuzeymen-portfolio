@@ -37,10 +37,10 @@ export const career: CareerEntry[] = [
     description: 'İlk takım deneyimi; ulusal liglerde düzenli podyumlar.',
   },
   {
-    id: 'nogrip',
+    id: 'content',
     year: 2022,
-    title: [{ text: 'NoGripSimRacing', lang: 'en' }, "'in Kuruluşu"],
-    description: 'Kendi içerik markamı kurdum; topluluk hızla büyüdü.',
+    title: 'İçerik Üreticiliği',
+    description: 'Sim racing içerikleri üretmeye başladım; topluluk hızla büyüdü.',
   },
   {
     id: 'tch',
@@ -59,7 +59,7 @@ export const career: CareerEntry[] = [
     id: 'real-track',
     year: 2025,
     title: 'Gerçek Pist — TOSFED & FIAT',
-    description: 'Simülatörden gerçek piste geçtim; TOSFED ve FIAT programlarında yarıştım.',
+    description: "Simülatörden gerçek piste geçtim; TOSFED ve FIAT'ın ortak programında yarıştım.",
   },
 ];
 

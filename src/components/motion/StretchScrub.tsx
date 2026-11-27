@@ -44,7 +44,11 @@
  * same element, and give any flex hairline beside the heading a `min-w-*` floor
  * so a short heading cannot crush it to zero and snap.
  *
- * ## Reduced motion
+ * ## Reduced motion, and phones
+ *
+ * Below `md` the scrub is off as well and the heading renders static at its
+ * display width: on a phone a heading crosses its half-viewport of travel in
+ * a flick, and the width change read as the type glitching.
  *
  * Renders a plain `div` and never subscribes to scroll. With no wrapper
  * publishing a value, `--axis-wdth` falls back to `--axis-wdth-display` and the
@@ -63,7 +67,8 @@ import {
   type UseScrollOptions,
 } from 'motion/react';
 
-import { usePrefersReducedMotion } from '@/hooks';
+import { useMediaQuery, usePrefersReducedMotion } from '@/hooks';
+import { BREAKPOINTS } from '@/lib/constants';
 
 /**
  * Defaults mirroring `--axis-wdth-entry` / `--axis-wdth-display` in
@@ -127,8 +132,14 @@ function ScrubbedAxis({
 
 export function StretchScrub(props: StretchScrubProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const isDesktop = useMediaQuery(BREAKPOINTS.md);
 
-  if (prefersReducedMotion) {
+  // Below md the scrub is off and the heading sits at its display width, the
+  // same as under reduced motion. On a phone the scrolled-past distance is
+  // short and fast, so the widening read as a heading twitching between sizes
+  // — and only three of the page's headings did it, which made it look like
+  // a fault rather than a device.
+  if (prefersReducedMotion || !isDesktop) {
     return <div className={props.className}>{props.children}</div>;
   }
   return <ScrubbedAxis {...props} />;

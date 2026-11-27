@@ -30,7 +30,7 @@ import { simToRealItems, type SimToRealItem } from '@/data';
 import type { SectionProps } from '@/types';
 
 const LEAD =
-  "Simülatörde öğrendi, gerçek pistte kanıtladı. Soldan sağa: rig'den TOSFED padoklarına, FIAT Egea direksiyonuna.";
+  "Simülatörde öğrendi, gerçek pistte kanıtladı: rig'den TOSFED padoklarına, FIAT Egea direksiyonuna.";
 
 /**
  * How far a photo drifts inside its frame over the grid's pass through the
