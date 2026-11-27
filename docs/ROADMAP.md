@@ -213,9 +213,23 @@
 - The helmet reveal is held above the neck, so the two photos' mismatched
   shoulders never show.
 
+**Performance** — [workstream 07](plans/07-performance.md)
+
+- Measured before anything changed, in headless Chrome at 4× CPU
+  throttling (`docs/assets/measure-frames.mjs`): with nothing moving, the
+  main thread was busy about 950 ms of every second.
+- The hero's helmet loop runs only while the hero is on screen and reads no
+  layout while idle; the ambient loops (colour fields, the drawing's drift,
+  the scroll cue, the Kick pulse, Setup's pings) run on the compositor; the
+  cyan runners hold while they cannot be seen; the page ambient's moving
+  parts have their own layers; the lap animation reads before it writes.
+- Main-thread work per frame fell 15–30 % across the page and scrolling went
+  from every other frame to every frame, with nothing on screen changed —
+  checked by pixel-diffing screenshots of both builds.
+
 ## Planned work
 
-None. All five workstreams in [plans/](plans/) have landed; their files stay for
+None. All seven workstreams in [plans/](plans/) have landed; their files stay for
 the reasoning they record. What is left is either blocked on material or a
 decision from Yavuz (below), or deliberately unscheduled.
 
