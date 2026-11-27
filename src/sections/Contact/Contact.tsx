@@ -114,7 +114,16 @@ function ContactBody({ progress }: { progress: MotionValue<number> | null }) {
           lang="en"
           className="tracking-display stretch-scrub mt-6 text-[15vw] leading-[0.96] font-black uppercase md:mt-9 md:text-[clamp(56px,8vw,140px)]"
         >
-          Let&apos;s race
+          {/* Below md the break between the two words is forced. At 15vw,
+              "LET'S RACE" fits one line only while the axis is narrow
+              (wdth ≲ 97 on a 375px phone), so while the scrub ran on phones a
+              fast scroll flipped the heading between two and three lines and
+              the page jumped by a line height. StretchScrub is now off below
+              md, and the break states the three lines the display width gives
+              anyway, rather than leaving them to the wrap. md and up fit both
+              words on one line across the whole axis, so it is hidden there. */}
+          Let&apos;s
+          <br className="md:hidden" /> race
           <br />
           {/* Instrument Serif is static and ignores the axes; pinning it is
               belt and braces against a future variable serif inheriting a
@@ -133,7 +142,12 @@ function ContactBody({ progress }: { progress: MotionValue<number> | null }) {
         variant="primary"
         size="lg"
         lang="en"
-        className="mt-9 md:mt-[52px]"
+        // The address is one unbreakable line, and at the button's 14px it is
+        // wider than a phone: the button ran to the screen edges. Below md
+        // the type scales with the viewport (10px at 320, 12px at 375) and
+        // the padding tightens, so it sits inside the gutter like everything
+        // else.
+        className="mt-9 max-w-full px-5 text-[clamp(10px,3.2vw,14px)] md:mt-[52px] md:px-[34px] md:text-[14px]"
       >
         {hasEmail ? profile.email : 'Business Enquiries'} →
       </Button>
@@ -157,7 +171,7 @@ function ContactBody({ progress }: { progress: MotionValue<number> | null }) {
           © {new Date().getFullYear()} Yavuz Eymen
         </MonoLabel>
         <MonoLabel size="xs" tracking="chip" tone="faint" lang="en" className="md:text-[10px]">
-          NoGripSimRacing
+          @yavuzeymen_12
         </MonoLabel>
         <PrivacyNote triggerClassName={cn(FOOTER_LINK_CLASSES, 'cursor-pointer')} />
       </footer>

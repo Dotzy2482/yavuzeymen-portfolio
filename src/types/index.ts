@@ -53,9 +53,9 @@ export interface ForeignRun {
  * `ForeignRun`s carry their own.
  *
  * This matters wherever the copy is uppercased in CSS. The document is
- * `lang="tr"`, and Turkish casing maps `i` to `İ`, so "NoGripSimRacing'in"
- * renders "NOGRİPSİMRACİNG'İN" unless the brand is tagged English — and the
- * Turkish suffix after it must stay Turkish, or "'in" would lose its dot.
+ * `lang="tr"`, and Turkish casing maps `i` to `İ`, so "iRacing'in" renders
+ * "İRACİNG'İN" unless the brand is tagged English — and the Turkish suffix
+ * after it must stay Turkish, or "'in" would lose its dot.
  */
 export type MixedText = readonly (string | ForeignRun)[];
 

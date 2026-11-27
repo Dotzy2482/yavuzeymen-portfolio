@@ -23,8 +23,9 @@ const PARAGRAPHS: React.ReactNode[] = [
     yarışıyorum.
   </>,
   <>
-    <strong className="text-text font-bold">NoGripSimRacing</strong> markasının kurucusuyum;
-    Instagram ve YouTube&apos;da sim racing içerikleri üretiyor, canlı yayınlar yapıyorum.
+    Instagram, YouTube ve TikTok&apos;ta{' '}
+    <strong className="text-text font-bold">yavuzeymen_12</strong> adıyla sim racing içerikleri
+    üretiyor, Kick&apos;te canlı yayın yapıyorum.
   </>,
   <>
     iRacing ve ACC&apos;de GT3 sınıfında yarışıyorum.{' '}
@@ -34,8 +35,8 @@ const PARAGRAPHS: React.ReactNode[] = [
   <>
     Simülatörde öğrendiklerimi gerçek piste taşıdım:{' '}
     <strong className="text-text font-bold">TOSFED</strong> ve{' '}
-    <strong className="text-text font-bold">FIAT</strong> programlarında gerçek yarış deneyimi
-    kazandım.
+    <strong className="text-text font-bold">FIAT</strong>&apos;ın ortak programında gerçek yarış
+    deneyimi kazandım.
   </>,
 ];
 
