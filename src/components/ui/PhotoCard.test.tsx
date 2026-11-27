@@ -38,12 +38,12 @@ describe('PhotoCard', () => {
     expect(video).not.toHaveClass('opacity-0');
   });
 
-  it('shows only the still under reduced motion', () => {
+  it('still plays the clip under reduced motion, over its cover', () => {
     preferReducedMotion();
     const { container } = render(
       <PhotoCard src="/images/reels/fiat.jpg" video="/videos/reels/fiat.mp4" caption="REEL" />,
     );
-    expect(container.querySelector('video')).toBeNull();
+    expect(container.querySelector('video')?.getAttribute('src')).toBe('/videos/reels/fiat.mp4');
     expect(container.querySelector('img')?.getAttribute('src')).toBe('/images/reels/fiat.jpg');
   });
 });

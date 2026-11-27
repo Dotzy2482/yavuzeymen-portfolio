@@ -71,6 +71,12 @@ scroll rail does the same with motion values.
 **Every animation honours `prefers-reduced-motion`.** Call
 `usePrefersReducedMotion()` and render a static, immediately-visible state.
 Content must never be left invisible because an animation did not run.
+Three things are content, not decoration, and keep running under it: the reel
+videos (and the fan's playlist, minus its travel), the lap replay (with
+Pause on offer), and the desktop helmet reveal, which only follows the
+visitor's own pointer. Windows' "Animation effects" switch sets the preference
+on many machines whose owners never chose it, and with these frozen the site
+read as broken (November 2026). Scroll-driven and decorative motion stays off.
 
 **No `any`.** TypeScript is strict, `noUnusedLocals` and `noUnusedParameters`
 are on. Give every component a `Props` interface. If a type is genuinely

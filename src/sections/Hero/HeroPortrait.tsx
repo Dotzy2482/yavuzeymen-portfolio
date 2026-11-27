@@ -91,10 +91,16 @@ export function HeroPortrait({ mode, progress, stageRef, visible }: HeroPortrait
   // connection never shows the face first and the helmet popping on after.
   const helmetShown = useRef(0);
 
+  // The desktop reveal follows the visitor's own pointer, so it runs under
+  // reduced motion too: nothing moves that the visitor did not move. (Windows'
+  // "Animation effects" switch sets the preference on plenty of machines, and
+  // there the helmet simply never appeared.) The phone's reveal plays by
+  // itself, so it stays off there and the face shows from the start.
+  const revealOn = mode === 'static' || !prefersReducedMotion;
   const reveal = useHelmetReveal({
     targetRef: helmetRef,
     mode: mode === 'scroll' ? 'scrub' : 'pointer',
-    active: !prefersReducedMotion,
+    active: revealOn,
   });
 
   // Only while the stage is on screen: off it there is nothing to draw, and
@@ -127,7 +133,7 @@ export function HeroPortrait({ mode, progress, stageRef, visible }: HeroPortrait
         return clamp01(1 + rect.top / (rect.height * HELMET_REVEAL.fadeViewport));
       });
     }
-  }, !prefersReducedMotion && visible);
+  }, revealOn && visible);
 
   /**
    * Both layers, so they cannot drift apart. `origin-[50%_20%]` puts the
