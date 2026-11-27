@@ -15,13 +15,18 @@
  * Two modes:
  * - `static` (desktop): the cursor drives the reveal. The helmet is invisible
  *   until the cursor comes near the head, then opens under it.
- * - `scroll` (mobile): no cursor, so the pinned 180vh hero drives it instead —
- *   the helmet starts on and irises shut onto the head as the reader scrolls,
- *   while the portrait scales up underneath.
+ * - `scroll` (mobile): no cursor. The helmet starts on and comes off by
+ *   itself a beat after it is on screen, irising shut onto the head while the
+ *   portrait pushes in a little underneath. Scrolling the hero away drives
+ *   the same reveal, and whichever of the two is further along wins.
  *
- * The reveal damps to nothing as the hero leaves: by pin progress on mobile,
- * where the stage is pinned and its rect never moves, and by how far the stage
- * has left the viewport on desktop.
+ * The mobile hero used to be pinned for 180vh and the reveal ran on that pin:
+ * the page held still for most of a screen while the helmet came off, and on
+ * a phone that read as the page being stuck. It now scrolls like any other
+ * section from the first pixel.
+ *
+ * On desktop the reveal damps to nothing by how far the stage has left the
+ * viewport.
  *
  * IMPORTANT: horizontal centring lives entirely in the inline `transform`.
  * Tailwind's `-translate-x-1/2` compiles to the standalone `translate` CSS
@@ -62,9 +67,14 @@ function clamp01(value: number): number {
   return value < 0 ? 0 : value > 1 ? 1 : value;
 }
 
+/** Ease in and out, for the helmet coming off by itself. */
+function easeInOut(t: number): number {
+  return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+}
+
 export interface HeroPortraitProps {
   mode: 'static' | 'scroll';
-  /** Pin progress (0–1) — required in scroll mode. */
+  /** How far the hero has scrolled away (0–1) — required in scroll mode. */
   progress?: MotionValue<number>;
   /** The stage element, for coordinate space. */
   stageRef: React.RefObject<HTMLDivElement | null>;
@@ -76,6 +86,10 @@ export function HeroPortrait({ mode, progress, stageRef, visible }: HeroPortrait
   const faceRef = useRef<HTMLImageElement>(null);
   const helmetRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
+  // Time the helmet has been on screen, ms: the clock for it coming off by
+  // itself. It only runs once the helmet photo has loaded, so a slow
+  // connection never shows the face first and the helmet popping on after.
+  const helmetShown = useRef(0);
 
   const reveal = useHelmetReveal({
     targetRef: helmetRef,
@@ -93,13 +107,18 @@ export function HeroPortrait({ mode, progress, stageRef, visible }: HeroPortrait
     if (!face || !helmet || !stage) return;
 
     if (mode === 'scroll') {
+      const helmetPhoto = helmet.querySelector('img');
+      if (helmetPhoto?.complete) helmetShown.current += delta;
+      const { autoDelay, autoDuration, scrubEnd } = HELMET_REVEAL;
+      const byTime = easeInOut(clamp01((helmetShown.current - autoDelay) / autoDuration));
+      const byScroll = clamp01((progress?.get() ?? 0) / scrubEnd);
+      const off = Math.max(byTime, byScroll);
       // Both layers take the same transform, or the bodies stop lining up and
       // the circle shows a seam instead of a helmet.
-      const p = progress?.get() ?? 0;
-      const transform = `${CENTRED} scale(${1 + p * 0.05})`;
+      const transform = `${CENTRED} scale(${1 + off * 0.05})`;
       face.style.transform = transform;
       helmet.style.transform = transform;
-      reveal(delta, () => clamp01(1 - p / HELMET_REVEAL.scrubEnd));
+      reveal(delta, () => 1 - off);
     } else {
       // Read lazily: with the cursor away from the hero and the helmet shut,
       // the reveal never asks, and the frame reads no layout at all.

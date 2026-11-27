@@ -14,7 +14,10 @@
  * the halo on the team card, which does sit over the portrait's arms.
  *
  * Desktop: a plain 100vh stage, with the helmet revealed under the cursor.
- * Mobile: a pinned 180vh wrapper; scrolling irises the helmet shut instead.
+ * Mobile: a plain 100vh stage too. The helmet starts on and comes off by
+ * itself, or as the reader scrolls, whichever comes first. It used to be a
+ * pinned 180vh wrapper that held the page still while the helmet came off,
+ * which on a phone read as the page being stuck.
  *
  * ## The mobile headline block
  *
@@ -22,12 +25,10 @@
  * in the first screen says what he does — and the two move as one block
  * between the fixed top bar and the portrait. Two limits hold it there:
  *
- * - **The bar.** The block rests at `max(11vh, 72px)` and drifts up by
- *   `clamp(0px, 11vh - 72px, 4vh)` over the pin, so it arrives at 72px and
- *   never above: the bar is 62px tall, and 72 leaves the wordmark air. The
- *   drift used to be a flat 4vh from 11vh, which put "ALWAYS" under the
- *   wordmark by the end of the pin — at 59px on a 390×844 phone and 46px on a
- *   375×667 one. On a 390×844 phone the drift is now 21px instead of 34.
+ * - **The bar.** The block rests at `max(11vh, 72px)`: the bar is 62px
+ *   tall, and 72 leaves the wordmark air. (While the hero was pinned the
+ *   block drifted up over the pin; with the pin gone it scrolls with the
+ *   page, and the drift went with it.)
  * - **The portrait.** It is bottom-anchored and `min(78vh, 118vw)` tall (see
  *   HeroPortrait), so the helmet's crown sits that far above the bottom.
  *   `--hero-room` is the height left between the block's top and the crown
@@ -61,13 +62,12 @@
  * mobile term, the 13.06em belongs to the copy in data/profile.ts.
  */
 
-import { Fragment } from 'react';
-import { motion, useMotionValue, useTransform, type MotionValue } from 'motion/react';
+import { Fragment, useRef } from 'react';
+import { useScroll, type MotionValue } from 'motion/react';
 
 import { cn } from '@/lib/cn';
 import { BREAKPOINTS } from '@/lib/constants';
-import { useInView, useMediaQuery, usePrefersReducedMotion } from '@/hooks';
-import { Pinned } from '@/components/motion';
+import { useInView, useMediaQuery } from '@/hooks';
 import { MonoLabel } from '@/components/ui';
 import { profile } from '@/data';
 import type { SectionProps } from '@/types';
@@ -77,7 +77,7 @@ import { HeroBar } from './HeroBar';
 import { HeroPortrait } from './HeroPortrait';
 
 interface HeroStageProps {
-  /** Pin progress; null on desktop, which has no pin. */
+  /** How far the hero has scrolled away (0–1); null on desktop. */
   progress: MotionValue<number> | null;
 }
 
@@ -94,16 +94,6 @@ function HeroStage({ progress }: HeroStageProps) {
     once: false,
   });
   const isDesktop = useMediaQuery(BREAKPOINTS.md);
-  const prefersReducedMotion = usePrefersReducedMotion();
-
-  // Desktop has no pin, and reduced motion keeps the headline still, so either
-  // way the drift reads a constant 0. The clamp is the bar rule described at
-  // the top of the file.
-  const staticProgress = useMotionValue(0);
-  const headlineY = useTransform(
-    progress && !prefersReducedMotion ? progress : staticProgress,
-    (v) => `calc(${-v} * clamp(0px, 11vh - 72px, 4vh))`,
-  );
 
   const words = profile.headline.split(' ');
   const accent = words.pop();
@@ -121,10 +111,7 @@ function HeroStage({ progress }: HeroStageProps) {
 
       {/* Headline — in front of the portrait, behind the helmet. On mobile the
           role line rides under it; see the note at the top of the file. */}
-      <motion.div
-        className="pointer-events-none absolute inset-x-0 top-[max(11vh,72px)] z-[3] px-2 text-center md:top-[max(68px,9vh)] md:px-0"
-        style={{ y: headlineY }}
-      >
+      <div className="pointer-events-none absolute inset-x-0 top-[max(11vh,72px)] z-[3] px-2 text-center md:top-[max(68px,9vh)] md:px-0">
         <h1
           lang="en"
           className="tracking-title stretch-display md:tracking-display m-0 text-[length:min(13vw,8.5vh,max(32px,calc(var(--hero-room)/2.85),min(calc(var(--hero-room)/1.9),calc((100vw_-_16px)/7.9))))] leading-[0.95] font-black uppercase [--hero-room:calc(100vh_-_min(78vh,118vw)_-_max(11vh,72px)_-_52px)] [text-shadow:var(--hero-headline-shadow)] md:text-[max(52px,min(calc((100vw_-_96px)/13.3),12.5vh))] md:leading-[0.94]"
@@ -146,7 +133,7 @@ function HeroStage({ progress }: HeroStageProps) {
             </Fragment>
           ))}
         </MonoLabel>
-      </motion.div>
+      </div>
 
       {/* Bottom-left: current team card. */}
       <div className="border-accent-primary absolute bottom-[86px] left-5 z-[6] flex flex-col gap-1 border-l-2 pl-3 [text-shadow:var(--hero-headline-shadow)] md:bottom-[110px] md:left-10 md:gap-1.5 md:pl-4 md:[text-shadow:none]">
@@ -203,10 +190,21 @@ export function Hero({ id = 'hero', className }: SectionProps) {
       </section>
     );
   }
+  return <MobileHero id={id} className={className} />;
+}
+
+/**
+ * The phone hero: the same 100vh stage, with the share of it scrolled away
+ * handed to the portrait so scrolling can take the helmet off too. Split out
+ * so `useScroll` is only ever called below `md`.
+ */
+function MobileHero({ id, className }: { id: string; className?: string }) {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
 
   return (
-    <section id={id} className={className}>
-      <Pinned heightVh={180}>{(progress) => <HeroStage progress={progress} />}</Pinned>
+    <section ref={ref} id={id} className={cn('relative h-screen', className)}>
+      <HeroStage progress={scrollYProgress} />
     </section>
   );
 }

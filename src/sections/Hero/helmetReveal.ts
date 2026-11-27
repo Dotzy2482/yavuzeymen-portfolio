@@ -77,10 +77,12 @@ export const HELMET_REVEAL = {
   openTau: 130,
 
   /**
-   * Below `md` there is no cursor, so the pinned hero's scroll drives the
-   * effect instead: the circle starts wide enough to hold the whole helmet —
-   * which reads as the helmet simply being on — and irises shut onto the head
-   * as you scroll. `scrubRadius` is that starting radius, again in rendered
+   * Below `md` there is no cursor. The circle starts wide enough to hold the
+   * whole helmet (which reads as the helmet simply being on) and irises shut
+   * onto the head by itself, `autoDelay` ms after the helmet photo is on
+   * screen, over `autoDuration` ms. Scrolling closes it too, and whichever is
+   * further along wins, so a reader who scrolls straight away still sees it
+   * come off. `scrubRadius` is that starting radius, again in rendered
    * heights.
    *
    * Only the helmet can ever show — the region in `helmetRegion.ts` stops the
@@ -89,12 +91,20 @@ export const HELMET_REVEAL = {
    * scroll the iris starts to close rather than what it uncovers.
    */
   scrubRadius: 1,
-  /** Pin progress at which the helmet has fully dissolved. */
-  scrubEnd: 0.55,
+  /**
+   * Share of the hero scrolled away at which the helmet has fully dissolved.
+   * 0.3 of a phone screen is about 250px: the head is still well below the
+   * top bar there, so the reveal is seen rather than scrolled past.
+   */
+  scrubEnd: 0.3,
+  /** How long the helmet stays on before it comes off by itself, ms. */
+  autoDelay: 1100,
+  /** How long it takes to come off, ms. */
+  autoDuration: 1300,
 
   /**
    * Fraction of the stage that may scroll off the top before the reveal is
-   * gone. Desktop only — the pinned mobile stage never moves.
+   * gone. Desktop only.
    */
   fadeViewport: 0.5,
 } as const;
