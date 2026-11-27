@@ -95,6 +95,12 @@ vulnerabilities have nothing to attach to. What was checked:
   and `_dmarc` holds `v=DMARC1; p=reject; sp=reject; adkim=s; aspf=s`, so no
   mail can pass as coming from the domain. **If the domain is ever given a
   mailbox, both records must change first**, or its own mail is rejected.
+- **Cloudflare's own analytics.** New zones inject Cloudflare's Web Analytics
+  beacon (Real User Measurements) into every HTML response sent to a browser.
+  The CSP blocked it, so it measured nothing and logged an error on every
+  visit, and the privacy note says there are no analytics. It is switched off
+  under Speed, Real user monitoring, "Disable completely". If it is ever
+  wanted, the CSP and the privacy note have to change with it.
 - **Plain HTTP** redirects to HTTPS (Cloudflare, 301), and `www` redirects to
   the apex with path and query kept (a Cloudflare Redirect Rule from the
   "WWW to root" template, 301).
