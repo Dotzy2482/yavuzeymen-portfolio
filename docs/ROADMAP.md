@@ -226,6 +226,8 @@
 - Main-thread work per frame fell 15–30 % across the page and scrolling went
   from every other frame to every frame, with nothing on screen changed —
   checked by pixel-diffing screenshots of both builds.
+- The social card is re-encoded losslessly by `generate-og-images.mjs`:
+  280 → 196 KB, the same pixels.
 
 ## Planned work
 
@@ -265,9 +267,6 @@ No plan unblocks these — each is waiting on a person or a file.
   around, so it is its own change with its own doc update.
 - **Analytics**, if it is ever wanted — privacy-preserving and cookieless, or
   not at all.
-- **A lighter social card.** `og-image.png` is ~280 KB straight out of headless
-  Chrome; compressing it inside `generate-og-images.mjs` would cut that without
-  touching the card.
 - **A web manifest and JSON-LD** (`Person`) — cheap, but only worth it once
   there is a domain to point them at.
 

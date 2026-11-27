@@ -30,11 +30,13 @@
  * only way it was ever going to be caught.
  */
 
-import { access, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { access, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import sharp from 'sharp';
 
 const CARD = new URL('./og-card.html', import.meta.url);
 const FAVICON = new URL('../../public/favicon.svg', import.meta.url);
@@ -139,7 +141,29 @@ async function screenshot(chrome, { url, out, size, profile, label }) {
     url,
   ]);
 
+  await recompress(out);
   return assertSize(out, size, label);
+}
+
+/**
+ * Chrome writes its screenshots with fast, light zlib settings: the card came
+ * out at ~280 KB. Re-encoding at the highest compression level, without
+ * per-row filters (which only add entropy on a mostly flat dark card), takes
+ * about a third off. It is lossless — the same pixels, byte for byte once
+ * decoded — so the card a feed shows does not change. A palette encode would
+ * be smaller again, but it moves pixels in the gradients, and this file is
+ * the one a share preview rescales.
+ *
+ * Kept only when it is actually smaller, so a raster Chrome already packs
+ * well (the touch icon) is left as it was written.
+ */
+async function recompress(out) {
+  const path = fileURLToPath(out);
+  const before = (await stat(path)).size;
+  const packed = await sharp(path)
+    .png({ compressionLevel: 9, adaptiveFiltering: false, palette: false })
+    .toBuffer();
+  if (packed.length < before) await writeFile(path, packed);
 }
 
 /**
