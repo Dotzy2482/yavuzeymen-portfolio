@@ -29,7 +29,7 @@ layout or a crash.
 | `features/…/data/tracks.ts` | Lap times + car                                      | **Real** (snapshot) | iRacing profile, November 2026 — see TRACK_RECORDS.md                |
 | `features/…/trackPaths.ts`  | Circuit `path` geometry                              | **Real**            | Generated from OpenStreetMap; see TRACK_RECORDS.md                   |
 | `sections/Contact`          | Invitation paragraph                                 | **Real**            | Design handoff, final copy                                           |
-| `sections/Contact`          | `Gizlilik` / `Şartlar` footer links                  | **Placeholder**     | Legal pages not written                                              |
+| `sections/Contact`          | `Gizlilik` privacy note (`PrivacyNote.tsx`)          | **Real**            | Written 27 Nov 2026; `Şartlar` dropped — there are no terms to state |
 | `index.html`                | `description`, `og:*`, `twitter:*`                   | **Real, English**   | Design handoff — see the note below                                  |
 
 ### The document head is English, in a `lang="tr"` document

@@ -243,6 +243,8 @@
   `public/_headers` adds CSP, HSTS and frame denial; SPF and DMARC stop
   anyone sending mail as the domain; `www` redirects to the apex; private
   vulnerability reporting is on.
+- The footer's `Gizlilik` opens a short privacy note; `Şartlar` was dropped.
+- Registered in Google Search Console, sitemap submitted.
 
 ## Planned work
 
@@ -263,7 +265,6 @@ No plan unblocks these — each is waiting on a person or a file.
   [CONTENT.md](CONTENT.md).)
 - **Instagram figures** refreshed from the account with a visible "as of" date,
   since they are hand-entered snapshots.
-- **Legal page copy.** `Gizlilik` and `Şartlar` link to `#`.
 - **Two decisions for Yavuz**, flagged in [CONTENT.md](CONTENT.md): whether the
   document head speaks English or Turkish, and how often the iRacing and
   Instagram figures get refreshed.

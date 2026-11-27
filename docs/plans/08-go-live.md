@@ -101,6 +101,26 @@ vulnerabilities have nothing to attach to. What was checked:
 - **Private vulnerability reporting** is now on in the repository, so the flow
   in `SECURITY.md` works.
 
+### Privacy note
+
+The footer's `Gizlilik` and `Şartlar` pointed at `#`. A portfolio with nothing
+to sign up for or buy has no terms to state, so `Şartlar` went. `Gizlilik` now
+opens a short Turkish note (`sections/Contact/PrivacyNote.tsx`): no cookies,
+analytics or forms; Cloudflare handles connection data to serve the page; the
+Kick live-status check goes from the visitor's browser to Kick; e-mail is used
+only to reply. The note describes the site's actual behaviour, so it has to
+change if the site ever gains analytics, a form, or another third party.
+
+### Google Search Console
+
+A **Domain** property for `yavuzeymensimracing.com` (it covers `www` and every
+protocol), in the owner's Google account. Verified with a
+`google-site-verification` TXT record on the apex, added by hand rather than
+through Search Console's offer to connect to Cloudflare, which would have given
+Google write access to the zone's DNS. **Do not delete that TXT record**:
+Search Console re-checks it and drops the verification if it goes. The sitemap
+is submitted and indexing of the home page was requested.
+
 ## Steps
 
 1. Domain onto Cloudflare: zone on the free plan, Natro nameservers replaced.
@@ -110,6 +130,7 @@ vulnerabilities have nothing to attach to. What was checked:
 5. Security review; `_headers`; dev dependencies updated.
 6. With the owner's go-ahead: SPF and DMARC, the `www` → apex redirect,
    private vulnerability reporting.
+7. Privacy note in the footer; Google Search Console.
 
 ## Done when
 
@@ -126,3 +147,4 @@ vulnerabilities have nothing to attach to. What was checked:
 - [x] 4 — head, robots, sitemap
 - [x] 5 — security review
 - [x] 6 — SPF/DMARC, `www` redirect, private vulnerability reporting
+- [x] 7 — privacy note; Search Console
