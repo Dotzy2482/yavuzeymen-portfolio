@@ -4,7 +4,8 @@
  * as a MotionValue (0 at pin start, 1 at release) — consumers feed it into
  * useTransform without ever re-rendering per frame.
  *
- * Used by the mobile hero (180vh) and the Sim to Real gallery (240vh). The
+ * Used by the Sim to Real gallery (240vh); the mobile hero was pinned too,
+ * until it read as the page being stuck (see sections/Hero). The
  * prototype pins via JS transforms; `position: sticky` does the same job
  * without fighting the scroll thread.
  */
