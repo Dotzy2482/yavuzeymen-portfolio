@@ -37,7 +37,7 @@ None of this is in the repository, so it is written down here.
 | Pages project  | `yavuzeymen-portfolio`, production branch `main`            |
 | Build          | `pnpm build`, output `dist`                                 |
 | Variables      | the five filled `VITE_` values from `.env.local`            |
-|                | `NODE_VERSION` matching `.nvmrc`, `PNPM_VERSION` 11.21.0    |
+|                | `NODE_VERSION` 22, `PNPM_VERSION` 11.21.0                   |
 | Custom domains | `yavuzeymensimracing.com` and `www.yavuzeymensimracing.com` |
 | GitHub access  | the Cloudflare app, installed on this one repository only   |
 | Nameservers    | `everton.ns.cloudflare.com`, `rafe.ns.cloudflare.com`       |
@@ -86,12 +86,15 @@ vulnerabilities have nothing to attach to. What was checked:
   `public/_headers` adds a Content-Security-Policy, HSTS, frame denial,
   `Cross-Origin-Opener-Policy` and a Permissions-Policy, and caches the
   hashed `/assets/` files forever. Every CSP source is justified in the file.
-  CSP was checked on a Pages preview deployment, since `vite preview` does not
-  read `_headers`.
-- **E-mail spoofing.** The domain sends no mail, but Natro's SPF record
-  authorised Natro's mail servers to send as it. It now says `v=spf1 -all`,
-  with a DMARC record set to reject, so nobody can send mail that passes as
-  coming from the domain.
+  CSP was checked on this branch's Pages preview deployment, since
+  `vite preview` does not read `_headers`: no violations while scrolling the
+  whole page, and the helmet mask, fonts and videos all loaded.
+- **E-mail spoofing (open, the owner's call).** The domain sends no mail, but
+  the SPF record imported from Natro still authorises Natro's mail servers to
+  send as it, and there is no DMARC record. Replacing it with `v=spf1 -all`
+  and adding `_dmarc` → `v=DMARC1; p=reject` would stop anyone sending mail
+  that passes as coming from the domain. Not changed without the owner's
+  go-ahead, and it must be undone if the domain is ever given a mailbox.
 - **Plain HTTP** redirects to HTTPS (Cloudflare, 301).
 
 ## Steps
@@ -100,14 +103,15 @@ vulnerabilities have nothing to attach to. What was checked:
 2. Pages project from the GitHub repository, variables set, first deploy.
 3. Natro parking records removed; apex and `www` attached to Pages.
 4. `og:url`, canonical, absolute image URLs; `robots.txt`, `sitemap.xml`.
-5. Security review; `_headers`; dev dependencies updated; SPF and DMARC.
-6. `www` redirects to the apex.
+5. Security review; `_headers`; dev dependencies updated.
+6. Optional, waiting on the owner: SPF and DMARC; a `www` → apex redirect
+   (today `www` serves the same page, and the canonical points at the apex).
 
 ## Done when
 
 - `https://yavuzeymensimracing.com` serves the build of `main`, over HTTPS,
   with the headers in `public/_headers` and no CSP violations in the console.
-- `www` and plain HTTP both end up on `https://yavuzeymensimracing.com/`.
+- `www` serves the site, and plain HTTP redirects to HTTPS.
 - `pnpm audit` reports nothing.
 
 ## Progress
@@ -117,4 +121,4 @@ vulnerabilities have nothing to attach to. What was checked:
 - [x] 3 — domains attached
 - [x] 4 — head, robots, sitemap
 - [x] 5 — security review
-- [ ] 6 — `www` redirect
+- [ ] 6 — optional: SPF/DMARC, `www` redirect
