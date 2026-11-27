@@ -28,7 +28,7 @@
  * played on them. The clips are the section's content, not decoration.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/lib/cn';
 import { useInView } from '@/hooks';
@@ -61,6 +61,15 @@ export interface PhotoCardProps {
   className?: string;
 }
 
+/**
+ * How long a `manual` card holds its cover when the browser refuses to play
+ * the clip, before it reports itself ended. iOS Low Power Mode, Safari's and
+ * Firefox's "never autoplay" settings and some data savers all reject play(),
+ * and the fan's playlist only moves on when the centre clip ends: without
+ * this it sat on its first card for good.
+ */
+const BLOCKED_HOLD_MS = 6000;
+
 const MEDIA_CLASSES =
   'duration-slow absolute inset-0 h-full w-full object-cover transition-transform ease-out motion-safe:group-hover:scale-[1.04]';
 
@@ -84,21 +93,38 @@ function CardVideo({ src, className, active, threshold, manual, onEnded }: CardV
   // scrolled into view. The cover picture sits underneath instead, and the
   // video fades in over it once it is actually playing.
   const [ready, setReady] = useState(false);
+  // The latest `onEnded`, for the blocked-autoplay fallback below: the fan
+  // hands down a new function every render, and the effect must not restart
+  // the clip each time it does.
+  const onEndedRef = useRef(onEnded);
+  useEffect(() => {
+    onEndedRef.current = onEnded;
+  }, [onEnded]);
 
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
-    if (shouldPlay) {
-      // play() returns a promise in browsers (rejected if autoplay is
-      // refused, which muted inline video never is) and nothing in jsdom.
-      const playing = video.play() as Promise<void> | undefined;
-      playing?.catch(() => {});
-    } else {
+    if (!shouldPlay) {
       video.pause();
+      return;
     }
+    let cancelled = false;
+    let hold: number | undefined;
+    // play() returns a promise in browsers, rejected when autoplay is refused
+    // (see BLOCKED_HOLD_MS), and nothing in jsdom. A refused card keeps its
+    // cover; a refused centre card still moves the playlist on.
+    const playing = video.play() as Promise<void> | undefined;
+    playing?.catch(() => {
+      if (cancelled || !manual) return;
+      hold = window.setTimeout(() => onEndedRef.current?.(), BLOCKED_HOLD_MS);
+    });
+    return () => {
+      cancelled = true;
+      window.clearTimeout(hold);
+    };
     // `src` too: a card that reaches the fan's centre swaps its preview for
     // the full clip, and the new source has to be started again.
-  }, [shouldPlay, src, ref]);
+  }, [shouldPlay, src, ref, manual]);
 
   return (
     <video
