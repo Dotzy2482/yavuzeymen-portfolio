@@ -240,8 +240,8 @@
 - `og:url`, a canonical link and absolute social image URLs; `robots.txt` and
   a sitemap.
 - Security review: no findings in the code; dev-tool advisories cleared;
-  `public/_headers` adds CSP, HSTS and frame denial; SPF and DMARC stop
-  anyone sending mail as the domain.
+  `public/_headers` adds CSP, HSTS and frame denial. Open, waiting on the
+  owner: SPF/DMARC records against mail spoofing, and a `www` redirect.
 
 ## Planned work
 
