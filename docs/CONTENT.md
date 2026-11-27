@@ -122,6 +122,7 @@ than edited:
 | `public/og-image.png`         | 1200 × 630 | 196 KB | `docs/assets/og-card.html` |
 | `public/apple-touch-icon.png` | 180 × 180  | 5 KB   | `public/favicon.svg`       |
 | `public/favicon-192.png`      | 192 × 192  | 5 KB   | `public/favicon.svg`       |
+| `public/favicon-512.png`      | 512 × 512  | 15 KB  | `public/favicon.svg`       |
 | `public/favicon.ico`          | 48, 32, 16 | 4 KB   | `public/favicon-192.png`   |
 
 ```bash

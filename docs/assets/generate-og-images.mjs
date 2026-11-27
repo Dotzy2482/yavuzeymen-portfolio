@@ -5,12 +5,14 @@
  *   public/og-image.png         1200×630, from ./og-card.html
  *   public/apple-touch-icon.png   180×180, from ../../public/favicon.svg
  *   public/favicon-192.png        192×192, from ../../public/favicon.svg
+ *   public/favicon-512.png        512×512, from ../../public/favicon.svg
  *   public/favicon.ico        48, 32, 16, downscaled from favicon-192.png
  *
  * The last two are for search results. Google shows a site's favicon next to
  * its result, but only one that is square and a multiple of 48px; it showed
  * a grey globe while the site had nothing but the SVG. The .ico is the file
  * every crawler and old browser asks for at the root without being told.
+ * The 512 is the large icon site.webmanifest offers a phone's home screen.
  *
  *   node docs/assets/generate-og-images.mjs           # rewrite them
  *   node docs/assets/generate-og-images.mjs --check   # assert they are present
@@ -51,6 +53,7 @@ const OG_IMAGE = new URL('../../public/og-image.png', import.meta.url);
 const TOUCH_ICON = new URL('../../public/apple-touch-icon.png', import.meta.url);
 const FAVICON_PNG = new URL('../../public/favicon-192.png', import.meta.url);
 const FAVICON_ICO = new URL('../../public/favicon.ico', import.meta.url);
+const FAVICON_LARGE = new URL('../../public/favicon-512.png', import.meta.url);
 
 /** 1.91:1, the aspect every major card renderer crops to. */
 const OG_SIZE = { width: 1200, height: 630 };
@@ -58,6 +61,8 @@ const OG_SIZE = { width: 1200, height: 630 };
 const TOUCH_ICON_SIZE = { width: 180, height: 180 };
 /** Search-result favicon: square, a multiple of 48 (Google's rule). */
 const FAVICON_PNG_SIZE = { width: 192, height: 192 };
+/** The manifest's large icon. */
+const FAVICON_LARGE_SIZE = { width: 512, height: 512 };
 /** The sizes packed into favicon.ico, largest first. */
 const ICO_SIZES = [48, 32, 16];
 
@@ -253,6 +258,7 @@ const targets = [
   { out: OG_IMAGE, size: OG_SIZE, label: 'public/og-image.png' },
   { out: TOUCH_ICON, size: TOUCH_ICON_SIZE, label: 'public/apple-touch-icon.png' },
   { out: FAVICON_PNG, size: FAVICON_PNG_SIZE, label: 'public/favicon-192.png' },
+  { out: FAVICON_LARGE, size: FAVICON_LARGE_SIZE, label: 'public/favicon-512.png' },
 ];
 
 if (check) {
@@ -291,6 +297,8 @@ if (check) {
     await writeFile(touchPage, await iconPage(TOUCH_ICON_SIZE), 'utf8');
     const faviconPage = join(workdir, 'favicon.html');
     await writeFile(faviconPage, await iconPage(FAVICON_PNG_SIZE), 'utf8');
+    const largePage = join(workdir, 'favicon-large.html');
+    await writeFile(largePage, await iconPage(FAVICON_LARGE_SIZE), 'utf8');
 
     const card = await screenshot(chrome, {
       url: CARD.href,
@@ -318,6 +326,15 @@ if (check) {
       profile: join(workdir, 'profile-favicon'),
     });
     console.log(`wrote public/favicon-192.png — ${favicon.width}×${favicon.height}`);
+
+    const large = await screenshot(chrome, {
+      url: new URL(`file://${largePage.replace(/\\/g, '/')}`).href,
+      out: FAVICON_LARGE,
+      size: FAVICON_LARGE_SIZE,
+      label: 'public/favicon-512.png',
+      profile: join(workdir, 'profile-favicon-large'),
+    });
+    console.log(`wrote public/favicon-512.png — ${large.width}×${large.height}`);
 
     await writeIco(fileURLToPath(FAVICON_PNG), FAVICON_ICO);
     console.log(`wrote public/favicon.ico — ${ICO_SIZES.join(', ')}`);
