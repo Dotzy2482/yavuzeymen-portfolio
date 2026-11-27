@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a0b0d" />
+    <meta name="robots" content="noindex" />
+    <title>404 — Yavuz Eymen</title>
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!--
+      Cloudflare Pages serves this file, with a 404 status, for any path it
+      has no file for. Without it Pages treated the site as a single-page app
+      and answered every mistyped address with the home page and a 200, which
+      search engines read as endless copies of it.
+
+      A second Vite entry (see vite.config.ts) so it is built with the site's
+      own stylesheet and tokens rather than a copy of them. No script: there is
+      nothing on it to run. Heading and button in English, the sentence in
+      Turkish, as everywhere else on the site.
+    -->
+    <link rel="stylesheet" href="/src/styles/globals.css" />
+  </head>
+  <body
+    class="bg-bg text-text flex min-h-svh flex-col items-center justify-center px-5 text-center"
+  >
+    <a href="/" aria-label="Yavuz Eymen — ana sayfa" class="mb-12">
+      <img src="/favicon.svg" alt="" width="56" height="56" class="size-14" />
+    </a>
+    <p lang="en" class="tracking-kicker text-accent-primary font-mono text-[11px] uppercase">
+      404 — Off track
+    </p>
+    <h1
+      lang="en"
+      class="tracking-display stretch-display mt-6 text-[13vw] leading-[0.95] font-black uppercase md:text-[96px]"
+    >
+      Off the <em class="font-serif font-normal tracking-normal normal-case italic">line.</em>
+    </h1>
+    <p class="text-text-secondary mt-7 max-w-[440px] text-[15px] leading-[1.75] md:text-[17px]">
+      Aradığınız sayfa burada değil. Adres yanlış yazılmış ya da sayfa kaldırılmış olabilir.
+    </p>
+    <a
+      href="/"
+      lang="en"
+      class="bg-accent-secondary text-text stretch-ui tracking-btn hover:bg-accent-secondary-hover duration-base mt-10 inline-flex items-center gap-3 px-[30px] py-[17px] text-[13px] font-extrabold uppercase transition-colors"
+    >
+      Back to the pits →
+    </a>
+  </body>
+</html>

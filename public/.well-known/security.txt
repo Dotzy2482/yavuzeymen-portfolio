@@ -1,0 +1,5 @@
+Contact: https://github.com/Dotzy2482/yavuzeymen-portfolio/security/advisories/new
+Expires: 2027-11-27T00:00:00.000Z
+Preferred-Languages: tr, en
+Canonical: https://yavuzeymensimracing.com/.well-known/security.txt
+Policy: https://github.com/Dotzy2482/yavuzeymen-portfolio/blob/main/SECURITY.md

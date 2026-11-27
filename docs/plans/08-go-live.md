@@ -127,6 +127,26 @@ Google write access to the zone's DNS. **Do not delete that TXT record**:
 Search Console re-checks it and drops the verification if it goes. The sitemap
 is submitted and indexing of the home page was requested.
 
+### What a finished site carries
+
+Added once the site was live, so nothing a visitor, a crawler or a phone
+looks for comes back empty:
+
+- **A 404 page.** `404.html` is a second Vite entry, built with the site's own
+  stylesheet. Without it Pages treated the site as a single-page app and
+  answered every mistyped address with the home page and a 200, which search
+  engines read as endless copies of it. The site has no client-side routes
+  (its links are `#` anchors), so nothing relied on that fallback.
+- **Structured data.** `vite.config.ts` writes a schema.org WebSite and Person
+  into the built `index.html`: the site name Google shows above a result, and
+  `sameAs` links to his profiles, taken from the same `VITE_` values as the
+  page, so they are never in git.
+- **A web manifest** (`site.webmanifest`) with the 192 and 512 icons, for a
+  phone's home screen.
+- **`/.well-known/security.txt`**, pointing at the repository's private
+  vulnerability reporting. **Its `Expires` date is 27 November 2027**: move it
+  on a year before then, or the file reads as abandoned.
+
 ## Steps
 
 1. Domain onto Cloudflare: zone on the free plan, Natro nameservers replaced.

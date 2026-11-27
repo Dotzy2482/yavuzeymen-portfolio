@@ -115,7 +115,7 @@ it. Either keep the ref in the component that renders the node, or use the
   See [docs/TRACK_RECORDS.md](docs/TRACK_RECORDS.md).
 
 - **Do not hand-edit `public/og-image.png`, `public/apple-touch-icon.png`,
-  `public/favicon-192.png` or `public/favicon.ico`.** All are rasterised by
+  `public/favicon-192.png`, `public/favicon-512.png` or `public/favicon.ico`.** All are rasterised by
   headless Chrome from sources in the repo — the card from
   `docs/assets/og-card.html`, the icons from `public/favicon.svg`.
   Regenerate them:
