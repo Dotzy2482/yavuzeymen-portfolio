@@ -240,8 +240,9 @@
 - `og:url`, a canonical link and absolute social image URLs; `robots.txt` and
   a sitemap.
 - Security review: no findings in the code; dev-tool advisories cleared;
-  `public/_headers` adds CSP, HSTS and frame denial. Open, waiting on the
-  owner: SPF/DMARC records against mail spoofing, and a `www` redirect.
+  `public/_headers` adds CSP, HSTS and frame denial; SPF and DMARC stop
+  anyone sending mail as the domain; `www` redirects to the apex; private
+  vulnerability reporting is on.
 
 ## Planned work
 
@@ -266,9 +267,6 @@ No plan unblocks these — each is waiting on a person or a file.
 - **Two decisions for Yavuz**, flagged in [CONTENT.md](CONTENT.md): whether the
   document head speaks English or Turkish, and how often the iRacing and
   Instagram figures get refreshed.
-- **Private vulnerability reporting** is off in the repository settings, so the
-  flow [SECURITY.md](../SECURITY.md) describes does not work until the owner
-  switches it on (Settings → Code security).
 
 ## Unscheduled
 
