@@ -119,8 +119,8 @@ than edited:
 
 | File                          | Dimensions | Size   | Source                     |
 | ----------------------------- | ---------- | ------ | -------------------------- |
-| `public/og-image.png`         | 1200 × 630 | 280 KB | `docs/assets/og-card.html` |
-| `public/apple-touch-icon.png` | 180 × 180  | 3 KB   | `public/favicon.svg`       |
+| `public/og-image.png`         | 1200 × 630 | 196 KB | `docs/assets/og-card.html` |
+| `public/apple-touch-icon.png` | 180 × 180  | 5 KB   | `public/favicon.svg`       |
 
 ```bash
 node docs/assets/generate-og-images.mjs
@@ -131,12 +131,13 @@ and racing lines, the helmet wireframe, Signal Cyan, and copy quoted from
 `data/profile.ts` and the section headings. Nothing on it is written for the
 card, so nothing on it can drift away from the page.
 
-`og-image.png` is 280 KB, which is large for something that is 90% flat Track
-Black, and it is a PNG because headless Chrome only writes PNGs. Neither costs
-a visitor anything: the file is fetched by crawlers and never by the page.
-`sharp` is a devDependency now, so squeezing the PNG is a one-liner worth
-taking one day — [03](plans/03-weight-and-wiring.md) left it alone because its
-job was what the page costs, and this file is not on the page.
+`og-image.png` is a PNG because headless Chrome only writes PNGs. Chrome
+wrote it at 280 KB with light zlib settings; the generator re-encodes both
+files losslessly with `sharp` at the highest compression level, which takes
+the card to 196 KB with the same pixels. A palette encode would reach about
+110 KB, but it moves pixels in the gradients, and this is the file a share
+preview rescales. None of it costs a visitor anything: the file is fetched by
+crawlers and never by the page.
 
 Both carry Yavuz's YE monogram: a slashed italic Y and E, traced into SVG from
 the Gemini concept he picked in November 2026 and recoloured to his choice
