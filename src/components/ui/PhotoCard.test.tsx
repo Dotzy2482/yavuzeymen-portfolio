@@ -38,6 +38,36 @@ describe('PhotoCard', () => {
     expect(video).not.toHaveClass('opacity-0');
   });
 
+  it('moves a manual card on after a hold when the browser refuses to play it', async () => {
+    // iOS Low Power Mode and "never autoplay" settings reject play(); the fan's
+    // playlist only advances when its centre clip ends.
+    vi.useFakeTimers();
+    const play = vi
+      .spyOn(HTMLMediaElement.prototype, 'play')
+      .mockImplementation(() => Promise.reject(new DOMException('blocked', 'NotAllowedError')));
+    const onEnded = vi.fn();
+    try {
+      render(
+        <PhotoCard
+          src="/images/reels/fiat.jpg"
+          video="/videos/reels/fiat.mp4"
+          caption="REEL"
+          play="manual"
+          playing
+          onEnded={onEnded}
+        />,
+      );
+      expect(play).toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(5900);
+      expect(onEnded).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(200);
+      expect(onEnded).toHaveBeenCalledTimes(1);
+    } finally {
+      play.mockRestore();
+      vi.useRealTimers();
+    }
+  });
+
   it('still plays the clip under reduced motion, over its cover', () => {
     preferReducedMotion();
     const { container } = render(

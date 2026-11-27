@@ -156,7 +156,7 @@ export function HeroPortrait({ mode, progress, stageRef, visible }: HeroPortrait
   const layer = cn(
     'absolute left-1/2 w-auto max-w-none origin-[50%_20%]',
     mode === 'scroll'
-      ? 'bottom-0 h-[min(78vh,118vw)]'
+      ? 'bottom-0 h-[min(78svh,118vw)]'
       : 'top-[55px] h-[106vh] portrait:top-auto portrait:bottom-0 portrait:h-[calc(91vh_-_90px)]',
   );
 

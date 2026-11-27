@@ -14,7 +14,14 @@
  * the halo on the team card, which does sit over the portrait's arms.
  *
  * Desktop: a plain 100vh stage, with the helmet revealed under the cursor.
- * Mobile: a plain 100vh stage too. The helmet starts on and comes off by
+ * Mobile: a plain 100vh stage too.
+ *
+ * "100vh" is `svh` throughout the phone layout, and the section is `h-svh` on
+ * every screen. Chrome on Android and Safari on iOS measure `vh` as if their
+ * address bar were hidden, so on first load the bottom of a 100vh hero (the
+ * Kick / Scroll bar, and the team card above it) sat under the browser's own
+ * bar. `svh` is the height with the bars showing. On a desktop the two are
+ * the same, so the `md:` sizes keep `vh`. The helmet starts on and comes off by
  * itself, or as the reader scrolls, whichever comes first. It used to be a
  * pinned 180vh wrapper that held the page still while the helmet came off,
  * which on a phone read as the page being stuck.
@@ -111,10 +118,10 @@ function HeroStage({ progress }: HeroStageProps) {
 
       {/* Headline — in front of the portrait, behind the helmet. On mobile the
           role line rides under it; see the note at the top of the file. */}
-      <div className="pointer-events-none absolute inset-x-0 top-[max(11vh,72px)] z-[3] px-2 text-center md:top-[max(68px,9vh)] md:px-0">
+      <div className="pointer-events-none absolute inset-x-0 top-[max(11svh,72px)] z-[3] px-2 text-center md:top-[max(68px,9vh)] md:px-0">
         <h1
           lang="en"
-          className="tracking-title stretch-display md:tracking-display m-0 text-[length:min(13vw,8.5vh,max(32px,calc(var(--hero-room)/2.85),min(calc(var(--hero-room)/1.9),calc((100vw_-_16px)/7.9))))] leading-[0.95] font-black uppercase [--hero-room:calc(100vh_-_min(78vh,118vw)_-_max(11vh,72px)_-_52px)] [text-shadow:var(--hero-headline-shadow)] md:text-[max(52px,min(calc((100vw_-_96px)/13.3),12.5vh))] md:leading-[0.94]"
+          className="tracking-title stretch-display md:tracking-display m-0 text-[length:min(13vw,8.5svh,max(32px,calc(var(--hero-room)/2.85),min(calc(var(--hero-room)/1.9),calc((100vw_-_16px)/7.9))))] leading-[0.95] font-black uppercase [--hero-room:calc(100svh_-_min(78svh,118vw)_-_max(11svh,72px)_-_52px)] [text-shadow:var(--hero-headline-shadow)] md:text-[max(52px,min(calc((100vw_-_96px)/13.3),12.5vh))] md:leading-[0.94]"
         >
           {words.join(' ')}{' '}
           <em className="font-serif font-normal tracking-normal normal-case italic">{accent}</em>
@@ -185,7 +192,7 @@ export function Hero({ id = 'hero', className }: SectionProps) {
 
   if (isDesktop) {
     return (
-      <section id={id} className={cn('relative h-screen', className)}>
+      <section id={id} className={cn('relative h-svh', className)}>
         <HeroStage progress={null} />
       </section>
     );
@@ -203,7 +210,7 @@ function MobileHero({ id, className }: { id: string; className?: string }) {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
 
   return (
-    <section ref={ref} id={id} className={cn('relative h-screen', className)}>
+    <section ref={ref} id={id} className={cn('relative h-svh', className)}>
       <HeroStage progress={scrollYProgress} />
     </section>
   );
