@@ -9,6 +9,15 @@ A single-page portfolio site for **Yavuz Eymen**, a sim racing driver who has
 crossed over to real-track racing — built from a finished Claude Design
 handoff, with an animated circuit-map section as its centrepiece.
 
+## Where it runs
+
+Live at **https://yavuzeymensimracing.com**, on Cloudflare Pages, which builds
+`main` on every push — merging to `main` is deploying. The `VITE_` values are
+set in the Pages project, not read from `.env.local`: a new variable has to be
+added there too. Response headers (CSP included) live in `public/_headers`
+and are only applied by Pages, never by `vite dev` or `vite preview`. See
+[docs/plans/08-go-live.md](docs/plans/08-go-live.md) for the whole setup.
+
 ## Commands
 
 | Command          | What it does                                     |
@@ -145,7 +154,6 @@ these by inventing values.
 | `data/profile.ts`      | Empty phone (and e-mail/socials when env is unset) | `.env.local` values     |
 | `data/contentStats.ts` | Counters are a dated snapshot of public profiles   | Re-reading the profiles |
 | Footer links           | `Gizlilik` / `Şartlar` point at `#`                | Legal pages             |
-| `index.html`           | No `og:url`, no canonical link                     | A final domain          |
 
 The site must render with an empty `.env` — every variable is optional and
 resolves to an empty string.
@@ -164,7 +172,7 @@ renders "NOGRIPSIMRACING'İN" and not "NOGRİPSİMRACİNG'İN".
 ## Multi-session work
 
 Workstreams are planned out in [docs/plans/](docs/plans/), numbered in the
-order they must land. All seven (`01`–`07`) have landed; their files stay for
+order they must land. All eight (`01`–`08`) have landed; their files stay for
 the **Reasoning** they record, which the code does not — read the relevant one
 before changing the part of the site it built. **Starting a new one:** give it
 the next number and the same shape (Reasoning, Steps, Done when, Progress).

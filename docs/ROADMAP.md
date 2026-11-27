@@ -233,9 +233,19 @@
 - The social card is re-encoded losslessly by `generate-og-images.mjs`:
   280 → 196 KB, the same pixels.
 
+**Go live** — [workstream 08](plans/08-go-live.md)
+
+- Live at https://yavuzeymensimracing.com on Cloudflare Pages (free), built
+  from `main` on every push; DNS on Cloudflare, the domain registered at Natro.
+- `og:url`, a canonical link and absolute social image URLs; `robots.txt` and
+  a sitemap.
+- Security review: no findings in the code; dev-tool advisories cleared;
+  `public/_headers` adds CSP, HSTS and frame denial; SPF and DMARC stop
+  anyone sending mail as the domain.
+
 ## Planned work
 
-None. All seven workstreams in [plans/](plans/) have landed; their files stay for
+None. All eight workstreams in [plans/](plans/) have landed; their files stay for
 the reasoning they record. What is left is either blocked on material or a
 decision from Yavuz (below), or deliberately unscheduled.
 
@@ -253,8 +263,6 @@ No plan unblocks these — each is waiting on a person or a file.
 - **Instagram figures** refreshed from the account with a visible "as of" date,
   since they are hand-entered snapshots.
 - **Legal page copy.** `Gizlilik` and `Şartlar` link to `#`.
-- **A final domain**, for `og:url`, a canonical link and a `robots.txt` /
-  sitemap worth having.
 - **Two decisions for Yavuz**, flagged in [CONTENT.md](CONTENT.md): whether the
   document head speaks English or Turkish, and how often the iRacing and
   Instagram figures get refreshed.
