@@ -1,9 +1,16 @@
 /**
- * Rasterises the two PNGs the document head needs and that nothing else in the
+ * Rasterises the images the document head needs and that nothing else in the
  * build can produce:
  *
  *   public/og-image.png         1200×630, from ./og-card.html
  *   public/apple-touch-icon.png   180×180, from ../../public/favicon.svg
+ *   public/favicon-192.png        192×192, from ../../public/favicon.svg
+ *   public/favicon.ico        48, 32, 16, downscaled from favicon-192.png
+ *
+ * The last two are for search results. Google shows a site's favicon next to
+ * its result, but only one that is square and a multiple of 48px; it showed
+ * a grey globe while the site had nothing but the SVG. The .ico is the file
+ * every crawler and old browser asks for at the root without being told.
  *
  *   node docs/assets/generate-og-images.mjs           # rewrite them
  *   node docs/assets/generate-og-images.mjs --check   # assert they are present
@@ -42,11 +49,17 @@ const CARD = new URL('./og-card.html', import.meta.url);
 const FAVICON = new URL('../../public/favicon.svg', import.meta.url);
 const OG_IMAGE = new URL('../../public/og-image.png', import.meta.url);
 const TOUCH_ICON = new URL('../../public/apple-touch-icon.png', import.meta.url);
+const FAVICON_PNG = new URL('../../public/favicon-192.png', import.meta.url);
+const FAVICON_ICO = new URL('../../public/favicon.ico', import.meta.url);
 
 /** 1.91:1, the aspect every major card renderer crops to. */
 const OG_SIZE = { width: 1200, height: 630 };
 /** iOS home-screen icon; Apple's largest, downscaled from there. */
 const TOUCH_ICON_SIZE = { width: 180, height: 180 };
+/** Search-result favicon: square, a multiple of 48 (Google's rule). */
+const FAVICON_PNG_SIZE = { width: 192, height: 192 };
+/** The sizes packed into favicon.ico, largest first. */
+const ICO_SIZES = [48, 32, 16];
 
 const CHROME_CANDIDATES = [
   process.env.CHROME_PATH,
@@ -180,9 +193,8 @@ async function recompress(out) {
  * applies its own corner mask: transparent corners outside favicon.svg's
  * rounded rect would flash as white pips before being rounded off again.
  */
-async function touchIconPage() {
+async function iconPage({ width, height }) {
   const svg = await readFile(FAVICON, 'utf8');
-  const { width, height } = TOUCH_ICON_SIZE;
   return `<!doctype html>
 <meta charset="utf-8">
 <style>
@@ -193,10 +205,54 @@ ${svg}
 `;
 }
 
+/**
+ * An .ico is a directory of images; each entry may be a whole PNG file, which
+ * every browser since IE Vista and every crawler reads. A 6-byte header, a
+ * 16-byte entry per image, then the PNGs.
+ */
+async function writeIco(source, out) {
+  const images = await Promise.all(
+    ICO_SIZES.map((size) =>
+      sharp(source).resize(size, size).png({ compressionLevel: 9 }).toBuffer(),
+    ),
+  );
+  const header = Buffer.alloc(6);
+  header.writeUInt16LE(0, 0); // reserved
+  header.writeUInt16LE(1, 2); // 1 = icon
+  header.writeUInt16LE(images.length, 4);
+  let offset = 6 + 16 * images.length;
+  const entries = images.map((png, i) => {
+    const entry = Buffer.alloc(16);
+    const size = ICO_SIZES[i];
+    entry.writeUInt8(size >= 256 ? 0 : size, 0); // width (0 means 256)
+    entry.writeUInt8(size >= 256 ? 0 : size, 1); // height
+    entry.writeUInt8(0, 2); // palette colours
+    entry.writeUInt8(0, 3); // reserved
+    entry.writeUInt16LE(1, 4); // colour planes
+    entry.writeUInt16LE(32, 6); // bits per pixel
+    entry.writeUInt32LE(png.length, 8);
+    entry.writeUInt32LE(offset, 12);
+    offset += png.length;
+    return entry;
+  });
+  await writeFile(fileURLToPath(out), Buffer.concat([header, ...entries, ...images]));
+}
+
+/** The sizes in an .ico's directory, for --check. */
+async function icoSizes(out) {
+  const buffer = await readFile(fileURLToPath(out));
+  if (buffer.length < 6 || buffer.readUInt16LE(0) !== 0 || buffer.readUInt16LE(2) !== 1) {
+    throw new Error('public/favicon.ico is not an icon file');
+  }
+  const count = buffer.readUInt16LE(4);
+  return Array.from({ length: count }, (_, i) => buffer.readUInt8(6 + 16 * i) || 256);
+}
+
 const check = process.argv.includes('--check');
 const targets = [
   { out: OG_IMAGE, size: OG_SIZE, label: 'public/og-image.png' },
   { out: TOUCH_ICON, size: TOUCH_ICON_SIZE, label: 'public/apple-touch-icon.png' },
+  { out: FAVICON_PNG, size: FAVICON_PNG_SIZE, label: 'public/favicon-192.png' },
 ];
 
 if (check) {
@@ -212,6 +268,16 @@ if (check) {
       failed = true;
     }
   }
+  try {
+    const sizes = await icoSizes(FAVICON_ICO);
+    if (sizes.join() !== ICO_SIZES.join()) {
+      throw new Error(`public/favicon.ico holds ${sizes.join(', ')}, want ${ICO_SIZES.join(', ')}`);
+    }
+    console.log(`public/favicon.ico — ${sizes.join(', ')}`);
+  } catch (error) {
+    console.error(error.code === 'ENOENT' ? 'public/favicon.ico is missing' : error.message);
+    failed = true;
+  }
   if (failed) {
     console.error('Run: node docs/assets/generate-og-images.mjs');
     process.exit(1);
@@ -221,8 +287,10 @@ if (check) {
   const workdir = await mkdtemp(join(tmpdir(), 'yavuz-og-'));
 
   try {
-    const iconPage = join(workdir, 'touch-icon.html');
-    await writeFile(iconPage, await touchIconPage(), 'utf8');
+    const touchPage = join(workdir, 'touch-icon.html');
+    await writeFile(touchPage, await iconPage(TOUCH_ICON_SIZE), 'utf8');
+    const faviconPage = join(workdir, 'favicon.html');
+    await writeFile(faviconPage, await iconPage(FAVICON_PNG_SIZE), 'utf8');
 
     const card = await screenshot(chrome, {
       url: CARD.href,
@@ -234,13 +302,25 @@ if (check) {
     console.log(`wrote public/og-image.png — ${card.width}×${card.height}`);
 
     const icon = await screenshot(chrome, {
-      url: new URL(`file://${iconPage.replace(/\\/g, '/')}`).href,
+      url: new URL(`file://${touchPage.replace(/\\/g, '/')}`).href,
       out: TOUCH_ICON,
       size: TOUCH_ICON_SIZE,
       label: 'public/apple-touch-icon.png',
       profile: join(workdir, 'profile-icon'),
     });
     console.log(`wrote public/apple-touch-icon.png — ${icon.width}×${icon.height}`);
+
+    const favicon = await screenshot(chrome, {
+      url: new URL(`file://${faviconPage.replace(/\\/g, '/')}`).href,
+      out: FAVICON_PNG,
+      size: FAVICON_PNG_SIZE,
+      label: 'public/favicon-192.png',
+      profile: join(workdir, 'profile-favicon'),
+    });
+    console.log(`wrote public/favicon-192.png — ${favicon.width}×${favicon.height}`);
+
+    await writeIco(fileURLToPath(FAVICON_PNG), FAVICON_ICO);
+    console.log(`wrote public/favicon.ico — ${ICO_SIZES.join(', ')}`);
     console.log(`  chrome: ${chrome}`);
   } finally {
     await rm(workdir, { recursive: true, force: true });

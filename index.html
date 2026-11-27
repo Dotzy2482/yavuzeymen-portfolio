@@ -11,15 +11,21 @@
     />
 
     <!--
-      Yavuz's YE monogram, see public/favicon.svg. Declaring an icon explicitly is
-      also what stops the browser probing /favicon.ico and taking a 404.
+      Yavuz's YE monogram, see public/favicon.svg. Browsers take the SVG.
+      Search engines want a raster: Google shows a result's favicon only if it
+      is square and a multiple of 48px, and showed a grey globe while there was
+      nothing but the SVG. favicon-192.png and favicon.ico (48/32/16) are
+      rasterised from the SVG by docs/assets/generate-og-images.mjs, and the
+      .ico is also what crawlers fetch at the root without being told.
 
       apple-touch-icon has to be a PNG — iOS will not take the SVG — so it is
       rasterised from the same favicon.svg by
       docs/assets/generate-og-images.mjs. No `sizes`: with a single icon
       declared, iOS scales it for every slot it needs.
     -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <!--
