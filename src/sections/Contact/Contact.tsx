@@ -7,7 +7,8 @@
  * into .env.local to arm it.
  *
  * The headline, kicker and CTA are English and carry `lang="en"`; the
- * invitation copy and the legal links stay Turkish.
+ * invitation copy and the footer's privacy link stay Turkish. That link opens
+ * the privacy note in PrivacyNote.tsx.
  *
  * The copyright year is read at runtime rather than written in — a static build
  * would otherwise keep claiming the year it was built in.
@@ -42,6 +43,8 @@ import { StretchScrub } from '@/components/motion';
 import { profile } from '@/data';
 import { usePrefersReducedMotion } from '@/hooks';
 import type { SectionProps } from '@/types';
+
+import { PrivacyNote } from './PrivacyNote';
 
 /**
  * The footer's small print keeps its size; the link box around it grows to the
@@ -156,14 +159,7 @@ function ContactBody({ progress }: { progress: MotionValue<number> | null }) {
         <MonoLabel size="xs" tracking="chip" tone="faint" lang="en" className="md:text-[10px]">
           NoGripSimRacing
         </MonoLabel>
-        <span className="flex gap-5 md:gap-6">
-          <a href="#" className={FOOTER_LINK_CLASSES}>
-            Gizlilik
-          </a>
-          <a href="#" className={FOOTER_LINK_CLASSES}>
-            Şartlar
-          </a>
-        </span>
+        <PrivacyNote triggerClassName={cn(FOOTER_LINK_CLASSES, 'cursor-pointer')} />
       </footer>
     </>
   );

@@ -153,7 +153,6 @@ these by inventing values.
 | ---------------------- | -------------------------------------------------- | ----------------------- |
 | `data/profile.ts`      | Empty phone (and e-mail/socials when env is unset) | `.env.local` values     |
 | `data/contentStats.ts` | Counters are a dated snapshot of public profiles   | Re-reading the profiles |
-| Footer links           | `Gizlilik` / `Şartlar` point at `#`                | Legal pages             |
 
 The site must render with an empty `.env` — every variable is optional and
 resolves to an empty string.
