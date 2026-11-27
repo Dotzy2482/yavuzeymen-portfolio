@@ -105,7 +105,9 @@ order of size:
 - **The page ambient's fields and lines got their own compositor layers**
   (`will-change-transform`). Their transforms only ever translate, so the
   layers are rasterised once at scale 1 and never resampled. A scroll frame
-  now moves layers; a runner frame repaints the lines.
+  now moves layers; a runner frame repaints the lines. **Undone** — see
+  "Follow-up" below: in a real browser window this made every scroll frame
+  more expensive for the GPU, and the page stuttered more than before.
 - **The lap animation reads the panel size first**, before any write.
 
 ### What was looked at and left alone
@@ -163,6 +165,57 @@ Base `ee9edb6` → this branch, headless Chrome at 165 Hz (a frame is 6.06 ms), 
 | Scroll, 390×844 mobile   | 10.41 → **8.19**  | 12.1 → 6.1  | 18.2 → 18.15 | 0 → 0         | 235 → 237   |
 | Mobile, idle under About | 7.55 → **5.32**   | 6.1 → 6.1   | 12.2 → 6.2   | 0 → 0         | 140 → 73    |
 
+## Follow-up: the stutter in a real window
+
+After this landed, the owner felt the scroll stutter _more_ than before. That
+was true, and nothing in the table above could have shown it.
+
+**Headless missed it.** Every number above is headless Chrome. A second
+harness that scrolls by real input (`Input.synthesizeScrollGesture`, so the
+compositor scrolls the page the way a wheel does), traces the GPU process as
+well and keeps one browser profile across runs still found no regression:
+`95a9ad5` dropped 1.0–1.6 % of frames and `3072b45` 0.9–1.3 %. Then the same
+two builds were scrolled in the owner's own Chrome — a real window on the
+165 Hz display, by an in-page loop that scrolls 1500 px/s from top to bottom
+in `requestAnimationFrame` and records the frame deltas — and `3072b45` was
+clearly worse. In that window even an empty page drew only every third
+refresh: the GPU is the limit there, which is where a real visitor is
+whenever anything else is using it.
+
+**The cause was the page ambient's `will-change-transform`.** Switching off
+this plan's GPU-side changes one at a time in that window, only one moved the
+numbers: taking the three promoted layers back out of the fixed ambient layer
+brought the scroll back to `95a9ad5`. Keeping any one of the three promoted
+was as bad as keeping all three; forcing the layer's opacity to 1 changed
+nothing, and neither did pausing every compositor animation on the page. So
+the fields and lines paint into the one layer again, as they did before this
+plan. Everything else here stays.
+
+| Owner's Chrome, full-page scroll | Frames drawn | Frames > 33 ms | Frames > 50 ms |
+| -------------------------------- | ------------ | -------------- | -------------- |
+| Before plan 07 (`95a9ad5`)       | 214          | 40             | 4.5            |
+| Plan 07 (`3072b45`)              | 188          | 60             | 19.5           |
+| This fix                         | 211.5        | 45             | 8              |
+
+Four runs of each, alternated; frames drawn is the mean, the other two are
+medians. One scroll takes about 8 s. Headless with a warm profile the fix is
+neutral: 0.6 % of frames dropped (plan 07: 0.4–0.6 %), 422 ms of main-thread
+work a second (439–447), and at 4× CPU 5.9 % dropped against 5.6 %.
+
+**Two more things the measurement showed, which no change to the site fixes:**
+
+- A game left running in the background had the GPU at 92 %. While it ran,
+  the owner's Chrome drew an _empty_ page at about 27 fps, and both builds
+  stuttered alike.
+- The first scroll after Chrome starts can freeze for 100–300 ms at a time.
+  That is Chrome compiling GPU pipelines for draws it has not made yet, in
+  the GPU process; it happens on both builds, on every run in a fresh
+  profile, and mostly not on the second.
+
+**For the next performance pass:** adding compositor layers is a GPU trade,
+and headless Chrome on a free GPU does not show what it costs. Measure it in
+a real window before keeping it.
+
 ## Progress
 
 - [x] 1 — harness and baseline
@@ -172,3 +225,4 @@ Base `ee9edb6` → this branch, headless Chrome at 165 Hz (a frame is 6.06 ms), 
 - [x] 5 — runners hold unseen; page ambient layers
 - [x] 6 — lap animation reads first
 - [x] 7 — re-measured, screenshots compared
+- [x] Follow-up — page ambient layers undone after measuring in a real window
