@@ -221,8 +221,12 @@
 - The hero's helmet loop runs only while the hero is on screen and reads no
   layout while idle; the ambient loops (colour fields, the drawing's drift,
   the scroll cue, the Kick pulse, Setup's pings) run on the compositor; the
-  cyan runners hold while they cannot be seen; the page ambient's moving
-  parts have their own layers; the lap animation reads before it writes.
+  cyan runners hold while they cannot be seen; the lap animation reads
+  before it writes.
+- Follow-up: the page ambient's promoted layers were undone. Measured in a
+  real Chrome window they cost the GPU more than they saved, and the page
+  scrolled worse than before the plan (188 frames per full scroll against
+  214; 211.5 with the fix).
 - Main-thread work per frame fell 15–30 % across the page and scrolling went
   from every other frame to every frame, with nothing on screen changed —
   checked by pixel-diffing screenshots of both builds.

@@ -20,14 +20,23 @@
  *
  * ## What it costs
  *
- * The two fields and the lines each sit on their own compositor layer
- * (`will-change-transform`). Before, all of it was painted into the one fixed
- * layer, so every scroll frame that moved a field, and every frame a runner
- * moved, repainted the masked dot grid and both screen-sized gradients with
- * it. Now a scroll frame only moves layers, and a runner repaints the lines
- * alone. The runners hold while the layer is fully transparent — at the top
- * of the page, behind the hero — since a dash offset is never compositor
- * work (see `useLoop`).
+ * It is painted as one layer, on purpose. Plan 07 gave the two fields and the
+ * lines a compositor layer each (`will-change-transform`) so that a scroll
+ * frame would only move layers instead of repainting the masked dot grid and
+ * both gradients. Headless Chrome agreed; a real browser window did not.
+ * Three promoted layers inside this fixed, clipped, masked one made every
+ * frame of the page more expensive for the GPU, wherever the scroll was, and
+ * on a window whose GPU is shared (a game, an animated wallpaper, a second
+ * monitor) that cost came straight out of the frame rate: a full-page scroll
+ * drew 188 frames instead of 214, and four times as many took over 50 ms.
+ * Promoting any one of the three alone was as bad as all three. The
+ * repaint it saves is cheap, main-thread and off the GPU, so it is the better
+ * trade. Measured in docs/plans/07-performance.md ("Follow-up"); do not promote
+ * these again without measuring in a real, headed window.
+ *
+ * The runners hold while the layer is fully transparent — at the top of the
+ * page, behind the hero — since a dash offset is never compositor work (see
+ * `useLoop`).
  */
 
 import { useState } from 'react';
@@ -134,7 +143,7 @@ function Layer({ progress, presence, shown }: LayerProps) {
         }}
       />
       <motion.div
-        className="absolute will-change-transform"
+        className="absolute"
         style={{
           left: '-22%',
           top: '35%',
@@ -146,7 +155,7 @@ function Layer({ progress, presence, shown }: LayerProps) {
         }}
       />
       <motion.div
-        className="absolute will-change-transform"
+        className="absolute"
         style={{
           right: '-22%',
           top: '-20%',
@@ -160,7 +169,7 @@ function Layer({ progress, presence, shown }: LayerProps) {
       <svg
         viewBox="0 0 1600 900"
         preserveAspectRatio="xMidYMid slice"
-        className="absolute inset-0 h-full w-full will-change-transform"
+        className="absolute inset-0 h-full w-full"
       >
         {LINES.map((line) => (
           <path key={line.d} d={line.d} fill="none" stroke={line.stroke} strokeWidth="1.5" />
