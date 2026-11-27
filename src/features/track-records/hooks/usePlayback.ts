@@ -6,16 +6,15 @@
  * it. Keeping them apart means the controls can be tested without a running
  * rAF loop.
  *
- * Under prefers-reduced-motion playback starts paused: the design auto-plays,
- * but "reduce motion" means nothing moves until the visitor asks for it. The
- * same holds if the setting is switched on mid-visit — a running lap stops
- * where it is. Switching it off does not restart anything; that is the
- * visitor's call, and Play is right there.
+ * The lap plays on its own, under prefers-reduced-motion too. It used to
+ * start paused there, and Windows' "Animation effects" switch (off on plenty
+ * of machines whose owners never chose it) sets that preference, so on those
+ * computers the replay sat at 0:00.000 and read as broken. The replay is the
+ * section's content rather than decoration, it moves a small marker along a
+ * line, and Pause is one press away.
  */
 
 import { useCallback, useState } from 'react';
-
-import { usePrefersReducedMotion } from '@/hooks';
 
 /** Playback rate multiplier applied to the on-screen lap duration. */
 export type PlaybackSpeed = 1 | 2;
@@ -28,17 +27,8 @@ export interface UsePlaybackResult {
 }
 
 export function usePlayback(): UsePlaybackResult {
-  const prefersReducedMotion = usePrefersReducedMotion();
-  const [isPlaying, setIsPlaying] = useState(!prefersReducedMotion);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [speed, setSpeed] = useState<PlaybackSpeed>(1);
-
-  // Adjusting state during render, React's pattern for reacting to a changed
-  // input without an effect: the pause lands in the same commit as the change.
-  const [reducedMotionSeen, setReducedMotionSeen] = useState(prefersReducedMotion);
-  if (prefersReducedMotion !== reducedMotionSeen) {
-    setReducedMotionSeen(prefersReducedMotion);
-    if (prefersReducedMotion) setIsPlaying(false);
-  }
 
   const toggle = useCallback(() => setIsPlaying((playing) => !playing), []);
   const toggleSpeed = useCallback(() => setSpeed((s) => (s === 1 ? 2 : 1)), []);

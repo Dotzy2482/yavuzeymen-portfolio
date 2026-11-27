@@ -22,14 +22,16 @@
  * it, transparent until it is actually playing, then fades in. A `poster`
  * would not do — browsers drop it as soon as play() is called and paint black
  * until the first frame decodes, which flashed every card black on a phone.
- * Under reduced motion the card is the picture alone: a looping video is
- * motion, and the still says the same thing.
+ * Videos play under reduced motion too. They used to give way to the still
+ * there, and Windows' "Animation effects" switch sets that preference on
+ * plenty of machines whose owners never chose it, so the reels simply never
+ * played on them. The clips are the section's content, not decoration.
  */
 
 import { useEffect, useState } from 'react';
 
 import { cn } from '@/lib/cn';
-import { useInView, usePrefersReducedMotion } from '@/hooks';
+import { useInView } from '@/hooks';
 
 import { Picture } from './Picture';
 
@@ -127,7 +129,6 @@ export function PhotoCard({
   playThreshold = 0.25,
   className,
 }: PhotoCardProps) {
-  const prefersReducedMotion = usePrefersReducedMotion();
   const [hovered, setHovered] = useState(false);
   // The dimming sits on a wrapper, not on each layer: with the video over the
   // cover picture, two 85% layers would let the picture show through.
@@ -145,7 +146,7 @@ export function PhotoCard({
     >
       <div className={mediaFrameClasses}>
         <Picture src={src} alt={alt} loading="lazy" className={MEDIA_CLASSES} />
-        {video && !prefersReducedMotion && (
+        {video && (
           <CardVideo
             // Keyed by clip: a card that reaches the fan's centre swaps its
             // preview for the full clip, and the new one must stay hidden

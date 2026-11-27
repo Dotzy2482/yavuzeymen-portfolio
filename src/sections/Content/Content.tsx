@@ -31,8 +31,11 @@
  * counter, step it by hand. Side cards loop 270 × 480 previews and offstage
  * cards hold a poster, so one full clip and four small ones decode at a time:
  * five full clips in a fan that rotates and scrolls made the section stutter.
- * The playlist waits while the fan is off screen; under reduced motion the
- * cards jump instead of travelling and nothing plays.
+ * The playlist waits while the fan is off screen. Under reduced motion the
+ * fan is not dealt out by the scroll and the cards jump instead of
+ * travelling, but the clips still play and the playlist still moves on: on a
+ * machine with Windows' "Animation effects" off, a fan of stills read as
+ * broken.
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -459,9 +462,7 @@ function FanBody({ spread, active, layout }: FanBodyProps) {
         instant={!spread}
         spread={spread}
         layout={layout}
-        centre={
-          spread && isCentre ? { playing: active && !busy, onEnded: () => stepBy(1, false) } : null
-        }
+        centre={isCentre ? { playing: active && !busy, onEnded: () => stepBy(1, false) } : null}
       />
     );
   });
@@ -533,6 +534,19 @@ function FanBody({ spread, active, layout }: FanBodyProps) {
   );
 }
 
+/**
+ * The fan under reduced motion: dealt out from the start and never scrubbed,
+ * but the playlist runs while it is on screen, as it does everywhere else.
+ */
+function StillFan({ layout, className }: FanFrameProps) {
+  const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.5, once: false });
+  return (
+    <div ref={ref} className={className}>
+      <FanBody spread={null} active={inView} layout={layout} />
+    </div>
+  );
+}
+
 interface FanFrameProps {
   layout: FanLayout;
   className: string;
@@ -571,11 +585,7 @@ function Fan() {
   const layout = isDesktop ? DESKTOP_LAYOUT : PHONE_LAYOUT;
   const className = isDesktop ? FAN_CLASSES : PHONE_FAN_CLASSES;
   if (prefersReducedMotion) {
-    return (
-      <div className={className}>
-        <FanBody spread={null} active={false} layout={layout} />
-      </div>
-    );
+    return <StillFan layout={layout} className={className} />;
   }
   // Keyed by layout: crossing the breakpoint remounts the fan rather than
   // animating every card from one geometry into the other.

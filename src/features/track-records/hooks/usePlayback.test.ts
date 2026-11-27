@@ -1,7 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { REDUCED_MOTION_QUERY } from '@/lib/constants';
 import { preferReducedMotion } from '@/test/reducedMotion';
 
 import { usePlayback } from './usePlayback';
@@ -18,58 +17,23 @@ describe('usePlayback', () => {
     expect(result.current.speed).toBe(1);
   });
 
-  it('starts paused under prefers-reduced-motion', () => {
+  it('plays under prefers-reduced-motion too', () => {
     preferReducedMotion();
 
     const { result } = renderHook(() => usePlayback());
 
-    // "Reduce motion" means nothing moves until the visitor asks for it. The
-    // speed is untouched: it is a choice for when they do.
-    expect(result.current.isPlaying).toBe(false);
+    // Windows' "Animation effects" switch sets the preference on machines
+    // whose owners never chose it; a replay frozen at 0:00 read as broken.
+    expect(result.current.isPlaying).toBe(true);
     expect(result.current.speed).toBe(1);
   });
 
-  it('still lets a reduced-motion visitor start the lap themselves', () => {
+  it('lets a reduced-motion visitor pause the lap', () => {
     preferReducedMotion();
     const { result } = renderHook(() => usePlayback());
 
     act(() => result.current.toggle());
 
-    expect(result.current.isPlaying).toBe(true);
-  });
-
-  it('stops a running lap when reduced motion is switched on mid-visit', () => {
-    let reduce = false;
-    const listeners = new Set<EventListenerOrEventListenerObject>();
-    vi.stubGlobal('matchMedia', (query: string): MediaQueryList => ({
-      matches: query === REDUCED_MOTION_QUERY && reduce,
-      media: query,
-      onchange: null,
-      addEventListener: (_type: string, listener: EventListenerOrEventListenerObject) =>
-        listeners.add(listener),
-      removeEventListener: (_type: string, listener: EventListenerOrEventListenerObject) =>
-        listeners.delete(listener),
-      addListener: () => {},
-      removeListener: () => {},
-      dispatchEvent: () => false,
-    }));
-    const flip = (next: boolean) =>
-      act(() => {
-        reduce = next;
-        const event = new Event('change');
-        for (const listener of listeners) {
-          if (typeof listener === 'function') listener(event);
-          else listener.handleEvent(event);
-        }
-      });
-    const { result } = renderHook(() => usePlayback());
-    expect(result.current.isPlaying).toBe(true);
-
-    flip(true);
-    expect(result.current.isPlaying).toBe(false);
-
-    // Switching it back off restarts nothing: that is the visitor's call.
-    flip(false);
     expect(result.current.isPlaying).toBe(false);
   });
 

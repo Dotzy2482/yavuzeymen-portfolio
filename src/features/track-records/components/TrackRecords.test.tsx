@@ -391,12 +391,12 @@ describe('TrackRecords', () => {
       expect(screen.queryByRole('button', { name: 'Play' })).toBeNull();
     });
 
-    it('offers Play under prefers-reduced-motion', () => {
+    it('auto-plays under prefers-reduced-motion too, with Pause on offer', () => {
       preferReducedMotion();
 
       render(<TrackRecords />);
 
-      expect(playButton()).toHaveTextContent('Play');
+      expect(pauseButton()).toHaveTextContent('Pause');
       expect(speedButton(1)).toBeInTheDocument();
     });
 
@@ -521,21 +521,21 @@ describe('TrackRecords', () => {
       expectReading(panelTrack(), elapsed, 2);
     });
 
-    it('stays on the line under reduced motion until Play is pressed', async () => {
+    it('runs the replay under reduced motion too, and Pause stops it', async () => {
       // No observer needed: under reduced motion the panel counts as visible.
       preferReducedMotion();
       render(<TrackRecords />);
       const track = panelTrack();
-
-      clock.frames(60);
-      expect(reading()).toBe(0);
-      // Nothing is left waiting on an animation that is not going to run.
+      // Nothing is left waiting on an animation before the personal best shows.
       expect(personalBest()).toBe(track.lap);
 
-      await user.click(playButton());
       const elapsed = clock.frames(60);
-
       expectReading(track, elapsed);
+
+      await user.click(pauseButton());
+      const held = reading();
+      clock.frames(60);
+      expect(reading()).toBe(held);
     });
 
     it('starts a newly picked circuit from the line', async () => {
