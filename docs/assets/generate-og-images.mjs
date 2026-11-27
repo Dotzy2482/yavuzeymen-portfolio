@@ -7,12 +7,21 @@
  *   public/favicon-192.png        192×192, from ../../public/favicon.svg
  *   public/favicon-512.png        512×512, from ../../public/favicon.svg
  *   public/favicon.ico        48, 32, 16, downscaled from favicon-192.png
+ *   public/search-image.jpg     1200×1200, the bare-headed hero photo on the
+ *                               page ground
  *
  * The last two are for search results. Google shows a site's favicon next to
  * its result, but only one that is square and a multiple of 48px; it showed
  * a grey globe while the site had nothing but the SVG. The .ico is the file
  * every crawler and old browser asks for at the root without being told.
  * The 512 is the large icon site.webmanifest offers a phone's home screen.
+ *
+ * search-image.jpg is the picture Google shows beside the search result.
+ * Left to choose, it took the hero's helmet cut-out, a transparent PNG, and
+ * showed it on white. The structured data in vite.config.ts now names this
+ * square, opaque image instead (Google crops result thumbnails to about a
+ * square, which would cut the head off any of the tall portraits), and
+ * robots.txt keeps Google's image crawler off the transparent hero files.
  *
  *   node docs/assets/generate-og-images.mjs           # rewrite them
  *   node docs/assets/generate-og-images.mjs --check   # assert they are present
@@ -54,6 +63,8 @@ const TOUCH_ICON = new URL('../../public/apple-touch-icon.png', import.meta.url)
 const FAVICON_PNG = new URL('../../public/favicon-192.png', import.meta.url);
 const FAVICON_ICO = new URL('../../public/favicon.ico', import.meta.url);
 const FAVICON_LARGE = new URL('../../public/favicon-512.png', import.meta.url);
+const HERO_FACE = new URL('../../public/images/hero/portrait-cutout.png', import.meta.url);
+const SEARCH_IMAGE = new URL('../../public/search-image.jpg', import.meta.url);
 
 /** 1.91:1, the aspect every major card renderer crops to. */
 const OG_SIZE = { width: 1200, height: 630 };
@@ -63,6 +74,8 @@ const TOUCH_ICON_SIZE = { width: 180, height: 180 };
 const FAVICON_PNG_SIZE = { width: 192, height: 192 };
 /** The manifest's large icon. */
 const FAVICON_LARGE_SIZE = { width: 512, height: 512 };
+/** The search-result picture: square, and large enough for any crop Google makes. */
+const SEARCH_IMAGE_SIZE = { width: 1200, height: 1200 };
 /** The sizes packed into favicon.ico, largest first. */
 const ICO_SIZES = [48, 32, 16];
 
@@ -211,6 +224,33 @@ ${svg}
 }
 
 /**
+ * The search-result picture's page: the bare-headed hero photo standing on the
+ * bottom edge of the page ground, with the red and blue ambient glows the
+ * hero and the social card use. Values are literals mirrored from tokens.css,
+ * for the reason og-card.html gives.
+ */
+function searchImagePage() {
+  const face = fileURLToPath(HERO_FACE).replace(/\\/g, '/');
+  const { width, height } = SEARCH_IMAGE_SIZE;
+  return `<!doctype html>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; padding: 0; }
+  .stage { position: relative; width: ${width}px; height: ${height}px; overflow: hidden; background: #0a0b0d; }
+  .glow { position: absolute; border-radius: 50%; }
+  .red { left: -20%; top: 18%; width: 70%; height: 80%; background: radial-gradient(ellipse at center, rgba(232, 35, 42, 0.2), transparent 62%); }
+  .blue { right: -20%; top: 8%; width: 70%; height: 80%; background: radial-gradient(ellipse at center, rgba(43, 88, 255, 0.18), transparent 62%); }
+  img { position: absolute; left: 50%; bottom: 0; height: 92%; transform: translateX(-50%); }
+</style>
+<div class="stage">
+  <div class="glow red"></div>
+  <div class="glow blue"></div>
+  <img src="file:///${face}" alt="">
+</div>
+`;
+}
+
+/**
  * An .ico is a directory of images; each entry may be a whole PNG file, which
  * every browser since IE Vista and every crawler reads. A 6-byte header, a
  * 16-byte entry per image, then the PNGs.
@@ -261,6 +301,21 @@ const targets = [
   { out: FAVICON_LARGE, size: FAVICON_LARGE_SIZE, label: 'public/favicon-512.png' },
 ];
 
+/** Width and height of a baseline or progressive JPEG, from its SOF marker. */
+async function jpegSize(path) {
+  const buffer = await readFile(path);
+  let offset = 2;
+  while (offset < buffer.length) {
+    const marker = buffer.readUInt16BE(offset);
+    const length = buffer.readUInt16BE(offset + 2);
+    if (marker >= 0xffc0 && marker <= 0xffc2) {
+      return { height: buffer.readUInt16BE(offset + 5), width: buffer.readUInt16BE(offset + 7) };
+    }
+    offset += 2 + length;
+  }
+  throw new Error(`${path} has no frame header`);
+}
+
 if (check) {
   let failed = false;
   for (const { out, size, label } of targets) {
@@ -273,6 +328,16 @@ if (check) {
       console.error(error.code === 'ENOENT' ? `${label} is missing` : error.message);
       failed = true;
     }
+  }
+  try {
+    const { width, height } = await jpegSize(fileURLToPath(SEARCH_IMAGE));
+    if (width !== SEARCH_IMAGE_SIZE.width || height !== SEARCH_IMAGE_SIZE.height) {
+      throw new Error(`public/search-image.jpg is ${width}×${height}, want 1200×1200`);
+    }
+    console.log(`public/search-image.jpg — ${width}×${height}`);
+  } catch (error) {
+    console.error(error.code === 'ENOENT' ? 'public/search-image.jpg is missing' : error.message);
+    failed = true;
   }
   try {
     const sizes = await icoSizes(FAVICON_ICO);
@@ -297,6 +362,8 @@ if (check) {
     await writeFile(touchPage, await iconPage(TOUCH_ICON_SIZE), 'utf8');
     const faviconPage = join(workdir, 'favicon.html');
     await writeFile(faviconPage, await iconPage(FAVICON_PNG_SIZE), 'utf8');
+    const searchPage = join(workdir, 'search-image.html');
+    await writeFile(searchPage, searchImagePage(), 'utf8');
     const largePage = join(workdir, 'favicon-large.html');
     await writeFile(largePage, await iconPage(FAVICON_LARGE_SIZE), 'utf8');
 
@@ -335,6 +402,20 @@ if (check) {
       profile: join(workdir, 'profile-favicon-large'),
     });
     console.log(`wrote public/favicon-512.png — ${large.width}×${large.height}`);
+
+    // Chrome writes PNG; the photo ships as a JPEG, a tenth of the size.
+    const searchPng = new URL(`file://${join(workdir, 'search-image.png').replace(/\\/g, '/')}`);
+    await screenshot(chrome, {
+      url: new URL(`file://${searchPage.replace(/\\/g, '/')}`).href,
+      out: searchPng,
+      size: SEARCH_IMAGE_SIZE,
+      label: 'search-image.png',
+      profile: join(workdir, 'profile-search'),
+    });
+    await sharp(fileURLToPath(searchPng))
+      .jpeg({ quality: 86, mozjpeg: true })
+      .toFile(fileURLToPath(SEARCH_IMAGE));
+    console.log('wrote public/search-image.jpg — 1200×1200');
 
     await writeIco(fileURLToPath(FAVICON_PNG), FAVICON_ICO);
     console.log(`wrote public/favicon.ico — ${ICO_SIZES.join(', ')}`);

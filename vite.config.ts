@@ -5,13 +5,24 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
 const SITE_URL = 'https://yavuzeymensimracing.com/';
+const SEARCH_IMAGE = {
+  '@type': 'ImageObject',
+  '@id': `${SITE_URL}#search-image`,
+  url: `${SITE_URL}search-image.jpg`,
+  width: 1200,
+  height: 1200,
+  caption: 'Yavuz Eymen',
+};
 
 /**
  * Writes the site's structured data (schema.org JSON-LD) into index.html at
  * build time: a WebSite, which is where Google takes the site name it shows
- * above a result, and a Person whose `sameAs` lists his profiles, which is how
- * a search engine ties the site to the Instagram, YouTube, TikTok and Kick
- * accounts it already knows.
+ * above a result; a WebPage whose `primaryImageOfPage` is the picture Google
+ * should show beside the result (search-image.jpg, see
+ * docs/assets/generate-og-images.mjs; left to choose, Google took the hero's
+ * transparent helmet cut-out and showed it on white); and a Person whose
+ * `sameAs` lists his profiles, which is how a search engine ties the site to
+ * the Instagram, YouTube, TikTok and Kick accounts it already knows.
  *
  * The profile URLs come from the same `VITE_` environment as the rest of the
  * page (see data/profile.ts), so they are in the built HTML and never in git.
@@ -40,11 +51,22 @@ function structuredData(mode: string): Plugin {
         about: { '@id': `${SITE_URL}#person` },
       },
       {
+        '@type': 'WebPage',
+        '@id': `${SITE_URL}#webpage`,
+        url: SITE_URL,
+        name: 'Yavuz Eymen — Sim Racing',
+        inLanguage: 'tr',
+        isPartOf: { '@id': `${SITE_URL}#website` },
+        about: { '@id': `${SITE_URL}#person` },
+        primaryImageOfPage: SEARCH_IMAGE,
+        image: SEARCH_IMAGE,
+      },
+      {
         '@type': 'Person',
         '@id': `${SITE_URL}#person`,
         name: 'Yavuz Eymen',
         url: SITE_URL,
-        image: `${SITE_URL}og-image.png`,
+        image: SEARCH_IMAGE,
         jobTitle: 'Sim racing driver and content creator',
         nationality: { '@type': 'Country', name: 'Türkiye' },
         memberOf: { '@type': 'SportsTeam', name: 'Team Curve Hunters' },

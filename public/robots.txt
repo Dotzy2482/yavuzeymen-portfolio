@@ -1,4 +1,13 @@
 User-agent: *
 Allow: /
 
+# The hero's two portraits are transparent cut-outs, made to be stacked on the
+# page. Google's image crawler took the helmeted one as the search-result
+# picture and showed it on white; the structured data names search-image.jpg
+# instead, and this keeps the cut-outs out of Google Images altogether.
+# Googlebot itself still fetches them to render the page.
+User-agent: Googlebot-Image
+Disallow: /images/hero/
+Allow: /
+
 Sitemap: https://yavuzeymensimracing.com/sitemap.xml
