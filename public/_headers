@@ -1,0 +1,32 @@
+# Cloudflare Pages response headers. Copied into dist/ as-is by Vite and read
+# by Pages at deploy time; `vite dev` and `vite preview` ignore this file, so
+# a policy change is only proven on a Pages preview deployment.
+#
+# Content-Security-Policy, source by source:
+#   script-src 'self'      the one Vite module bundle; there are no inline
+#                          scripts and nothing from another origin
+#   style-src 'self'       the built stylesheet. React and motion write styles
+#                          through element.style (CSSOM), which CSP does not
+#                          gate, so no 'unsafe-inline' is needed
+#   img-src data:          the hero's helmet mask is an SVG data: URL in a
+#                          CSS mask-image, which counts as an image load
+#   connect-src kick.com   useKickLive polls Kick's public channel API
+#   frame-ancestors 'none' nobody may frame the page (clickjacking)
+#   form-action 'none'     the page has no forms; contact is a mailto link
+#
+# HSTS has no `preload`: preloading is hard to undo and gains little here.
+#
+# Pages already sends X-Content-Type-Options: nosniff and
+# Referrer-Policy: strict-origin-when-cross-origin; repeating them here would
+# duplicate the headers.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self' https://kick.com; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Frame-Options: DENY
+  Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()
+
+# Vite content-hashes everything under /assets/, so a file there never changes
+# under the same name and can be cached for good.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

@@ -27,16 +27,18 @@
       rasterised by docs/assets/generate-og-images.mjs — edit the source and
       regenerate, never the PNG.
 
-      og:image is root-relative because there is no final domain to make it
-      absolute with. Crawlers generally resolve it against the page URL, but
-      Facebook's own documentation asks for an absolute URL, so treat this as
-      provisional: it must become absolute at the same moment og:url and a
-      canonical link arrive — which is the same wait, for the same reason.
+      The site lives at https://yavuzeymensimracing.com (the apex; www is an
+      alias of it). og:url, the canonical link and both image URLs are absolute
+      on that origin: Facebook's documentation asks for absolute image URLs,
+      and the canonical is what keeps www and the *.pages.dev address from
+      counting as separate copies of the page. Change all four together.
 
       NOTE: og:description and the `description` meta above are English inside
       a lang="tr" document with og:locale tr_TR. That is a copy decision, not a
       bug to fix in passing — see docs/CONTENT.md.
     -->
+    <link rel="canonical" href="https://yavuzeymensimracing.com/" />
+    <meta property="og:url" content="https://yavuzeymensimracing.com/" />
     <meta property="og:type" content="profile" />
     <meta property="og:site_name" content="Yavuz Eymen" />
     <meta property="og:title" content="Yavuz Eymen — Sim Racing" />
@@ -45,7 +47,7 @@
       content="Yavuz Eymen — sim racing driver. Track records, career and content."
     />
     <meta property="og:locale" content="tr_TR" />
-    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image" content="https://yavuzeymensimracing.com/og-image.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -60,7 +62,7 @@
       name="twitter:description"
       content="Yavuz Eymen — sim racing driver. Track records, career and content."
     />
-    <meta name="twitter:image" content="/og-image.png" />
+    <meta name="twitter:image" content="https://yavuzeymensimracing.com/og-image.png" />
     <meta
       name="twitter:image:alt"
       content="Yavuz Eymen — professional sim racing driver and content creator, Team Curve Hunters."
