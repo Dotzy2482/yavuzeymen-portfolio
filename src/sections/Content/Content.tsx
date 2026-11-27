@@ -10,8 +10,15 @@
  * in, on a damped scrub, and hovering a card lifts it on a spring, squares it
  * to the reader and raises it above its neighbours. It used to overlap 44px
  * and tilt to ±13°, so a hovered neighbour swung across the centre card and
- * covered its view count. Phones and tablets: a scroll-snap carousel of straight cards,
- * centre card first.
+ * covered its view count.
+ *
+ * Phones and tablets get the same fan, smaller: a 220px centre card with its
+ * neighbours tilted behind it and spilling past the screen edges, the outer
+ * pair only peeking in. It used to be a scroll-snap carousel of straight
+ * cards, which read as a row of thumbnails rather than the section's set
+ * piece. A horizontal swipe steps the playlist like the arrows do, and only
+ * the centre card plays: the side cards hold their stills, so a phone decodes
+ * one clip at a time.
  *
  * ## The fan is a playlist
  *
@@ -28,7 +35,7 @@
  * cards jump instead of travelling and nothing plays.
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   animate,
   motion,
@@ -39,11 +46,12 @@ import {
   type MotionValue,
 } from 'motion/react';
 
+import { BREAKPOINTS } from '@/lib/constants';
 import { cn } from '@/lib/cn';
 import { padNumber } from '@/lib/format';
 import { CountUp } from '@/components/motion';
 import { MonoLabel, PhotoCard, SectionHeading } from '@/components/ui';
-import { useInView, usePrefersReducedMotion } from '@/hooks';
+import { useInView, useMediaQuery, usePrefersReducedMotion } from '@/hooks';
 import { contentCounters, reelCards, FAN_CENTER_INDEX, type ReelCard } from '@/data';
 import type { SectionProps } from '@/types';
 
@@ -61,11 +69,31 @@ import type { SectionProps } from '@/types';
  * the row. The scrub starts every card a share
  * of that distance in towards the middle (see GATHER) and deals it out.
  */
-const FAN_RINGS = [
-  { width: 270, rotate: 0, y: 0, z: 'z-[5]', reach: 0 },
-  { width: 230, rotate: 5, y: 20, z: 'z-[3]', reach: 240 },
-  { width: 190, rotate: 10, y: 56, z: 'z-[1]', reach: 440 },
-] as const;
+interface FanRing {
+  width: number;
+  rotate: number;
+  y: number;
+  reach: number;
+}
+
+const FAN_RINGS: readonly FanRing[] = [
+  { width: 270, rotate: 0, y: 0, reach: 0 },
+  { width: 230, rotate: 5, y: 20, reach: 240 },
+  { width: 190, rotate: 10, y: 56, reach: 440 },
+];
+
+/**
+ * The phone fan. The cards overlap far more than on desktop (a neighbour
+ * hides 70px of itself behind the centre card) because the row has 350px to
+ * live in rather than 1070. On a 390px phone the neighbours run about 20px
+ * past the screen edge and the outer cards show a 60px sliver: the fan reads
+ * as spreading off the page rather than as shrunk to fit it.
+ */
+const PHONE_RINGS: readonly FanRing[] = [
+  { width: 220, rotate: 0, y: 0, reach: 0 },
+  { width: 176, rotate: 6, y: 14, reach: 128 },
+  { width: 140, rotate: 11, y: 34, reach: 205 },
+];
 
 /**
  * At the start of the scrub every side card sits this share of its reach in
@@ -87,9 +115,6 @@ const PICK_STEP_MS = 440;
 /** The hover lift: quick and springy, but no overshoot past the cards beside it. */
 const HOVER_SPRING = { type: 'spring', stiffness: 320, damping: 26 } as const;
 
-/** Every card is drawn at the centre card's width and scaled to its slot. */
-const CARD_WIDTH = FAN_RINGS[0].width;
-
 interface FanSlot {
   /** Scale against CARD_WIDTH. */
   scale: number;
@@ -100,25 +125,56 @@ interface FanSlot {
   z: number;
 }
 
-function fanSlot(index: number): FanSlot {
+function fanSlot(index: number, rings: readonly FanRing[]): FanSlot {
   const offset = index - FAN_CENTER_INDEX;
   // Anything beyond the outermost ring keeps the outermost treatment.
-  const ringIndex = Math.min(Math.abs(offset), FAN_RINGS.length - 1);
-  const ring = FAN_RINGS[ringIndex];
+  const ringIndex = Math.min(Math.abs(offset), rings.length - 1);
+  const ring = rings[ringIndex];
   const side = Math.sign(offset);
   return {
-    scale: ring.width / CARD_WIDTH,
+    // Every card is drawn at the centre card's width and scaled to its slot.
+    scale: ring.width / rings[0].width,
     rotate: side * ring.rotate,
     y: ring.y,
     x: side * ring.reach,
-    z: FAN_RINGS.length - ringIndex,
+    z: rings.length - ringIndex,
   };
 }
 
+/** Everything that differs between the desktop fan and the phone's. */
+interface FanLayout {
+  rings: readonly FanRing[];
+  /** How far past the outer slot a card travels as it leaves or arrives, px. */
+  offstage: number;
+  /** Side cards hold their still instead of looping a preview. */
+  sidesStill: boolean;
+  /** A horizontal swipe steps the playlist. */
+  swipe: boolean;
+  /** Where the arrows sit under the box: clear of the side cards' drop. */
+  controlsClassName: string;
+}
+
+const DESKTOP_LAYOUT: FanLayout = {
+  rings: FAN_RINGS,
+  offstage: 220,
+  sidesStill: false,
+  swipe: false,
+  controlsClassName: '-bottom-14',
+};
+
+const PHONE_LAYOUT: FanLayout = {
+  rings: PHONE_RINGS,
+  offstage: 140,
+  sidesStill: true,
+  swipe: true,
+  controlsClassName: '-bottom-[84px]',
+};
+
+/** How far a finger has to travel sideways before a swipe counts, px. */
+const SWIPE_THRESHOLD = 40;
+
 /** How many cards the fan shows at once: the centre and two rings each side. */
 const VISIBLE = FAN_RINGS.length * 2 - 1;
-/** How far past the outer slot a card travels as it leaves or arrives, px. */
-const OFFSTAGE = 220;
 
 interface FanCardProps {
   card: ReelCard;
@@ -135,6 +191,7 @@ interface FanCardProps {
   spread: MotionValue<number> | null;
   /** The centre card's playback, when the playlist runs; null elsewhere. */
   centre: { playing: boolean; onEnded: () => void } | null;
+  layout: FanLayout;
 }
 
 /**
@@ -158,11 +215,14 @@ function FanCard({
   instant,
   spread,
   centre,
+  layout,
 }: FanCardProps) {
+  const { rings, offstage } = layout;
+  const cardWidth = rings[0].width;
   const visible = position < VISIBLE;
   const wasVisible = previousPosition < VISIBLE;
   // Offstage cards wait at the outer slot of the side they will enter from.
-  const slot = fanSlot(visible ? position : direction > 0 ? VISIBLE - 1 : 0);
+  const slot = fanSlot(visible ? position : direction > 0 ? VISIBLE - 1 : 0, rings);
   const emphasis = position === FAN_CENTER_INDEX;
 
   // The slot, as motion values that glide to each new slot.
@@ -180,7 +240,7 @@ function FanCard({
     }
     if (!visible) {
       // Leaving: on past the outer slot it last held, fading as it goes.
-      const exitX = fanSlot(previousPosition).x - direction * OFFSTAGE;
+      const exitX = fanSlot(previousPosition, rings).x - direction * offstage;
       // Gone within the first third of the move: a card still half visible
       // past the outer slot read as a ghost of the fan.
       const moves = [
@@ -191,7 +251,7 @@ function FanCard({
     }
     if (!wasVisible) {
       // Arriving: start just offstage on the side it comes from.
-      slotX.set(slot.x + direction * OFFSTAGE);
+      slotX.set(slot.x + direction * offstage);
       slotY.set(slot.y);
       slotRotate.set(slot.rotate);
       slotScale.set(slot.scale);
@@ -228,6 +288,8 @@ function FanCard({
     slotRotate,
     slotScale,
     opacity,
+    rings,
+    offstage,
   ]);
 
   // The scrub deals the fan out: from GATHER of the way in towards the centre,
@@ -242,7 +304,10 @@ function FanCard({
     <PhotoCard
       src={card.src}
       // Offstage cards hold their poster: nothing to decode until they arrive.
-      video={!visible ? undefined : centre ? card.video : card.preview}
+      // On a phone the side cards hold theirs too.
+      video={
+        !visible ? undefined : centre ? card.video : layout.sidesStill ? undefined : card.preview
+      }
       play={centre ? 'manual' : 'view'}
       playing={centre?.playing ?? false}
       onEnded={centre?.onEnded}
@@ -271,8 +336,8 @@ function FanCard({
         !visible && 'pointer-events-none',
       )}
       style={{
-        width: CARD_WIDTH,
-        marginLeft: -CARD_WIDTH / 2,
+        width: cardWidth,
+        marginLeft: -cardWidth / 2,
         x,
         y,
         rotate,
@@ -311,9 +376,16 @@ function FanCard({
  * plus the outer cards' drop.
  */
 const FAN_CLASSES = cn(
-  'relative mx-auto mt-24 mb-16 hidden h-[536px] w-[1070px] origin-top lg:block',
+  'relative mx-auto mt-24 mb-16 h-[536px] w-[1070px] origin-top',
   'lg:-mb-[45px] lg:scale-[0.8] xl:mb-16 xl:scale-100',
 );
+
+/**
+ * The phone fan's box: the centre card (220 x 391) plus the outer cards'
+ * drop, the whole column wide so the side cards can run past its edges into
+ * the section's clip. Room underneath for the arrows.
+ */
+const PHONE_FAN_CLASSES = 'relative mx-auto mt-10 mb-28 h-[425px] w-full';
 
 const ARROW_CLASSES =
   'border-hairline-strong text-text hover:border-accent-primary hover:text-accent-primary duration-base flex size-11 items-center justify-center rounded-full border font-mono text-[16px] transition-colors disabled:opacity-40';
@@ -322,6 +394,7 @@ interface FanBodyProps {
   spread: MotionValue<number> | null;
   /** Whether the fan is on screen; the playlist waits while it is not. */
   active: boolean;
+  layout: FanLayout;
 }
 
 function positionOf(cardIndex: number, offset: number, count: number): number {
@@ -337,7 +410,7 @@ interface FanStep {
   quick: boolean;
 }
 
-function FanBody({ spread, active }: FanBodyProps) {
+function FanBody({ spread, active, layout }: FanBodyProps) {
   const count = reelCards.length;
   // Offset 0 puts playlist card i in slot i, so the fan opens on card
   // FAN_CENTER_INDEX in the centre slot (both are 2).
@@ -368,32 +441,66 @@ function FanBody({ spread, active }: FanBodyProps) {
     timer.current = window.setTimeout(() => setBusy(false), PICK_STEP_MS);
   };
 
+  // A swipe that ends on a reel card must not also open it: the tap that
+  // finishes a drag can still arrive as a click on the link under the finger.
+  const swiped = useRef(false);
+
+  const cards = reelCards.map((card, i) => {
+    const position = positionOf(i, step.offset, count);
+    const isCentre = position === FAN_CENTER_INDEX;
+    return (
+      <FanCard
+        key={card.id}
+        card={card}
+        position={position}
+        previousPosition={positionOf(i, step.previous, count)}
+        direction={step.direction}
+        quick={step.quick}
+        instant={!spread}
+        spread={spread}
+        layout={layout}
+        centre={
+          spread && isCentre ? { playing: active && !busy, onEnded: () => stepBy(1, false) } : null
+        }
+      />
+    );
+  });
+
   return (
     <>
-      {reelCards.map((card, i) => {
-        const position = positionOf(i, step.offset, count);
-        const isCentre = position === FAN_CENTER_INDEX;
-        return (
-          <FanCard
-            key={card.id}
-            card={card}
-            position={position}
-            previousPosition={positionOf(i, step.previous, count)}
-            direction={step.direction}
-            quick={step.quick}
-            instant={!spread}
-            spread={spread}
-            centre={
-              spread && isCentre
-                ? { playing: active && !busy, onEnded: () => stepBy(1, false) }
-                : null
-            }
-          />
-        );
-      })}
+      {layout.swipe ? (
+        // `pan-y`: the page still scrolls under a vertical drag; only a
+        // sideways one is the fan's. Swiping left brings the next card in,
+        // the way the playlist moves on by itself.
+        <motion.div
+          className="absolute inset-0"
+          style={{ touchAction: 'pan-y' }}
+          onPointerDown={() => {
+            swiped.current = false;
+          }}
+          onPanStart={() => {
+            swiped.current = true;
+          }}
+          onPanEnd={(_, info) => {
+            if (Math.abs(info.offset.x) >= SWIPE_THRESHOLD) press(info.offset.x < 0 ? 1 : -1);
+          }}
+          onClickCapture={(event) => {
+            if (swiped.current) event.preventDefault();
+          }}
+        >
+          {cards}
+        </motion.div>
+      ) : (
+        cards
+      )}
       {/* The playlist's own controls, centred under the fan: back, where the
           playlist is, forward. */}
-      <div className="absolute -bottom-14 left-1/2 z-20 flex -translate-x-1/2 items-center gap-5">
+      <div
+        className={cn(
+          'absolute left-1/2 z-20 flex -translate-x-1/2 items-center gap-5',
+          layout.controlsClassName,
+        )}
+      >
         <button
           type="button"
           lang="en"
@@ -426,7 +533,12 @@ function FanBody({ spread, active }: FanBodyProps) {
   );
 }
 
-function ScrubbedFan() {
+interface FanFrameProps {
+  layout: FanLayout;
+  className: string;
+}
+
+function ScrubbedFan({ layout, className }: FanFrameProps) {
   const fanRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: fanRef,
@@ -439,39 +551,40 @@ function ScrubbedFan() {
 
   return (
     <div ref={viewRef}>
-      <div ref={fanRef} className={FAN_CLASSES}>
-        <FanBody spread={spread} active={inView} />
+      <div ref={fanRef} className={className}>
+        <FanBody spread={spread} active={inView} layout={layout} />
       </div>
     </div>
   );
 }
 
 /**
- * The desktop fan. Split in two, like Partners' grid, so that under reduced
- * motion `useScroll` is never called rather than merely ignored: the static
- * branch draws the dealt-out fan, five stills that never move, and registers
- * no scroll listener.
+ * The fan, desktop or phone. Split in two, like Partners' grid, so that under
+ * reduced motion `useScroll` is never called rather than merely ignored: the
+ * static branch draws the dealt-out fan, five stills that never move, and
+ * registers no scroll listener. Only one of the two layouts is ever mounted,
+ * so there is one playlist and one scroll subscription.
  */
 function Fan() {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const isDesktop = useMediaQuery(BREAKPOINTS.lg);
+  const layout = isDesktop ? DESKTOP_LAYOUT : PHONE_LAYOUT;
+  const className = isDesktop ? FAN_CLASSES : PHONE_FAN_CLASSES;
   if (prefersReducedMotion) {
     return (
-      <div className={FAN_CLASSES}>
-        <FanBody spread={null} active={false} />
+      <div className={className}>
+        <FanBody spread={null} active={false} layout={layout} />
       </div>
     );
   }
-  return <ScrubbedFan />;
+  // Keyed by layout: crossing the breakpoint remounts the fan rather than
+  // animating every card from one geometry into the other.
+  return (
+    <ScrubbedFan key={isDesktop ? 'desktop' : 'phone'} layout={layout} className={className} />
+  );
 }
 
 export function Content({ id = 'content', className }: SectionProps) {
-  // Mobile carousel leads with the emphasised centre card. Memoised so the
-  // list identity is stable across the re-renders the counters trigger.
-  const carouselOrder = useMemo(
-    () => [reelCards[FAN_CENTER_INDEX], ...reelCards.filter((_, i) => i !== FAN_CENTER_INDEX)],
-    [],
-  );
-
   return (
     <section id={id} className={cn('container-section container-wide overflow-hidden', className)}>
       <SectionHeading index="06" title="Content" meta="@YAVUZEYMEN_12" />
@@ -501,41 +614,8 @@ export function Content({ id = 'content', className }: SectionProps) {
         ))}
       </div>
 
-      {/* Desktop card fan */}
+      {/* The card fan: the desktop layout from lg up, the phone's below. */}
       <Fan />
-
-      {/* Mobile carousel */}
-      <div className="-mx-[var(--gutter)] mt-11 flex snap-x snap-mandatory gap-4 overflow-x-auto px-[var(--gutter)] pb-3 lg:hidden">
-        {carouselOrder.map((card, i) => {
-          const photo = (
-            <PhotoCard
-              src={card.src}
-              video={card.preview}
-              caption={card.caption}
-              stat={card.stat}
-              emphasis={i === 0}
-              playThreshold={0.75}
-              className="w-[240px] shrink-0"
-            />
-          );
-          return card.href ? (
-            <a
-              key={card.id}
-              href={card.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${card.caption} — Instagram reel, ${card.stat ?? ''} izlenme`}
-              className="shrink-0 snap-center"
-            >
-              {photo}
-            </a>
-          ) : (
-            <div key={card.id} className="shrink-0 snap-center">
-              {photo}
-            </div>
-          );
-        })}
-      </div>
     </section>
   );
 }
