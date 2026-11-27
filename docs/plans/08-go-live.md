@@ -125,7 +125,30 @@ protocol), in the owner's Google account. Verified with a
 through Search Console's offer to connect to Cloudflare, which would have given
 Google write access to the zone's DNS. **Do not delete that TXT record**:
 Search Console re-checks it and drops the verification if it goes. The sitemap
-is submitted and indexing of the home page was requested.
+is submitted and indexing of the home page was requested. The favicon a result
+shows is a separate, slower Google crawl: after the raster favicons landed, the
+home page was resubmitted for indexing.
+
+### Bing and Yandex
+
+Bing (which also feeds DuckDuckGo, Yahoo and ChatGPT search) and Yandex each
+have the site added and verified, both by DNS rather than by handing either
+service access to another account:
+
+| Service          | Record in Cloudflare                               | Value                                   |
+| ---------------- | -------------------------------------------------- | --------------------------------------- |
+| Bing Webmaster   | CNAME `203e14838b5af8510f8eaa990b09ae67`, DNS only | `verify.bing.com`                       |
+| Yandex Webmaster | TXT on the apex                                    | `yandex-verification: eb4d79d5eaa75bd8` |
+
+**Keep both records**, like Google's: each service re-checks and drops the
+site if its record goes. The Bing CNAME must stay grey-clouded (DNS only), or
+Cloudflare answers for it and Bing cannot see the target.
+
+Bing has the sitemap. Yandex's sitemap tool was read-only on Yandex's side on
+the day, so the home page was sent through its "Reindex pages" tool instead;
+Yandex also reads the `Sitemap:` line in `robots.txt` on its own. When the tool
+is back, adding `https://yavuzeymensimracing.com/sitemap.xml` there is a
+nice-to-have, not a fix.
 
 ### What a finished site carries
 
