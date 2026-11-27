@@ -89,13 +89,17 @@ vulnerabilities have nothing to attach to. What was checked:
   CSP was checked on this branch's Pages preview deployment, since
   `vite preview` does not read `_headers`: no violations while scrolling the
   whole page, and the helmet mask, fonts and videos all loaded.
-- **E-mail spoofing (open, the owner's call).** The domain sends no mail, but
-  the SPF record imported from Natro still authorises Natro's mail servers to
-  send as it, and there is no DMARC record. Replacing it with `v=spf1 -all`
-  and adding `_dmarc` → `v=DMARC1; p=reject` would stop anyone sending mail
-  that passes as coming from the domain. Not changed without the owner's
-  go-ahead, and it must be undone if the domain is ever given a mailbox.
-- **Plain HTTP** redirects to HTTPS (Cloudflare, 301).
+- **E-mail spoofing.** The domain sends no mail, but the SPF record imported
+  from Natro authorised Natro's mail servers to send as it, and there was no
+  DMARC record. With the owner's go-ahead the apex TXT is now `v=spf1 -all`
+  and `_dmarc` holds `v=DMARC1; p=reject; sp=reject; adkim=s; aspf=s`, so no
+  mail can pass as coming from the domain. **If the domain is ever given a
+  mailbox, both records must change first**, or its own mail is rejected.
+- **Plain HTTP** redirects to HTTPS (Cloudflare, 301), and `www` redirects to
+  the apex with path and query kept (a Cloudflare Redirect Rule from the
+  "WWW to root" template, 301).
+- **Private vulnerability reporting** is now on in the repository, so the flow
+  in `SECURITY.md` works.
 
 ## Steps
 
@@ -104,14 +108,14 @@ vulnerabilities have nothing to attach to. What was checked:
 3. Natro parking records removed; apex and `www` attached to Pages.
 4. `og:url`, canonical, absolute image URLs; `robots.txt`, `sitemap.xml`.
 5. Security review; `_headers`; dev dependencies updated.
-6. Optional, waiting on the owner: SPF and DMARC; a `www` → apex redirect
-   (today `www` serves the same page, and the canonical points at the apex).
+6. With the owner's go-ahead: SPF and DMARC, the `www` → apex redirect,
+   private vulnerability reporting.
 
 ## Done when
 
 - `https://yavuzeymensimracing.com` serves the build of `main`, over HTTPS,
   with the headers in `public/_headers` and no CSP violations in the console.
-- `www` serves the site, and plain HTTP redirects to HTTPS.
+- `www` and plain HTTP both end up on `https://yavuzeymensimracing.com/`.
 - `pnpm audit` reports nothing.
 
 ## Progress
@@ -121,4 +125,4 @@ vulnerabilities have nothing to attach to. What was checked:
 - [x] 3 — domains attached
 - [x] 4 — head, robots, sitemap
 - [x] 5 — security review
-- [ ] 6 — optional: SPF/DMARC, `www` redirect
+- [x] 6 — SPF/DMARC, `www` redirect, private vulnerability reporting
